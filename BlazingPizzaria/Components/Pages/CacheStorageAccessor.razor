@@ -1,0 +1,42 @@
+﻿@* @page "/cache"
+@inject InjectServices injectServices
+@inject HttpClient httpClient
+@inject Dependencias.CacheStorageAccessor cacheStorageAcessor
+
+<h3>CacheStorage</h3>
+
+<hr />
+<button class="btn btn-primary" type="button" @onclick = "SetValueAsync">Insira o valor</button>
+<div>Valor da loja: @StoreValue</div>
+<button class="btn btn-primary" type="button" @onclick = "GetValueAsync">Valor</button>
+<button class="btn btn-primary" type="button" @onclick = "RemoveAsync">Remover o valor</button>
+<button class="btn btn-primary" type="button" @onclick = "ClearAllAsync">Remover todos valores</button> *@
+
+@code {
+    // public string StoreValue { get; set; } = "";
+
+    // public async Task SetValueAsync()
+    // {
+    //     var message = CreateMessage();
+    //     var response = await httpClient.SendAsync(message);
+    //     await cacheStorageAcessor.StoreAsync(message, response);
+    // }
+
+    // public async Task GetValueAsync()
+    // {
+    //     StoreValue = await cacheStorageAcessor.GetAsync(CreateMessage());
+    // }
+
+    // public async Task RemoveAsync()
+    // {
+    //     await cacheStorageAcessor.RemoveAsync(CreateMessage());
+    // }
+
+    // public async Task ClearAllAsync()
+    // {
+
+    //     await cacheStorageAcessor.RemoveAllAsync();
+    // }
+
+    // public HttpRequestMessage CreateMessage() => new HttpRequestMessage(HttpMethod.Get, "specialsCacheLocal");
+}

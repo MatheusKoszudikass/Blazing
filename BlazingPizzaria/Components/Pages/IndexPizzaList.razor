@@ -1,0 +1,84 @@
+@page "/"
+@inject IProdutoServices pizzaServices
+@inject InjectServicesWeb injectServicesWeb
+<PageTitle>Blazing Pizza</PageTitle>
+<div class="main">
+    <div class="pizza-left" style="height: 20px">
+        <h1>Pizzas</h1>
+    </div>
+        <div class="pizza-filter" style="height: 57px">
+            <RadzenCard Style="height: 49px; width: 798px">
+            <RadzenTextBox @oninput=@(args => FilterPizza(args.Value.ToString())) class="w-100" aria-label="TextBox with placeholder" Style="width: 205px" />
+            </RadzenCard> 
+            <RadzenProfileMenu Style="width: 65px">
+                <Template>
+                    <RadzenGravatar Email="">
+                    </RadzenGravatar>
+                </Template>
+                <ChildContent>
+                <RadzenRadioButtonList @bind-Value="@SelectValue" TValue="int" Change="@SelectFilter" Orientation="Orientation.Vertical" class="mb-5">
+                        <Items>
+                            <RadzenRadioButtonListItem Text="Nome" Value="1" />
+                            <RadzenRadioButtonListItem Text="Preço" Value="2" />
+                        </Items>
+                    </RadzenRadioButtonList>
+                </ChildContent>
+            </RadzenProfileMenu>
+       </div>
+    <ul class="pizza-cards">
+        @if (produtosFiltro != null)
+        {
+            @foreach (var special in produtosFiltro)
+            {
+                <li style="background-image: url('@special.Imagem.Url')">
+                    <div class="pizza-info">
+                        <span class="title">@special.Nome</span>
+                        @special.Descricao
+                        <span class="price">@special.Preco</span>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+@code {
+    private int SelectValue = 1;
+    private IEnumerable<ProdutoDtos> produtos { get; set; }
+    private IEnumerable<ProdutoDtos> produtosFiltro { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        produtos = await pizzaServices.GetItens();
+        produtosFiltro = produtos;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        produtosFiltro = produtos;
+    }
+
+    protected async Task FilterPizza(string nome)
+    {
+        await OnAfterRenderAsync(true);
+
+        if (nome != null)
+        {
+            produtosFiltro = produtosFiltro.Where(s => s.Nome.Contains(nome, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            SelectValue = 1;
+        }
+    }
+
+    protected async Task SelectFilter()
+    {
+        await OnAfterRenderAsync(true);
+
+        if (SelectValue == 2)
+        {
+            produtosFiltro = produtosFiltro.OrderBy(o => o.Preco).ToList();
+            StateHasChanged();
+        }
+    }
+ }
+
