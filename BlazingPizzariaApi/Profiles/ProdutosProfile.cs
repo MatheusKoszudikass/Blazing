@@ -17,6 +17,7 @@ namespace BlazingPizza.Api.Profiles
                 CreateMap<CarrinhoItemAdd, CarrinhoItemAddDtos>().ReverseMap();
                 CreateMap<Categoria, CategoriasDtos>().ReverseMap();
                 CreateMap<Dimensoes, DimensoesDtos>().ReverseMap();
+                CreateMap<Disponibilidade, DisponibilidadeDtos>().ReverseMap();
                 CreateMap<Imagem, ImagemDtos>().ReverseMap();
                 CreateMap<Produto, ProdutoDtos>().ReverseMap();
                 CreateMap<Revisao, RevisaoDtos>().ReverseMap();

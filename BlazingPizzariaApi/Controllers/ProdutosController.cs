@@ -10,26 +10,15 @@ namespace BlazingPizza.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ProdutosController : ControllerBase
+    public class ProdutosController(ILogger<ProdutosController> logger, IProdutoRepository produtoRepository) : ControllerBase
     {
-        private readonly ILogger<ProdutosController> _logger;
-        private readonly IProdutoRepository _produtoRepository;
+        private readonly ILogger<ProdutosController> _logger = logger;
+        private readonly IProdutoRepository _produtoRepository = produtoRepository;
 
-        private readonly InjectServicesApi _injectServices;
-
-        public ProdutosController(ILogger<ProdutosController> logger,IProdutoRepository produtoRepository, 
-            InjectServicesApi injectServices)
-        {
-            _logger = logger;
-            _injectServices = injectServices;
-            _produtoRepository = produtoRepository;
-            _injectServices = injectServices;
- 
-        }
         [HttpPost("add-produtos")]
-        public async Task<ActionResult<IEnumerable<Produto>>> AddProduto([FromBody] List<ProdutoDtos> novosProdutosDto)
+        public async Task<ActionResult<IEnumerable<ProdutoDtos>>> AddProduto([FromBody] List<ProdutoDtos> novosProdutosDto)
         {
-            if (novosProdutosDto == null || novosProdutosDto.Any())
+            if (novosProdutosDto == null || novosProdutosDto.Count == 0)
             {
                 return BadRequest("A lista de produtos não pode estar vazia.");
             }
@@ -46,6 +35,22 @@ namespace BlazingPizza.Api.Controllers
 
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ProdutoDtos>> EditProduto(int id, [FromBody] ProdutoDtos produtoDtos)
+        {
+            if (produtoDtos == null || id != produtoDtos.Id)
+            {
+                return BadRequest();
+            }
+
+            var editProduto = await _produtoRepository.EditProduto(id, produtoDtos);
+
+            if (editProduto == null)
+            {
+                return NotFound();
+            }
+            return Ok(editProduto);
+        }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProdutoDtos>>> GetItens()
         {
@@ -56,12 +61,12 @@ namespace BlazingPizza.Api.Controllers
                 {
                     return NotFound("Nenhum produto foi localizado");
                 }
-                var produtoDtos = _injectServices._mapper.Map<List<ProdutoDtos>>(produtos);
-                return Ok(produtoDtos);
+             
+                return Ok(produtos);
             }
             catch (Exception)
             {
-                return StatusCode(500);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
             }
         }
         [HttpGet("{id:int}")]
@@ -75,38 +80,52 @@ namespace BlazingPizza.Api.Controllers
                     return NotFound("Produto não localizado");
                 }
 
-                var produtosDtos = _injectServices._mapper.Map<ProdutoDtos>(produto);
-
-                return Ok(produtosDtos);
+                return Ok(produto);
             }
             catch (Exception)
             {
 
-                return StatusCode(500);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
             }
 
         }
         [HttpGet]
         [Route("api/[controller]/GetItensPorCategorias/{categoriaId}")]
-        public async Task<ActionResult<CategoriasDtos?>> GetCategorias(int categoriaId)
+        public async Task<ActionResult<ProdutoDtos?>> GetCategorias(int categoriaId)
         {
             try
             {
-                var categorias = await _produtoRepository.GetItensPorCategorias(categoriaId);
+                var categorias = await _produtoRepository.GetItensProdutoCategoria(categoriaId);
 
-                if (categorias.Count() == 0)
+                if (categorias == null || !categorias.Any())
                 {
                     return NotFound("Categorias não foi encontrato");
                 }
 
-                var categoriasDtos = _injectServices._mapper.Map<List<CategoriasDtos>>(categorias);
-
-                return Ok(categoriasDtos);
+                return Ok(categorias);
             }
             catch (Exception)
             {
-                return StatusCode(500);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
             }
+        }
+        [HttpDelete("batch")]
+        public async Task<ActionResult<ProdutoDtos>> DeleteProduto([FromBody] List<int> id)
+        {
+            try
+            {
+                var produtoDeletados = await _produtoRepository.DeleteProduto(id);
+                if (produtoDeletados == null)
+                {
+                    return NotFound();
+                }
+                return Ok(produtoDeletados);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor");
+            }
+
         }
     }
 }
