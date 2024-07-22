@@ -12,6 +12,6 @@ namespace BlazingPizza.Api.Entites
         [StringLength(100)]
         public string? Nome { get; set; }
 
-        public ICollection<Produto> Produtos { get; set; } = new List<Produto>();
+        public ICollection<Produto?> Produtos { get; set; } = [];
     }
 }

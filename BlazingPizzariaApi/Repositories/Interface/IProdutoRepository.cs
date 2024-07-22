@@ -1,15 +1,17 @@
 ﻿using BlazingPizza.Api.Entites;
 using BlazingPizzaria.Models.DTOs;
+using System.Collections;
 
 namespace BlazingPizza.Api.Repositories.Interface
 {
     public interface IProdutoRepository
     {
-        Task<IEnumerable<Produto?>> AddProduto(List<ProdutoDtos> produto);  
-        Task<Produto?> GetItem(int id);
-        Task<IEnumerable<Produto?>> GetItens();
-        Task<IEnumerable<Categoria?>> GetItensPorCategorias(int id);
-
+        Task<IEnumerable<ProdutoDtos?>> AddProduto(List<ProdutoDtos> produtoDtos);
+        Task<ProdutoDtos?> EditProduto(int id, ProdutoDtos produtoDtos);
+        Task<ProdutoDtos?> GetItem(int id);
+        Task<IEnumerable<ProdutoDtos?>> GetItens();
+        Task<IEnumerable<ProdutoDtos?>> GetItensProdutoCategoria(int id);
+        Task<IEnumerable<ProdutoDtos?>> DeleteProduto(List<int> id);
 
     }
 }

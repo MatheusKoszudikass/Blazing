@@ -10,7 +10,6 @@ namespace BlazingPizzaria.Models.DTOs
         public ProdutoDtos? Produto { get; set; }
         public int Quantidade { get; set; }
         public int CarrinhoDeCompraId { get; set; }
-
         [JsonIgnore]
         public CarrinhoDeCompraDtos? CarrinhoDeCompra { get; set; }
     }

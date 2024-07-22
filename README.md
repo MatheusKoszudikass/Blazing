@@ -24,8 +24,11 @@ O projeto encontra-se em fase inicial, com a estrutura do banco de dados finaliz
 
 ## 🆕 Atualizações Recentes
 
-Foi adicionado um projeto de API em .NET 8.0, que é consumido pelo site Blazor. A API utiliza Swagger para documentação e o AutoMapper para mapear as entidades para as classes DTOs.
+Foram criados novos endpoints no ProdutoController para adicionar, editar e excluir produtos.
+![alt text](image.png)
 
+Foi adicionado um projeto de testes unitários usando a biblioteca xUnit, e os testes para o ProdutoServices foram concluídos.
+![alt text](image-1.png)
 ## Roadmap
 
 ### 📖 Próximas Releases
