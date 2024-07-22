@@ -1,19 +1,17 @@
 @page "/"
 @inject IProdutoServices pizzaServices
 @inject InjectServicesWeb injectServicesWeb
+
 <PageTitle>Blazing Pizza</PageTitle>
 <div class="main">
     <div class="pizza-left" style="height: 20px">
         <h1>Pizzas</h1>
     </div>
         <div class="pizza-filter" style="height: 57px">
-            <RadzenCard Style="height: 49px; width: 798px">
             <RadzenTextBox @oninput=@(args => FilterPizza(args.Value.ToString())) class="w-100" aria-label="TextBox with placeholder" Style="width: 205px" />
-            </RadzenCard> 
-            <RadzenProfileMenu Style="width: 65px">
+            <RadzenProfileMenu Style="width: 38px">
                 <Template>
-                    <RadzenGravatar Email="">
-                    </RadzenGravatar>
+               
                 </Template>
                 <ChildContent>
                 <RadzenRadioButtonList @bind-Value="@SelectValue" TValue="int" Change="@SelectFilter" Orientation="Orientation.Vertical" class="mb-5">
@@ -30,7 +28,7 @@
         {
             @foreach (var special in produtosFiltro)
             {
-                <li style="background-image: url('@special.Imagem.Url')">
+                <li id="card-@special.Id" class="pizza-card" style="background-image: url('@special.Imagem.Url')" @onclick="() => ExpandCollapseCard(special.Id)">
                     <div class="pizza-info">
                         <span class="title">@special.Nome</span>
                         @special.Descricao
@@ -41,7 +39,9 @@
         }
     </ul>
 </div>
+
 @code {
+    private bool IsExpanded = true;
     private int SelectValue = 1;
     private IEnumerable<ProdutoDtos> produtos { get; set; }
     private IEnumerable<ProdutoDtos> produtosFiltro { get; set; }
@@ -79,6 +79,13 @@
             produtosFiltro = produtosFiltro.OrderBy(o => o.Preco).ToList();
             StateHasChanged();
         }
+    }
+
+    protected async Task ExpandCollapseCard(int id)
+    {
+     
+       await injectServicesWeb._jSRuntime.InvokeVoidAsync("ExpandCollapseCard", id);
+       
     }
  }
 

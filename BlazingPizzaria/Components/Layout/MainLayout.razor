@@ -3,12 +3,12 @@
 
 <RadzenLayout style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body';">
     <RadzenHeader>
-        <RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenColumn Size="10" Style="width: 44px">
+        <RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0" Style="height: 58px">
+            <RadzenColumn Size="10" Style="width: 181px">
                 <RadzenSidebarToggle Click="@SidebarToggleClick"></RadzenSidebarToggle>
             </RadzenColumn>
-            <RadzenColumn Size="2">
-                <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End"></RadzenStack>
+            <RadzenColumn Size="1" class="icon-column">
+                 <RadzenImage Path="img/Layout/carrinhoDeCompra.png" class="icon-image" />
             </RadzenColumn>
         </RadzenRow>
     </RadzenHeader>

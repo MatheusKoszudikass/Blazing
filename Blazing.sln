@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingPizza.Api", "Blazing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingPizza.Models", "BlazingPizzaria.Models.Dtos\BlazingPizza.Models.csproj", "{36A25F31-55C6-4299-9B57-53CB05854C7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingPizzaTest", "BlazingPizzaTest\BlazingPizzaTest.csproj", "{E56D2818-EC8A-4799-AFD6-1453BF62FBDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingPizzaTest", "BlazingPizzaTest\BlazingPizzaTest.csproj", "{E56D2818-EC8A-4799-AFD6-1453BF62FBDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -15,7 +15,7 @@ namespace BlazingPizza.Api.Controllers
         private readonly ILogger<ProdutosController> _logger = logger;
         private readonly IProdutoRepository _produtoRepository = produtoRepository;
 
-        [HttpPost("add-produtos")]
+        [HttpPost("{novosProdutosDto}")]
         public async Task<ActionResult<IEnumerable<ProdutoDtos>>> AddProduto([FromBody] List<ProdutoDtos> novosProdutosDto)
         {
             if (novosProdutosDto == null || novosProdutosDto.Count == 0)
@@ -89,8 +89,8 @@ namespace BlazingPizza.Api.Controllers
             }
 
         }
-        [HttpGet]
-        [Route("api/[controller]/GetItensPorCategorias/{categoriaId}")]
+
+        [HttpGet("{categoriaId}")]
         public async Task<ActionResult<ProdutoDtos?>> GetCategorias(int categoriaId)
         {
             try

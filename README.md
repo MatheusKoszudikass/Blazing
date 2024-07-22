@@ -24,17 +24,17 @@ O projeto encontra-se em fase inicial, com a estrutura do banco de dados finaliz
 
 ## 🆕 Atualizações Recentes
 
-Foram criados novos endpoints no ProdutoController para adicionar, editar e excluir produtos.
+Foram criado interações do usuário com as imagens dos produtos. Com o foco de exibir mais detalhes do produto e futuramente adicionar um button para adicionar o produto ao carrinho.
 ![alt text](image.png)
 
-Foi adicionado um projeto de testes unitários usando a biblioteca xUnit, e os testes para o ProdutoServices foram concluídos.
+Foi adicionado uma imagem carrinho de compra para ser trabalhodo a questão de adicionar os produtos.
 ![alt text](image-1.png)
 ## Roadmap
 
 ### 📖 Próximas Releases
 
 1. **Páginas de Pizza List:**
-   - Adicionar carrinho de compra.
+   - Trabalhando em Adicionar carrinho de compra.
    - Cria uma politica de testes unitarios e dos componentes da pagina.
    - Explorando mais a fundo questões de armazenamento em cache do navegador.
 

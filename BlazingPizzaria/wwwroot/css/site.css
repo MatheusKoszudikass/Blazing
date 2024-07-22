@@ -85,3 +85,15 @@ a:focus {
 .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
 }
+
+.icon-column {
+    display: flex;
+    justify-content: flex-end; /* Alinha o conteúdo à direita */
+    align-items: center; /* Centraliza verticalmente */
+    height: 10%; /* Garante que a coluna ocupe toda a altura disponível */
+}
+
+.icon-image {
+    width: 46px;
+    height: 43px;
+}

@@ -17,10 +17,6 @@ namespace BlazingPizza.Api.Repositories.Services
             _injectServicesApi = injectServicesApi;
         }
 
-        public CarrinhoCompraRepository()
-        {
-        }
-
         private async Task<bool> CarrinhoItemJaExiste(int carrinhoId, int produtoId)
         {
             return await _injectServicesApi._dbContext.CarrinhoDeItems.AnyAsync(c => c.Id == carrinhoId

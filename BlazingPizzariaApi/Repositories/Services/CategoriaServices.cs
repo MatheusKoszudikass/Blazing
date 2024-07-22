@@ -10,7 +10,7 @@ namespace BlazingPizza.Api.Repositories.Services
     {
         private readonly InjectServicesApi _injectServicesApi = injectServicesApi;
 
-        public async Task<IEnumerable<Categoria?>> AddCategoria(List<CategoriasDtos> categoriasDtos)
+        public async Task<IEnumerable<CategoriasDtos?>> AddCategoria(List<CategoriasDtos> categoriasDtos)
         {
             if (categoriasDtos == null || categoriasDtos.Count == 0)
             {
@@ -24,7 +24,7 @@ namespace BlazingPizza.Api.Repositories.Services
                 await _injectServicesApi._dbContext.Categorias.AddRangeAsync(categoria);
                 await _injectServicesApi._dbContext.SaveChangesAsync();
 
-                return categoria;
+                return categoriasDtos;
             }
             catch (Exception ex)
             {
@@ -32,9 +32,9 @@ namespace BlazingPizza.Api.Repositories.Services
             }
         }
 
-        public async Task<IEnumerable<Categoria?>> GetItensPorCategorias(int id)
+        public async Task<IEnumerable<CategoriasDtos?>> GetItensPorCategorias(int id)
         {
-            var produto = await _injectServicesApi._dbContext.Categorias
+            var categorias = await _injectServicesApi._dbContext.Categorias
                            .Include(p => p.Produtos)
                                  .ThenInclude(d => d.Dimensoes)
                            .Include(p => p.Produtos)
@@ -47,7 +47,9 @@ namespace BlazingPizza.Api.Repositories.Services
                            .Include(p => p.Produtos)
                                  .ThenInclude(p => p.Imagem)
                            .Where(c => c.Id == id).ToListAsync();
-            return produto;
+
+            var categoriasDtos =  _injectServicesApi._mapper.Map<IEnumerable<CategoriasDtos>>(categorias);
+            return categoriasDtos;
 
         }
     }
