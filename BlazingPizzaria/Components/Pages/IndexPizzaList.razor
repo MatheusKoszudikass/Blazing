@@ -1,4 +1,4 @@
-@page "/"
+@page "/pizzaSpecial"
 @inject IProdutoServices pizzaServices
 @inject InjectServicesWeb injectServicesWeb
 
@@ -34,6 +34,14 @@
                         @special.Descricao
                         <span class="price">@special.Preco</span>
                     </div>
+                    @if (expandedCardId == special.Id)
+                    {
+                        <div class="pizza-details">
+                            <p><strong>Marca:</strong> @special.Marca</p>
+                            <p><strong>SKU:</strong> @special.SKU</p>
+                            <button @onclick="() => ExpandCollapseCard(special.Id) ">Fechar</button>
+                        </div>
+                    }
                 </li>
             }
         }
@@ -41,7 +49,9 @@
 </div>
 
 @code {
+
     private bool IsExpanded = true;
+    private int expandedCardId;
     private int SelectValue = 1;
     private IEnumerable<ProdutoDtos> produtos { get; set; }
     private IEnumerable<ProdutoDtos> produtosFiltro { get; set; }
@@ -83,9 +93,16 @@
 
     protected async Task ExpandCollapseCard(int id)
     {
-     
-       await injectServicesWeb._jSRuntime.InvokeVoidAsync("ExpandCollapseCard", id);
-       
+        if (expandedCardId == id)
+        {
+            expandedCardId = 0;
+        }
+        else
+        {
+            expandedCardId = id;
+            await injectServicesWeb._jSRuntime.InvokeVoidAsync("ToggleCardExpansion", id);
+        }
+  
     }
  }
 

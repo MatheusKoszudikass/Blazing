@@ -1,0 +1,22 @@
+﻿
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+    --main-color: #fd4646;
+    --text-color: #02ac70;
+    --bg-color: #fff;
+    --container-color: #ffffff;
+}
+
+.body {
+    background-color: var(--container-color);
+}
+.imgPizzas {
+    @apply h-28 w-28 rounded-md duration-300 hover:-rotate-2 hover:scale-110;
+}
+.headerProfile {
+    @apply h-[200px] bg-home w-full bg-cover bg-center text-gray-200;
+}

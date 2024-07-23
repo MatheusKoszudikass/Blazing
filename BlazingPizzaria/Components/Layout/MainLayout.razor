@@ -7,9 +7,11 @@
             <RadzenColumn Size="10" Style="width: 181px">
                 <RadzenSidebarToggle Click="@SidebarToggleClick"></RadzenSidebarToggle>
             </RadzenColumn>
+            <div>
             <RadzenColumn Size="1" class="icon-column">
-                 <RadzenImage Path="img/Layout/carrinhoDeCompra.png" class="icon-image" />
+                    <i class="bx bx-cart-add" id="cart-icon" data-quanlity="1"></i>
             </RadzenColumn>
+            </div>
         </RadzenRow>
     </RadzenHeader>
     <RadzenBody Expanded="@sidebarExpanded">
@@ -26,7 +28,7 @@
         </RadzenStack>
         <RadzenPanelMenu Style="color: #ffffff; background-color: #000000; text-align: left; line-height: 15px; text-decoration: none">
             <RadzenPanelMenuItem Text="Pizzas Especiais" Path="/" IconColor="" />
-            <RadzenPanelMenuItem Text="Cache" Path="/cache" IconColor="" />
+            <RadzenPanelMenuItem Text="PizzasAntigo" Path="/pizzaSpecial" IconColor="" />
         </RadzenPanelMenu>
         <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
             <RadzenText Text="BlazingPizza v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" Style="font-family: 'Comic Sans MS'" />
