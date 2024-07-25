@@ -105,8 +105,8 @@ a:focus {
     cursor: pointer;
 }
 
-    #cart-icon[data-quanlity]::after {
-        content: attr(data-quanlity);
+    #cart-icon[data-quantity]::after {
+        content: attr(data-quantity);
         position: absolute;
         top: 20px;
         right: -5px;

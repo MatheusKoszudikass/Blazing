@@ -1,6 +1,8 @@
-@inherits LayoutComponentBase
-<RadzenComponents />
+﻿@inherits LayoutComponentBase
+@inject InjectServicesWeb injectServicesWeb
 
+
+<RadzenComponents />
 <RadzenLayout style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body';">
     <RadzenHeader>
         <RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0" Style="height: 58px">
@@ -9,7 +11,7 @@
             </RadzenColumn>
             <div>
             <RadzenColumn Size="1" class="icon-column">
-                    <i class="bx bx-cart-add" id="cart-icon" data-quanlity="1"></i>
+                    <i class="bx bx-cart-add hidden" id="cart-icon" @onclick="ShowCart" data-quantity=""></i>
             </RadzenColumn>
             </div>
         </RadzenRow>
@@ -37,3 +39,51 @@
     </RadzenSidebar>
    
 </RadzenLayout>
+<!--Modal cart-->
+<div class="bg-black/60 z-[99] fixed left-0 top-0 hidden h-full w-full items-center justify-center" id="cart-modal" @onclick="CloseModal">
+
+    <div class="min-w-[90%] rounded-md bg-white p-2 md:min-w-[600px]">
+        <h2 class="mb-2 text-center text-2xl font-bold">Meu carrinho</h2>
+
+        <div id="cart-items"class="mb-2 flex flex-col justify-between"></div>
+
+        <p class="font-bold">Total: <span id="cart-total">0.00</span></p>
+
+        <p class="mt-2 font-bold">Endereço de entrega:</p>
+        <RadzenTextBox typeof="text" 
+            Placeholder="Digite o cep para entrega..."
+            class="border-2 w-full p-1" id="address"
+            />
+            <p class="hidden text-red-500" id="address-warn">Cep inválido.</p>
+
+                <div class="mt-5 flex w-full items-center justify-between">
+                    <button id="close-modal-btn" @onclick="CloseModal" class="rounded bg-red-500 px-4 py-1 text-white">Fechar</button>
+                    <button id="checkout-btn" class="rounded bg-green-500 px-4 py-1 text-white">Finalizar pedido</button>
+                </div>
+    </div>
+</div>
+<!--Fim Modal cart-->
+
+<footer class="z-40 fixed bottom-0 flex w-full items-center justify-center bg-red-500 py-3">
+    <button class="flex items-center gap-2 rounded font-bold text-white" id="cart-btn" @onclick="ShowCart">
+        Veja meu carrinho
+        <i class="bx bx-cart-add text-lg text-white"></i>
+        (<span id="cart-count">0</span>)
+    </button>
+</footer>
+<!--Fim da layout-->
+
+@code{
+    private List<ProdutoDtos> produtosCompra = new();
+
+    private async Task ShowCart()
+    {
+        await injectServicesWeb._jSRuntime.InvokeVoidAsync("showCartModal");
+    }
+
+    private async Task CloseModal()
+    {
+
+        await injectServicesWeb._jSRuntime.InvokeVoidAsync("closeCartModal");
+    }
+}

@@ -24,20 +24,24 @@ O projeto encontra-se em fase inicial, com a estrutura do banco de dados finaliz
 
 ## 🆕 Atualizações Recentes
 
-Foram feitas mudanças significativas na exibição dos produtos, adotando uma abordagem mais simples, funcional e amigável, conforme mostrado nas imagens de antes e depois.
-![alt text](image-2.png)
 
-Foi adicionado novas bibliotecas tailwindcss para manipução dos elementos em html e boxicons para icones.
+Alterações foram feitas na página de produto. Foi adicionada a funcionalidade de filtro da página antiga para a nova, e a interação do usuário com a lista de produtos foi melhorada, permitindo a adição de quantidades de produtos ao carrinho e notificando o usuário sobre a adição do produto e se o produto já foi adicionado, conforme mostrado na imagem.
+![alt text](image.png)
+
+
+Estou trabalhando no design do carrinho de compra está na fase inicial.
+![alt text](image-1.png)
 ## Roadmap
 
 ### 📖 Próximas Releases
 
 1. **Páginas de Pizza List:**
-   - Migrando o filtro da pagina antiga para a pagina nova 
-   - Refatora as class em html.
-   - Trabalhando em Adicionar carrinho de compra.
-   - Cria uma politica de testes unitarios e dos componentes da pagina.
-   - Explorando mais a fundo questões de armazenamento em cache do navegador.
+   - ✔️ Migrando o filtro da pagina antiga para a pagina nova 
+   - ✔️ Refatora as class em html.
+   - ⏳ Trabalhando em Adicionar carrinho de compra.
+   - ⏳ Adiciona estrelas de avaliação no produto. 
+   - ⏳ Cria uma politica de testes unitarios e dos componentes da pagina.
+   - ⏳ Explorando mais a fundo questões de armazenamento em cache do navegador.
 
 2. **Cadastro de Usuário:**
    - Implementar a página de cadastro de usuário para facilitar o processo de compra.

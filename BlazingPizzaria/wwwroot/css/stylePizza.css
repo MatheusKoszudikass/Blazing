@@ -12,38 +12,17 @@
     height: 100%;
 }
 .pizza-cards {
-    display: grid;
+    position: -webkit-sticky; /* Para compatibilidade com navegadores mais antigos */
+    position: sticky;
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     grid-gap: 2rem;
     justify-content: center;
     padding-left: 0;
+    padding: 1rem;
+    z-index: 1000;
     margin: 0;
 }
 
-    .pizza-cards > li {
-        height: 10rem;
-        width: 100%;
-        position: relative;
-        background-size: cover;
-        border-radius: 0.5rem;
-        list-style-type: none;
-        box-shadow: 0 3px 4px rgba(0,0,0,0.4);
-        transition: transform 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out;
-        cursor: pointer;
-    }
-
-        .pizza-cards > li:hover,
-        .pizza-cards > li.touch-active {
-            transform: scale(1.02);
-        }
-
-.pizza-card.expanded {
-    width: 100%;
-    height: auto;
-    z-index: 10;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    margin: 0 auto;
-}
 
 .pizza-info {
     border-radius: 0.5rem;
