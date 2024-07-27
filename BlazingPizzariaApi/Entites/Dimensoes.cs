@@ -2,10 +2,13 @@
 
 namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Eintidade responsável pela Dimensoes do produto.
+    /// </summary>
     public class Dimensoes
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         public double Peso { get; set; }
         public double Altura { get; set; }
         public double Largura { get; set; }

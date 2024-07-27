@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace BlazingPizzaria.Models.DTOs
 {
-    public class DisponibilidadeDtos
+    public class DisponibilidadeDto
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public bool EstaDisponivel { get; set; }
         public DateTime DataEstimadaDeEntrega { get; set; }
     }

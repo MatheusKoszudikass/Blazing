@@ -3,15 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Entidade responsável pela avaliação do produto
+    /// </summary>
     public class Avaliacao
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         public double Media { get; set; }
         public int NumeroDeAvaliacoes { get; set; }
 
         [ForeignKey("RevisaoId")]
-        public int RevisaoId { get; set; }
+        public Guid RevisaoId { get; set; }
 
         public Revisao? Revisao { get; set; }
     }

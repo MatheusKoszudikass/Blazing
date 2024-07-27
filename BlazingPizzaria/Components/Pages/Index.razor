@@ -10,18 +10,12 @@
     </head>
     <body>
      <!-- Header -->
-    <header class="headerProfile">
+ @*    <header class="headerProfile">
            <div class="flex h-full w-full flex-col items-center justify-center">
             <img src="/img/LogoMenu.png" alt="Blazing Pizzaria" class="imgPizzas" />
-            <div class="infOpenClose" id="@DateTime.Now">
-                <span>Seg é Dom - 18:00 as 22:00</span>
-            </div>
+           
            </div>
-    </header>
-    <!-- Fim Header-->
-    <h2 class="tituloCardapio">
-        Conheça nosso cardápio
-    </h2>
+    </header> *@
     <div class="pizza-filter" style="height: 57px">
         <RadzenTextBox @oninput=@(args => FilterPizza(args.Value.ToString())) class="w-100" aria-label="TextBox with placeholder" Placeholder="Pesquise aqui..." Style="width: 205px" />
         <RadzenProfileMenu Style="width: 38px">
@@ -38,6 +32,14 @@
             </ChildContent>
         </RadzenProfileMenu>
     </div>
+    <div class="infOpenClose" id="@DateTime.Now">
+        <span>Seg é Dom - 18:00 as 22:00</span>
+    </div>
+    <!-- Fim Header-->
+    <h2 class="tituloCardapio">
+        Conheça nosso cardápio
+    </h2>
+
     <div id="menu">
             <!--Produto Item-->
         <menu class="gridColumProduto">
@@ -77,9 +79,9 @@
     private bool notificacao = false;
     private int expandedCardId;
     private int SelectValue = 1;
-    private IEnumerable<ProdutoDtos> produtos { get; set; }
-    private IEnumerable<ProdutoDtos> produtosFiltro { get; set; }
-    private List<ProdutoDtos> listaCompra { get; set; } = new();
+    private IEnumerable<ProdutoDto> produtos { get; set; }
+    private IEnumerable<ProdutoDto> produtosFiltro { get; set; }
+    private List<ProdutoDto> listaCompra { get; set; } = new();
 
 
     protected override async Task OnInitializedAsync()
@@ -121,7 +123,7 @@
     }
 
     //Adiciona o produto em uma lista de compra 
-    protected async Task ProdutosCart(int id)
+    protected async Task ProdutosCart(Guid id)
     {
         var produtoParaAdicionar = produtos.FirstOrDefault(p => p.Id == id) ?? produtosFiltro?.FirstOrDefault(p => p.Id == id);
 

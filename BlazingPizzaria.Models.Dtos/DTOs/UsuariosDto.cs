@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace BlazingPizzaria.Models.DTOs
 {
-    public class UsuariosDtos
+    public class UsuariosDto
     {
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string? Nome { get; set; }
 
@@ -15,6 +15,6 @@ namespace BlazingPizzaria.Models.DTOs
         public string? Senha { get; set; }
 
         [JsonIgnore]
-        public ICollection<CarrinhoDeCompraDtos>? CarrinhosDeCompra { get; set; }
+        public ICollection<CarrinhoDeCompraDto>? CarrinhosDeCompra { get; set; }
     }
 }

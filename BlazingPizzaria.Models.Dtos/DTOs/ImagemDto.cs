@@ -1,9 +1,9 @@
 ﻿
 namespace BlazingPizzaria.Models.DTOs
 {
-    public class ImagemDtos
+    public class ImagemDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string? Url { get; set; }
         public string? TextoAlternativo { get; set; }

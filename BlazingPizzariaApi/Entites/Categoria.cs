@@ -3,10 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Entidade responsável por agrupar produtos por categorias.
+    /// </summary>
     public class Categoria
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         [Required]
         [StringLength(100)]

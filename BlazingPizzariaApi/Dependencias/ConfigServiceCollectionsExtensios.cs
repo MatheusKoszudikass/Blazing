@@ -18,8 +18,10 @@ namespace BlazingPizza.Api.Dependencias
             InvalidOperationException("Problema com a string de conexão. Verifique o arquivo appsettings.json")));
             Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             Services.AddScoped<InjectServicesApi>();
-            Services.AddScoped<IProdutoRepository, ProdutoServices>();
             Services.AddScoped<ICarrinhoCompraRepository, CarrinhoCompraRepository>();
+            Services.AddScoped<ICategoriaRepository, CategoriaServices>();
+            Services.AddScoped<IProdutoRepository, ProdutoServices>();
+   
 
             return Services;
         }

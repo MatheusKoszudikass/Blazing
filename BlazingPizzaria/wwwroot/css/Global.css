@@ -20,7 +20,7 @@
 }
 
 .headerProfile {
-    @apply h-[200px] bg-home w-full bg-cover bg-center text-gray-200;
+    @apply h-[200px] w-full bg-cover bg-center text-gray-200;
 }
 
 .gridColumProduto {
@@ -33,7 +33,7 @@
 }
 
 .infOpenClose {
-    @apply mt-2 rounded-lg bg-green-500 px-4 py-1 font-bold text-white;
+    @apply bg-centerflex mt-2 h-full w-full flex-col items-center justify-center rounded bg-green-500 bg-cover px-4 py-1 font-bold text-white;
 }
 
 .tituloCardapio {

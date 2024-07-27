@@ -8,7 +8,7 @@ namespace BlazingPizza.Models.DTOs
 {
     public class CarrinhoDeItemAtualizarQuantidadeDto
     {
-        public int CarrinhoDeItemId { get; set; }
+        public Guid CarrinhoDeItemId { get; set; }
 
         public int Quantidade { get; set; }
     }

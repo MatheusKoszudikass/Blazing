@@ -4,11 +4,11 @@ namespace BlazingPizza.Repositories.Interface
 {
     public interface IProdutoServices
     {
-        Task<IEnumerable<ProdutoDtos>> GetItens();
+        Task<IEnumerable<ProdutoDto>> GetItens();
 
-        Task<ProdutoDtos> GetItem(int Id);
+        Task<ProdutoDto> GetItem(int Id);
 
-        Task<IEnumerable<ProdutoDtos>> GetItensPorCategoria(int CategoriaId);
+        Task<IEnumerable<ProdutoDto>> GetItensPorCategoria(int CategoriaId);
 
         //Task<IEnumerable<ProdutoDtos>> GetItensPorCategoria();
     }

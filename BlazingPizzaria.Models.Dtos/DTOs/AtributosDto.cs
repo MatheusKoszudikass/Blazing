@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazingPizzaria.Models.DTOs
 {
-    public class AtributosDtos
+    public class AtributosDto
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         public string? Cor { get; set; }
         public string? Material { get; set; }
         public string? Modelo { get; set; }

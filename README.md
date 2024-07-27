@@ -24,20 +24,20 @@ O projeto encontra-se em fase inicial, com a estrutura do banco de dados finaliz
 
 ## 🆕 Atualizações Recentes
 
-
-Alterações foram feitas na página de produto. Foi adicionada a funcionalidade de filtro da página antiga para a nova, e a interação do usuário com a lista de produtos foi melhorada, permitindo a adição de quantidades de produtos ao carrinho e notificando o usuário sobre a adição do produto e se o produto já foi adicionado, conforme mostrado na imagem.
+Refatoração das entidades, substituindo o int por Guid como identificador da entidade. Comentário no código do ProdutoServices, criação da interface ICategoriaRepository e da classe CategoriaService, além de mudanças na nomenclatura dos endpoints no CategoriaController e ProdutoController para torná-los mais legíveis. Inclua também o código comentado dessas classes.
 ![alt text](image.png)
 
-
-Estou trabalhando no design do carrinho de compra está na fase inicial.
+Criação dos testes unitarios para categoria.
 ![alt text](image-1.png)
 ## Roadmap
 
 ### 📖 Próximas Releases
 
 1. **Páginas de Pizza List:**
-   - ✔️ Migrando o filtro da pagina antiga para a pagina nova 
+   - ✔️ Migrando o filtro da pagina antiga para a pagina nova.
    - ✔️ Refatora as class em html.
+   - ✔️ Refatoração das entidades, substituindo int por Guid.
+   - ✔️ Criação da categoria.
    - ⏳ Trabalhando em Adicionar carrinho de compra.
    - ⏳ Adiciona estrelas de avaliação no produto. 
    - ⏳ Cria uma politica de testes unitarios e dos componentes da pagina.

@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace BlazingPizzaria.Models.DTOs
 {
-    public class ProdutoDtos
+    public class ProdutoDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string? Nome { get; set; }
 
@@ -17,7 +17,7 @@ namespace BlazingPizzaria.Models.DTOs
 
         public string? Moeda { get; set; }
 
-        public int CategoriaId { get; set; }
+        public Guid CategoriaId { get; set; }
 
         public string? Marca { get; set; }
 
@@ -26,22 +26,22 @@ namespace BlazingPizzaria.Models.DTOs
         public int QuantidadeEmEstoque { get; set; }
         public string? LocalizacaoEstoque { get; set; }
 
-        public int DimensoesId { get; set; }
-        public DimensoesDtos? Dimensoes { get; set; }
+        public Guid DimensoesId { get; set; }
+        public DimensoesDto? Dimensoes { get; set; }
 
-        public int AvaliacaoId { get; set; }
-        public AvaliacaoDtos? Avaliacao { get; set; }
+        public Guid AvaliacaoId { get; set; }
+        public AvaliacaoDto? Avaliacao { get; set; }
 
-        public int AtributosId { get; set; }
-        public AtributosDtos? Atributos { get; set; }
-
-
-        public int DisponibilidadeId { get; set; }
-        public DisponibilidadeDtos? Disponibilidades { get; set; }
+        public Guid AtributosId { get; set; }
+        public AtributosDto? Atributos { get; set; }
 
 
-        public int ImagemId { get; set; }
-        public ImagemDtos? Imagem { get; set; }
+        public Guid DisponibilidadeId { get; set; }
+        public DisponibilidadeDto? Disponibilidades { get; set; }
+
+
+        public Guid ImagemId { get; set; }
+        public ImagemDto? Imagem { get; set; }
 
     }
 }

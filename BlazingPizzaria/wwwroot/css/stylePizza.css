@@ -6,14 +6,15 @@
 }
 
 .pizza-filter {
+    position: sticky;
+    top: -1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
 }
 .pizza-cards {
-    position: -webkit-sticky; /* Para compatibilidade com navegadores mais antigos */
-    position: sticky;
+   
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     grid-gap: 2rem;
     justify-content: center;

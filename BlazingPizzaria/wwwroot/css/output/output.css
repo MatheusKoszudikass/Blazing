@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.6 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.7 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -687,8 +687,16 @@ video {
   bottom: 0px;
 }
 
+.end-1 {
+  inset-inline-end: 0.25rem;
+}
+
 .left-0 {
   left: 0px;
+}
+
+.start-1 {
+  inset-inline-start: 0.25rem;
 }
 
 .top-0 {
@@ -753,6 +761,10 @@ video {
 
 .clear-none {
   clear: none;
+}
+
+.m-1 {
+  margin: 0.25rem;
 }
 
 .mb-2 {
@@ -2597,7 +2609,6 @@ video {
 .headerProfile {
   height: 200px;
   width: 100%;
-  background-image: url('/img/Layout/background.jpg');
   background-size: cover;
   background-position: center;
   --tw-text-opacity: 1;
@@ -2638,7 +2649,13 @@ video {
 
 .infOpenClose {
   margin-top: 0.5rem;
-  border-radius: 0.5rem;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
   --tw-bg-opacity: 1;
   background-color: rgb(34 197 94 / var(--tw-bg-opacity));
   padding-left: 1rem;

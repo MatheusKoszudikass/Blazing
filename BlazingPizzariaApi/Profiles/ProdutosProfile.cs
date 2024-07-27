@@ -9,19 +9,19 @@ namespace BlazingPizza.Api.Profiles
     {
         public ProdutosProfile()
         {
-                CreateMap<Atributos, AtributosDtos>().ReverseMap();
+                CreateMap<Atributo, AtributosDto>().ReverseMap();
                 CreateMap<AtualizarQuantidadeCarrinho, CarrinhoDeItemAtualizarQuantidadeDto>();
-                CreateMap<Avaliacao, AvaliacaoDtos>().ReverseMap();
-                CreateMap<CarrinhoDeCompra, CarrinhoDeCompraDtos>().ReverseMap();
-                CreateMap<CarrinhoDeItems, CarrinhoDeItemsDtos>().ReverseMap();
-                CreateMap<CarrinhoItemAdd, CarrinhoItemAddDtos>().ReverseMap();
-                CreateMap<Categoria, CategoriasDtos>().ReverseMap();
-                CreateMap<Dimensoes, DimensoesDtos>().ReverseMap();
-                CreateMap<Disponibilidade, DisponibilidadeDtos>().ReverseMap();
-                CreateMap<Imagem, ImagemDtos>().ReverseMap();
-                CreateMap<Produto, ProdutoDtos>().ReverseMap();
-                CreateMap<Revisao, RevisaoDtos>().ReverseMap();
-                CreateMap<Usuario, UsuariosDtos>().ReverseMap();
+                CreateMap<Avaliacao, AvaliacaoDto>().ReverseMap();
+                CreateMap<CarrinhoDeCompra, CarrinhoDeCompraDto>().ReverseMap();
+                CreateMap<CarrinhoDeItem, CarrinhoDeItemsDto>().ReverseMap();
+                CreateMap<CarrinhoItemAdd, CarrinhoItemAddDto>().ReverseMap();
+                CreateMap<Categoria, CategoriasDto>().ReverseMap();
+                CreateMap<Dimensoes, DimensoesDto>().ReverseMap();
+                CreateMap<Disponibilidade, DisponibilidadeDto>().ReverseMap();
+                CreateMap<Imagem, ImagemDto>().ReverseMap();
+                CreateMap<Produto, ProdutoDto>().ReverseMap();
+                CreateMap<Revisao, RevisaoDto>().ReverseMap();
+                CreateMap<Usuario, UsuariosDto>().ReverseMap();
         }
     }
 }

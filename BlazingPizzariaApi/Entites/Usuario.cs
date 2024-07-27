@@ -2,10 +2,13 @@
 
 namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Entidade responsável  pelo usuário.
+    /// </summary>
     public class Usuario
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         [Required]
         [StringLength(100)]

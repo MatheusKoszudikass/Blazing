@@ -3,10 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Entidade responsável pela imagem do produtos em geral.
+    /// </summary>
     public class Imagem
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         [Required]
         public string? Url { get; set; }
         [StringLength(200)]

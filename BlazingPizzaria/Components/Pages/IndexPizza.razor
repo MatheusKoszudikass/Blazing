@@ -7,7 +7,7 @@
     <div class="pizza-left" style="height: 20px">
         <h1>Pizzas</h1>
     </div>
-        <div class="pizza-filter fixed" style="height: 57px">
+        <div class="pizza-filter" style="height: 57px">
             <RadzenTextBox @oninput=@(args => FilterPizza(args.Value.ToString())) class="w-100" aria-label="TextBox with placeholder" Style="width: 205px" />
             <RadzenProfileMenu Style="width: 38px">
                 <Template>
@@ -51,10 +51,10 @@
 @code {
 
     private bool IsExpanded = true;
-    private int expandedCardId;
+    private Guid expandedCardId;
     private int SelectValue = 1;
-    private IEnumerable<ProdutoDtos> produtos { get; set; }
-    private IEnumerable<ProdutoDtos> produtosFiltro { get; set; }
+    private IEnumerable<ProdutoDto> produtos { get; set; }
+    private IEnumerable<ProdutoDto> produtosFiltro { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -91,11 +91,11 @@
         }
     }
 
-    protected async Task ExpandCollapseCard(int id)
+    protected async Task ExpandCollapseCard(Guid id)
     {
         if (expandedCardId == id)
         {
-            expandedCardId = 0;
+            expandedCardId = Guid.Empty;
         }
         else
         {

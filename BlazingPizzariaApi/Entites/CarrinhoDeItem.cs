@@ -5,17 +5,20 @@ using System.Text.Json.Serialization;
 
 namespace BlazingPizza.Api.Entites
 {
-    public class CarrinhoDeItems
+    /// <summary>
+    /// Entidade responsável pela adição dos items no carrinho de compra.
+    /// </summary>
+    public class CarrinhoDeItem
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         [ForeignKey("Produto")]
-        public int ProdutoId { get; set; }
+        public Guid ProdutoId { get; set; }
         public Produto? Produto { get; set; }
         public int Quantidade { get; set; }
         [ForeignKey("CarrinhoDeCompra")]
-        public int CarrinhoDeCompraId { get; set; }
+        public Guid CarrinhoDeCompraId { get; set; }
         public CarrinhoDeCompra? CarrinhoDeCompra { get; set; }
     }
 }

@@ -4,10 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Entidade responsável pela informações em geral do produto.
+    /// </summary>
     public class Produto
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
 
         [Required]
         [StringLength(100)]
@@ -24,7 +27,7 @@ namespace BlazingPizza.Api.Entites
         public string? Moeda { get; set; }
 
         [ForeignKey("Categoria")]
-        public int CategoriaId { get; set; }
+        public Guid CategoriaId { get; set; }
 
         [StringLength(50)]
         public string? Marca { get; set; }
@@ -37,28 +40,28 @@ namespace BlazingPizza.Api.Entites
 
 
         [ForeignKey("Dimensoes")]
-        public int DimensoesId { get; set; }
+        public Guid DimensoesId { get; set; }
         public Dimensoes? Dimensoes { get; set; }
 
 
         [ForeignKey("Avaliacao")]
-        public int AvaliacaoId { get; set; }
+        public Guid AvaliacaoId { get; set; }
         public Avaliacao? Avaliacao { get; set; }
 
 
         [ForeignKey("Atributos")]
-        public int AtributosId { get; set; }
-        public Atributos? Atributos { get; set; }
+        public Guid AtributosId { get; set; }
+        public Atributo? Atributos { get; set; }
 
 
 
         [ForeignKey("DisponibilidadeId")]
-        public int DisponibilidadeId { get; set; }
+        public Guid DisponibilidadeId { get; set; }
         public Disponibilidade? Disponibilidades { get; set; }
 
 
         [ForeignKey("ImagemId")]
-        public int ImagemId { get; set; }
+        public Guid ImagemId { get; set; }
         public Imagem? Imagem { get; set; }
     }
 }

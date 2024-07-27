@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace BlazingPizza.Models.DTOs
 {
-    public class CarrinhoItemAddDtos
+    public class CarrinhoItemAddDto
     {
-        public int CarrinhoId { get; set; }
+        public Guid CarrinhoId { get; set; }
 
-        public int ProdutoId { get; set; }
+        public Guid ProdutoId { get; set; }
 
-        public ProdutoDtos? Produtos { get; set; }
+        public ProdutoDto? Produtos { get; set; }
 
         public int Quantidade { get; set; }
     }

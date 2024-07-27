@@ -29,9 +29,9 @@ namespace BlazingPizza.Repositories.Services.LocalCache.StorageCahceServices
             _produtoServices = ProdutoServices;
         }
 
-        public async Task<IEnumerable<ProdutoDtos>> GetCollectionItem()
+        public async Task<IEnumerable<ProdutoDto>> GetCollectionItem()
         {
-            return await _localStorageService.GetItemAsync<IEnumerable<ProdutoDtos>>(_key)
+            return await _localStorageService.GetItemAsync<IEnumerable<ProdutoDto>>(_key)
                 ?? await AddCollectionItem();
 
         }
@@ -41,7 +41,7 @@ namespace BlazingPizza.Repositories.Services.LocalCache.StorageCahceServices
             await this._localStorageService.RemoveItemAsync(_key);
         }
 
-        public async Task <IEnumerable<ProdutoDtos>> AddCollectionItem()
+        public async Task <IEnumerable<ProdutoDto>> AddCollectionItem()
         {
 
             var produtoCollection = await this._produtoServices.GetItens();

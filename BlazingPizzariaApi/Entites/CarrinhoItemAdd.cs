@@ -1,10 +1,13 @@
 ﻿namespace BlazingPizza.Api.Entites
 {
+    /// <summary>
+    /// Entidade responsável por adicionar item.
+    /// </summary>
     public class CarrinhoItemAdd
     {
-        public int CarrinhoId { get; set; }
+        public Guid CarrinhoId { get; set; } = new Guid();
 
-        public int ProdutoId { get; set; }
+        public Guid ProdutoId { get; set; }
 
         public  Produto? Produtos { get; set; }
 

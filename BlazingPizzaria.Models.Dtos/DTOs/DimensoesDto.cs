@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BlazingPizzaria.Models.DTOs
 {
-    public class DimensoesDtos
+    public class DimensoesDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public double Peso { get; set; }
         public double Altura { get; set; }
         public double Largura { get; set; }

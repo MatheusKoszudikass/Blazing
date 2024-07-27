@@ -14,12 +14,12 @@ namespace BlazingPizza.Repositories.Services
             _injectServicesWeb = InjectServicesWeb;
         }
 
-        public async Task<IEnumerable<ProdutoDtos>> GetItens()
+        public async Task<IEnumerable<ProdutoDto>> GetItens()
         {
             try
             {
                 var produtosDto = await _injectServicesWeb._httpClient.
-                    GetFromJsonAsync<IEnumerable<ProdutoDtos>>("api/Produtos/GetItens");
+                    GetFromJsonAsync<IEnumerable<ProdutoDto>>("api/Produtos/GetItens");
 
                 return produtosDto;
             }
@@ -30,7 +30,7 @@ namespace BlazingPizza.Repositories.Services
             }
         }
 
-        public async Task<ProdutoDtos> GetItem(int Id)
+        public async Task<ProdutoDto> GetItem(int Id)
         {
             try
             {
@@ -40,9 +40,9 @@ namespace BlazingPizza.Repositories.Services
                 {
                     if (produtoDtos.StatusCode == HttpStatusCode.NoContent)
                     {
-                        return default(ProdutoDtos);
+                        return default(ProdutoDto);
                     }
-                    return await produtoDtos.Content.ReadFromJsonAsync<ProdutoDtos>();
+                    return await produtoDtos.Content.ReadFromJsonAsync<ProdutoDto>();
                 }
                 else
                 {
@@ -59,7 +59,7 @@ namespace BlazingPizza.Repositories.Services
             }
         }
 
-        public async Task<IEnumerable<ProdutoDtos>> GetItensPorCategoria(int CategoriaId)
+        public async Task<IEnumerable<ProdutoDto>> GetItensPorCategoria(int CategoriaId)
         {
             try
             {
@@ -69,10 +69,10 @@ namespace BlazingPizza.Repositories.Services
                 {
                     if (ProdutoCategoriasDtos.StatusCode == HttpStatusCode.NoContent)
                     {
-                        return Enumerable.Empty<ProdutoDtos>();
+                        return Enumerable.Empty<ProdutoDto>();
                     }
 
-                    return await ProdutoCategoriasDtos.Content.ReadFromJsonAsync<IEnumerable<ProdutoDtos>>();
+                    return await ProdutoCategoriasDtos.Content.ReadFromJsonAsync<IEnumerable<ProdutoDto>>();
                 }
                 else
                 {

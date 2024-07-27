@@ -22,13 +22,11 @@ namespace BlazingPizza.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BlazingPizza.Api.Entites.Atributos", b =>
+            modelBuilder.Entity("BlazingPizza.Api.Entites.Atributo", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Cor")
                         .HasColumnType("nvarchar(max)");
@@ -41,16 +39,14 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Atributos");
+                    b.ToTable("Atributo");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Avaliacao", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Media")
                         .HasColumnType("float");
@@ -58,29 +54,27 @@ namespace BlazingPizza.Api.Migrations
                     b.Property<int>("NumeroDeAvaliacoes")
                         .HasColumnType("int");
 
-                    b.Property<int>("RevisaoId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RevisaoId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RevisaoId");
 
-                    b.ToTable("Avaliacaos");
+                    b.ToTable("Avaliacao");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.CarrinhoDeCompra", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -89,19 +83,17 @@ namespace BlazingPizza.Api.Migrations
                     b.ToTable("CarrinhoDeCompra");
                 });
 
-            modelBuilder.Entity("BlazingPizza.Api.Entites.CarrinhoDeItems", b =>
+            modelBuilder.Entity("BlazingPizza.Api.Entites.CarrinhoDeItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("CarrinhoDeCompraId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CarrinhoDeCompraId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProdutoId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProdutoId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantidade")
                         .HasColumnType("int");
@@ -112,16 +104,14 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasIndex("ProdutoId");
 
-                    b.ToTable("CarrinhoDeItems");
+                    b.ToTable("CarrinhoDeItem");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Categoria", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -130,16 +120,14 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categoria");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Dimensoes", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Altura")
                         .HasColumnType("float");
@@ -164,11 +152,9 @@ namespace BlazingPizza.Api.Migrations
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Disponibilidade", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DataEstimadaDeEntrega")
                         .HasColumnType("datetime2");
@@ -178,16 +164,14 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Disponibilidades");
+                    b.ToTable("Disponibilidade");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Imagem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TextoAlternativo")
                         .HasMaxLength(200)
@@ -204,33 +188,31 @@ namespace BlazingPizza.Api.Migrations
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Produto", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("AtributosId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AtributosId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("AvaliacaoId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AvaliacaoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoriaId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoriaId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("DimensoesId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DimensoesId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("DisponibilidadeId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DisponibilidadeId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ImagemId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ImagemId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LocalizacaoEstoque")
                         .HasColumnType("nvarchar(max)");
@@ -273,16 +255,14 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasIndex("ImagemId");
 
-                    b.ToTable("Produtos");
+                    b.ToTable("Produto");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Revisao", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Comentario")
                         .HasColumnType("nvarchar(max)");
@@ -295,16 +275,14 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Revisaos");
+                    b.ToTable("Revisao");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Usuario", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -323,7 +301,7 @@ namespace BlazingPizza.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Avaliacao", b =>
@@ -348,7 +326,7 @@ namespace BlazingPizza.Api.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("BlazingPizza.Api.Entites.CarrinhoDeItems", b =>
+            modelBuilder.Entity("BlazingPizza.Api.Entites.CarrinhoDeItem", b =>
                 {
                     b.HasOne("BlazingPizza.Api.Entites.CarrinhoDeCompra", "CarrinhoDeCompra")
                         .WithMany("Items")
@@ -369,7 +347,7 @@ namespace BlazingPizza.Api.Migrations
 
             modelBuilder.Entity("BlazingPizza.Api.Entites.Produto", b =>
                 {
-                    b.HasOne("BlazingPizza.Api.Entites.Atributos", "Atributos")
+                    b.HasOne("BlazingPizza.Api.Entites.Atributo", "Atributos")
                         .WithMany()
                         .HasForeignKey("AtributosId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -381,7 +359,7 @@ namespace BlazingPizza.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BlazingPizza.Api.Entites.Categoria", "Categorias")
+                    b.HasOne("BlazingPizza.Api.Entites.Categoria", null)
                         .WithMany("Produtos")
                         .HasForeignKey("CategoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -408,8 +386,6 @@ namespace BlazingPizza.Api.Migrations
                     b.Navigation("Atributos");
 
                     b.Navigation("Avaliacao");
-
-                    b.Navigation("Categorias");
 
                     b.Navigation("Dimensoes");
 

@@ -2,10 +2,14 @@
 
 namespace BlazingPizza.Api.Entites
 {
-    public class Atributos
+    /// <summary>
+    /// Entidade responsavel pelo atributos do produto
+    /// </summary>
+    public class Atributo
     {
+        //Criação do id com a inicialização do Guid.NewGuid.
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         public string? Cor { get; set; }
         public string? Material { get; set; }
         public string? Modelo { get; set; }
