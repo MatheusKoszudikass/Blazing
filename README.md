@@ -1,8 +1,14 @@
-# 🍕 BlazingPizzaria
+# Blazing
 
 ## 🧐 Visão Geral
 
-BlazingPizzaria é um aplicativo web desenvolvido em Blazor, focado na gestão de uma pizzaria. Ele oferece funcionalidades para listar pizzas especiais, bebidas e carrinho de compras para as pizzas. O projeto também inclui a estrutura de banco de dados para armazenar informações relevantes e utiliza técnicas de cache para otimizar o desempenho da aplicação. Recentemente, foi adicionado um projeto de API que o site Blazor utiliza para puxar os dados dos produtos, utilizando classes DTO para a transferência de dados.
+Blazing é um aplicativo web desenvolvido em Blazor, com o objetivo de ser um software genérico para e-commerce, abrangendo todos os segmentos. Ele oferecerá funcionalidades para listar produtos de forma geral, utilizando uma abordagem abstrata para produtos, além de possuir carrinho de compras, formas de pagamento e integrações com APIs para geração de notas fiscais, como a Nuvem Fiscal.
+
+O projeto também inclui uma estrutura de banco de dados para armazenar informações relevantes e utiliza técnicas de arquitetura limpa, com a intenção de escalar para vários segmentos, mantendo boas práticas de responsabilidade por camadas. Embora eu ainda esteja aprendendo o front-end, essas funcionalidades são previstas para a primeira etapa e podem ser ajustadas ao longo do desenvolvimento, sempre com foco em melhorias.
+
+Este software será de código aberto, com o objetivo de ajudar a comunidade e abordar diferentes formas de programar. A ideia é proporcionar um projeto base que ofereça noções de desenvolvimento real e prático, indo além de um simples CRUD ou de cópias de projetos comumente vendidos em cursos. É uma oportunidade para mostrar os passos de um projeto completo e complexo, algo que não encontrei em outros lugares, especialmente no início da minha jornada.
+
+
 
 ## ⚙️ Funcionalidades Principais
 
@@ -20,23 +26,22 @@ BlazingPizzaria é um aplicativo web desenvolvido em Blazor, focado na gestão d
 
 ## 🔋 Status do Projeto
 
-O projeto encontra-se em fase inicial, com a estrutura do banco de dados finalizada e a funcionalidade de listar pizzas especiais implementada. Atualmente, está sendo trabalhado o armazenamento em cache dos dados para melhorar o desempenho da aplicação. Além disso, está sendo utilizada a biblioteca Bunit para testes durante a fase de implementação. Agora, com a adição do projeto de API, os dados dos produtos são puxados via API utilizando classes DTO para a transferência de dados.
-
+O projeto está em fase inicial, focando na estruturação de testes antes das implementações por exemplo banco de dados . Atualmente, estou trabalhando na base do projeto com operações básicas CRUD, sempre buscando uma abordagem mais performática para a aplicação. Além disso, estamos utilizando a biblioteca xUnit para testes unitarios durante a fase de implementação. Utilizando DTO(Data Transfer Object) para transferencia de dados. Seu feedback e sempre bem-vindo,
 ## 🆕 Atualizações Recentes
 
-Foram criados novos endpoints no ProdutoController para adicionar, editar e excluir produtos.
-![alt text](image.png)
+Mudança significativas de toda base para uma arquitetura limpa. 
 
-Foi adicionado um projeto de testes unitários usando a biblioteca xUnit, e os testes para o ProdutoServices foram concluídos.
-![alt text](image-1.png)
+
 ## Roadmap
 
 ### 📖 Próximas Releases
 
-1. **Páginas de Pizza List:**
-   - Adicionar carrinho de compra.
-   - Cria uma politica de testes unitarios e dos componentes da pagina.
-   - Explorando mais a fundo questões de armazenamento em cache do navegador.
+1. **API:**
+   - ✔️ Teste unitário e implementações CRUD product.
+   - ✔️ Arquitetura limpa.
+   - ⏳ Teste nos controllers.
+   - ⏳ Teste unitário e implementações CRUD para category. 
+   - ⏳ Criação das migrations.
 
 2. **Cadastro de Usuário:**
    - Implementar a página de cadastro de usuário para facilitar o processo de compra.
