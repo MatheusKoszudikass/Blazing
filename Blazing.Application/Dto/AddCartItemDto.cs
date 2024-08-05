@@ -1,4 +1,6 @@
-﻿namespace Blazing.Application.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Blazing.Application.Dto
 {
     #region DTO Add cart.
     /// <summary>
@@ -12,6 +14,7 @@
 
         public ProductDto? Product { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Quantidade tem que ser maior que zero.")]
         public int Quantity { get; set; }
     }
     #endregion

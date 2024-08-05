@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Domain.Entities
 {
@@ -17,12 +11,14 @@ namespace Blazing.Domain.Entities
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [ForeignKey("Product")]
+        [Required(ErrorMessage = "O ID do produto é obrigatório.")]
         public Guid ProductId { get; set; }
         public Product? Product { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser pelo menos 1.")]
         public int Quantity { get; set; }
 
-        [ForeignKey("ShoppingCart")]
+        [Required(ErrorMessage = "O ID do carrinho de compras é obrigatório.")]
         public Guid ShoppingCartId { get; set; }
         public ShoppingCart? ShoppingCart { get; set; }
     }

@@ -13,10 +13,12 @@ namespace Blazing.Domain.Entities
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        [Required]
         public Guid ProductId { get; set; }
 
         public Product? Product { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Quantidade tem que ser maior que zero.")]
         public int Quantity { get; set; }
     }
     #endregion

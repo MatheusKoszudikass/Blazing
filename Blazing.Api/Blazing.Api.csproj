@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blazing.Application\Blazing.Application.csproj" />
+    <ProjectReference Include="..\Blazing.infrastructure\Blazing.infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
