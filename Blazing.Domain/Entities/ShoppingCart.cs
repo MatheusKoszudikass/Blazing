@@ -13,16 +13,21 @@ namespace Blazing.Domain.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [ForeignKey("User")]
+        [Required(ErrorMessage = "O identificador do usuário é obrigatório.")]
         public Guid UserId { get; set; }
 
+        /// <summary>
+        /// Details of the user associated with the shopping cart.
+        /// </summary>
         public User? User { get; set; }
 
+        [Required(ErrorMessage = "A lista de itens é obrigatória.")]
         public IEnumerable<CartItem?> Items { get; set; } = [];
 
-        [Required]
-        [Column(TypeName = "decimal(10,2)")]
+        [Range(0, double.MaxValue, ErrorMessage = "O valor total deve ser um valor positivo.")]
         public decimal TotalValue { get; set; }
 
+        [Required(ErrorMessage = "A data de criação é obrigatória.")]
         public DateTime CreationDate { get; set; } = DateTime.Now;
     }
     #endregion

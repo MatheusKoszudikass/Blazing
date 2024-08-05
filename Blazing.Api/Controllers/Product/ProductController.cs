@@ -1,5 +1,6 @@
 ﻿using Blazing.Application.Dto;
 using Blazing.Application.Interfaces.Product;
+using Blazing.infrastructure.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +16,10 @@ namespace Blazing.Api.Controllers.Product
     /// </remarks>
     /// <typeparam name="TLogger">The type of the logger.</typeparam>
     /// <typeparam name="TProdutoAppService">The type of the product app service.</typeparam>
-    public class ProductController(ILogger<ProductController> logger, IProductAppService produtoRepository) : ControllerBase
+    public class ProductController(ILogger<ProductController> logger, IProductInfrastructureRepository produtoRepository) : ControllerBase
     {
         private readonly ILogger<ProductController> _logger = logger;
-        private readonly IProductAppService _productAppService = produtoRepository;
+        private readonly IProductInfrastructureRepository _productAppService = produtoRepository;
 
         /// <summary>
         /// Adds a list of new productsDto.
@@ -57,9 +58,9 @@ namespace Blazing.Api.Controllers.Product
         /// <response code="404">If the productDto is not found.</response>
         /// <response code="200">If the productDto is edited successfully.</response>
         [HttpPut("{id:Guid}")]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, [FromBody] ProductDto productDto)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduct(IEnumerable<Guid> id, [FromBody] IEnumerable<ProductDto> productDto)
         {
-            if (productDto == null || id != productDto.Id)
+            if (productDto == null || !id.Any())
             {
                 return BadRequest(); // Status 400
             }
@@ -82,11 +83,11 @@ namespace Blazing.Api.Controllers.Product
         /// <response code="404">If no categoryDto is found.</response>
         /// <response code="500">If an error occurs while getting the categoryDto.</response>
         [HttpGet("{categoryId}")]
-        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId(Guid categoryId)
+        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId(IEnumerable<Guid> id)
         {
             try
             {
-                var categorias = await _productAppService.GetProductsByCategoryId(categoryId);
+                var categorias = await _productAppService.GetProductsByCategoryId(id);
 
                 if (categorias == null || !categorias.Any())
                 {
@@ -136,7 +137,7 @@ namespace Blazing.Api.Controllers.Product
         /// <response code="404">If the productDto is not found.</response>
         /// <response code="500">If an error occurs while retrieving the productDto.</response>
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<ProductDto>> GetProductById(Guid id)
+        public async Task<ActionResult<ProductDto>> GetProductById(IEnumerable<Guid> id)
         {
             try
             {

@@ -1,4 +1,5 @@
-﻿using Blazing.Domain.Entities;
+﻿using Blazing.Application.Dto;
+using Blazing.Domain.Entities;
 
 namespace BlazingPizzaTest.Data
 {
@@ -26,34 +27,35 @@ namespace BlazingPizzaTest.Data
 
         #region Categories
         // Method to add categories.
-        public IEnumerable<Category> AddCategory()
+        public IEnumerable<CategoryDto> AddCategory()
         {
             return
             [
-                new Category
+                new ()
                 {
                      Id = CategoryId,
                      Name = "Category",
                 },
-                new Category
+                new ()
                 {
                      Id = CategoryId1,
                      Name = "Category 1",
+
                 }
             ];
         }
 
         // Method to get categories.
-        public IEnumerable<Category> GetCategoryItems()
+        public IEnumerable<CategoryDto> GetCategoryItems()
         {
             return
             [
-               new Category
+               new ()
                {
                    Id = CategoryId,
                    Name = "Category",
                },
-               new Category
+               new ()
                {
                     Id = CategoryId1,
                     Name = "Category 1",
@@ -61,16 +63,19 @@ namespace BlazingPizzaTest.Data
 
            ];
         }
-            
+
 
         // Method to update a category.
-        public Category UpdateCategory()
+        public IEnumerable<CategoryDto> UpdateCategory()
         {
-            return new Category
-            {
-                Id = CategoryId,
-                Name = "Category edited",
-            };
+            return
+            [
+                    new ()
+                    {
+                        Id = CategoryId,
+                        Name = "Category edited",
+                    }
+            ];
         }
 
         public IEnumerable<Guid> GetCategoryIds()
@@ -84,7 +89,7 @@ namespace BlazingPizzaTest.Data
 
         #region Products
         // Method to initialize the list of products
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<ProductDto> GetProducts()
         {
             return
         [
@@ -111,20 +116,6 @@ namespace BlazingPizzaTest.Data
                 Unit = "cm"
             },
             AssessmentId = AssessmentId,
-            Assessment = new ()
-            {
-                Id = AssessmentId,
-                Average = 4.5,
-                NumberOfReviews = 10,
-                RevisionId = RevisionId,
-                RevisionDetail = new ()
-                {
-                    Id = RevisionId,
-                    User = "User 1",
-                    Comment = "Very good!",
-                    Date = DateTime.Now
-                }
-            },
             AttributesId = AttributesId,
             Attributes = new ()
             {
@@ -171,20 +162,6 @@ namespace BlazingPizzaTest.Data
                 Unit = "cm"
             },
             AssessmentId = AssessmentId,
-            Assessment = new ()
-            {
-                Id = AssessmentId1,
-                Average = 3.5,
-                NumberOfReviews = 5,
-                RevisionId = RevisionId1,
-                RevisionDetail = new ()
-                {
-                    Id = RevisionId1,
-                    User = "User 2",
-                    Comment = "Good, but could be better.",
-                    Date = DateTime.Now
-                }
-            },
             AttributesId = AttributesId1,
             Attributes = new ()
             {
@@ -204,83 +181,119 @@ namespace BlazingPizzaTest.Data
             Image = new ()
             {
                 Id = ImageId1,
-                Url = "https://example.com/image2.jpg",
-                AltText = "Image of Product 2"
+                Url = "https://example.com/image1.jpg",
+                AltText = "Image of Product 1"
             }
-             }
+            }
         ];
-    }
+        }
 
         // Updates and returns a product with edited details
-        public Product UpdateProduct()
+        public IEnumerable<ProductDto> UpdateProduct()
         {
-            return new Product
-            {
-                Id = ProductId,
-                Name = "Product 1 edited",
-                Description = "Description of Product 1",
-                Price = 100.00M,
-                Currency = "BRL",
-                CategoryId = CategoryId1,
-                Brand = "Brand A",
-                SKU = "SKU001",
-                StockQuantity = 10,
-                StockLocation = "A1",
-                DimensionsId = DimensionsId1,
-                Dimensions = new()
-                {
-                    Id = DimensionsId1,
-                    Weight = 1.5,
-                    Height = 10.0,
-                    Width = 15.0,
-                    Depth = 20.0,
-                    Unit = "cm"
-                },
-                AssessmentId = AssessmentId1,
-                Assessment = new()
-                {
-                    Id = AssessmentId1,
-                    Average = 4.5,
-                    NumberOfReviews = 10,
-                    RevisionId = RevisionId1,
-                    RevisionDetail = new()
+            return
+            [
+                 new()
                     {
-                        Id = RevisionId1,
-                        User = "User 1",
-                        Comment = "Very good!",
-                        Date = DateTime.Now
+                        Id = ProductId,
+                        Name = "Product 1 edited",
+                        Description = "Description of Product 1 Edit",
+                        Price = 300.00M,
+                        Currency = "BRL Edit",
+                        CategoryId = CategoryId,
+                        Brand = "Brand A Edit",
+                        SKU = "SKU001 Edit",
+                        StockQuantity = 30,
+                        StockLocation = "A1 Edit",
+                        DimensionsId = DimensionsId,
+                        Dimensions = new()
+                        {
+                            Id = DimensionsId,
+                            Weight = 3.5,
+                            Height = 30.0,
+                            Width = 35.0,
+                            Depth = 30.0,
+                            Unit = "cm Edit"
+                        },
+                        AssessmentId = AssessmentId,
+                        AttributesId = AttributesId,
+                        Attributes = new()
+                        {
+                            Id = AttributesId,
+                            Color = "Blue Edit",
+                            Material = "Plastic Edit",
+                            Model = "Model A Edit"
+                        },
+                        AvailabilityId = AvailabilityId,
+                        Availability = new()
+                        {
+                            Id = AvailabilityId,
+                            IsAvailable = true,
+                            EstimatedDeliveryDate = DateTime.Now.AddDays(5)
+                        },
+                        ImageId = ImageId,
+                        Image = new()
+                        {
+                            Id = ImageId,
+                            Url = "https://example.com/image1.jpg",
+                            AltText = "Image of Product 1 Edit"
+                        }
+                    },
+
+                  new()
+                    {
+                        Id = ProductId1,
+                        Name = "Product 1 edited 2",
+                        Description = "Description of Product 1 Edit 2",
+                        Price = 300.00M,
+                        Currency = "BRL Edit 2",
+                        CategoryId = CategoryId1,
+                        Brand = "Brand B Edit",
+                        SKU = "SKU001 Edit",
+                        StockQuantity = 30,
+                        StockLocation = "A1 Edit",
+                        DimensionsId = DimensionsId1,
+                        Dimensions = new()
+                        {
+                            Id = DimensionsId1,
+                            Weight = 3.5,
+                            Height = 30.0,
+                            Width = 35.0,
+                            Depth = 30.0,
+                            Unit = "cm Edit"
+                        },
+                        AssessmentId = AssessmentId1,
+                        AttributesId = AttributesId1,
+                        Attributes = new()
+                        {
+                            Id = AttributesId1,
+                            Color = "Blue Edit",
+                            Material = "Plastic Edit",
+                            Model = "Model B Edit"
+                        },
+                        AvailabilityId = AvailabilityId1,
+                        Availability = new()
+                        {
+                            Id = AvailabilityId1,
+                            IsAvailable = true,
+                            EstimatedDeliveryDate = DateTime.Now.AddDays(5)
+                        },
+                        ImageId = ImageId1,
+                        Image = new()
+                        {
+                            Id = ImageId1,
+                            Url = "https://example.com/image1.jpg",
+                            AltText = "Image of Product 1 Edit"
+                        }
                     }
-                },
-                AttributesId = AttributesId1,
-                Attributes = new()
-                {
-                    Id = AttributesId,
-                    Color = "Blue",
-                    Material = "Plastic",
-                    Model = "Model A"
-                },
-                AvailabilityId = AvailabilityId1,
-                Availability = new()
-                {
-                    Id = AvailabilityId1,
-                    IsAvailable = true,
-                    EstimatedDeliveryDate = DateTime.Now.AddDays(5)
-                },
-                ImageId = ImageId1,
-                Image = new()
-                {
-                    Id = ImageId1,
-                    Url = "https://example.com/image1.jpg",
-                    AltText = "Image of Product 1"
-                }
-            };
+            ];
 
         }
         public IEnumerable<Guid> GetIdsProduct()
         {
             return
             [
-                ProductId,
+                ProductId1, ProductId
 
             ];
         }

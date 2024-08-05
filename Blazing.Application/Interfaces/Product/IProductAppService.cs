@@ -1,8 +1,9 @@
 ﻿using Blazing.Application.Dto;
+using System.Xml.Linq;
 
 namespace Blazing.Application.Interfaces.Product
 {
-    #region Interface product.
+    #region Interface product App Service.
     /// <summary>
     /// Product application layer interface
     /// </summary>
@@ -21,34 +22,42 @@ namespace Blazing.Application.Interfaces.Product
         /// <param name="id">The ID of the productsDto to be updated.</param>
         /// <param name="productDto">The updated productsDto details.</param>
         /// <returns>A task representing the asynchronous operation, with the updated productsDto.</returns>
-        Task<ProductDto?> UpdateProduct(Guid id, ProductDto productDto);
+        Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDto);
 
         /// <summary>
         /// Retrieves a collection of productsDto by categoryDto ID.
         /// </summary>
-        /// <param name="categoryId">The ID of the categoryDto to retrieve productsDto from.</param>
+        /// <param name="id">The ID of the categoryDto to retrieve productsDto from.</param>
+        /// <param name="productDto">The productsDto to be retrieved.</param>
         /// <returns>A task representing the asynchronous operation, with a collection of productsDto in the specified categoryDto.</returns>
-        Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(Guid categoryId);
+        Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, IEnumerable<ProductDto?> productDto);
 
         /// <summary>
         /// Deletes a collection of productsDto by their IDs.
         /// </summary>
         /// <param name="ids">A collection of productsDto IDs to be deleted.</param>
         /// <returns>A task representing the asynchronous operation, with a collection of the deleted productsDto.</returns>
-        Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> ids);
+        Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id, IEnumerable<ProductDto?> productDto);
 
         /// <summary>
         /// Retrieves a productsDto by its ID.
         /// </summary>
         /// <param name="id">The ID of the productsDto to be retrieved.</param>
         /// <returns>A task representing the asynchronous operation, with the productsDto details.</returns>
-        Task<ProductDto?> GetProductById(Guid id);
+        Task<IEnumerable<ProductDto?>> GetProductById(IEnumerable<Guid> id, IEnumerable<ProductDto?> productDto);
 
         /// <summary>
         /// Retrieves all productsDto.
         /// </summary>
         /// <returns>A task representing the asynchronous operation, with a collection of all productsDto.</returns>
-        Task<IEnumerable<ProductDto?>> GetAll();
+        Task<IEnumerable<ProductDto?>> GetAllProduct(IEnumerable<ProductDto?> productDto);
+
+        /// <summary>
+        ///  checks the name to see if it already exists or not
+        /// </summary>
+        /// <param name="exists"></param>
+        /// <returns></returns>
+        Task<bool> ExistsProduct(bool exists);
     }
     #endregion
 }

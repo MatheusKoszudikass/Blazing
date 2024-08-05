@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.Test", "Blazing.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.Application", "Blazing.Application\Blazing.Application.csproj", "{37727826-FE2A-4B5E-AFF2-FACB4C2873B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazing.Api", "Blazing.Api\Blazing.Api.csproj", "{8033132F-8C6C-4101-BC6A-E1B7C34D5E4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.Api", "Blazing.Api\Blazing.Api.csproj", "{8033132F-8C6C-4101-BC6A-E1B7C34D5E4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazing.infrastructure", "Blazing.infrastructure\Blazing.infrastructure.csproj", "{00532580-A9E9-439D-ABA9-23356D56A2F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.infrastructure", "Blazing.infrastructure\Blazing.infrastructure.csproj", "{00532580-A9E9-439D-ABA9-23356D56A2F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

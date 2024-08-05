@@ -2,34 +2,49 @@
 
 ## 🧐 Visão Geral
 
-Blazing é um aplicativo web desenvolvido em Blazor, com o objetivo de ser um software genérico para e-commerce, abrangendo todos os segmentos. Ele oferecerá funcionalidades para listar produtos de forma geral, utilizando uma abordagem abstrata para produtos, além de possuir carrinho de compras, formas de pagamento e integrações com APIs para geração de notas fiscais, como a Nuvem Fiscal.
+Blazing é um aplicativo web desenvolvido em Blazor, projetado para ser um software genérico de e-commerce que abrange diversos segmentos. O aplicativo incluirá funcionalidades como listagem de produtos de forma geral, uma abordagem abstrata para produtos, carrinho de compras, formas de pagamento e integrações com APIs para a geração de notas fiscais, como a Nuvem Fiscal.
 
-O projeto também inclui uma estrutura de banco de dados para armazenar informações relevantes e utiliza técnicas de arquitetura limpa, com a intenção de escalar para vários segmentos, mantendo boas práticas de responsabilidade por camadas. Embora eu ainda esteja aprendendo o front-end, essas funcionalidades são previstas para a primeira etapa e podem ser ajustadas ao longo do desenvolvimento, sempre com foco em melhorias.
+O projeto também conta com uma estrutura de banco de dados para armazenar informações relevantes e adota técnicas de arquitetura limpa, com a intenção de escalar para diferentes segmentos, mantendo boas práticas de separação por camadas. Embora eu ainda esteja aprendendo sobre front-end, essas funcionalidades são previstas para a primeira etapa e podem ser ajustadas ao longo do desenvolvimento, sempre com foco em melhorias contínuas.
 
-Este software será de código aberto, com o objetivo de ajudar a comunidade e abordar diferentes formas de programar. A ideia é proporcionar um projeto base que ofereça noções de desenvolvimento real e prático, indo além de um simples CRUD ou de cópias de projetos comumente vendidos em cursos. É uma oportunidade para mostrar os passos de um projeto completo e complexo, algo que não encontrei em outros lugares, especialmente no início da minha jornada.
+Este software será de código aberto, com o objetivo de ajudar a comunidade e explorar diferentes abordagens de programação. A ideia é fornecer um projeto base que ofereça uma visão prática e realista do desenvolvimento, indo além de um simples CRUD ou das cópias de projetos comumente vendidos em cursos. É uma oportunidade para demonstrar as etapas de um projeto completo e complexo, algo que não encontrei em outros lugares, especialmente no início da minha jornada.
 
 
 
 ## ⚙️ Funcionalidades Principais
 
-1. **Listagem de Pizzas Especiais:**
-   - A aplicação permite visualizar todas as pizzas especiais disponíveis na pizzaria.
+1. **Listagem de Produtos:**
+   - A aplicação permite visualizar todos os produtos disponíveis.
 
-2. **Listagem de Bebidas:**
-   - Além das pizzas, é possível visualizar as bebidas disponíveis para compra.
+2. **Carrinho de Compras:**
+   - Os usuários podem adicionar produtos ao carrinho de compras e realizar pedidos.
 
-3. **Carrinho de Compras:**
-   - Os usuários podem adicionar pizzas ao carrinho de compras e realizar pedidos.
+3. **Filtragem :**
+   - Existe a opção de filtrar por nome, preço, disponibilidade, entre outros. Isso facilita a busca para os clientes.
 
-4. **Filtragem por Nome:**
-   - Existe a opção de filtrar pizzas por nome, facilitando a busca para os clientes.
+4. **Delivery e entrega :**
+   - A aplicação oferece opções de entrega tanto para o segmento de delivery quanto para entregas em geral.
+
+5. **Formas de pagamento :**
+   - Aborda todas as opções de pagamento disponíveis.
+
+5. **Nota fiscal :**
+   - Inclui a geração básica de notas fiscais, com integração com um aplicativo externo para gerenciar o site de e-commerce.
 
 ## 🔋 Status do Projeto
 
-O projeto está em fase inicial, focando na estruturação de testes antes das implementações por exemplo banco de dados . Atualmente, estou trabalhando na base do projeto com operações básicas CRUD, sempre buscando uma abordagem mais performática para a aplicação. Além disso, estamos utilizando a biblioteca xUnit para testes unitarios durante a fase de implementação. Utilizando DTO(Data Transfer Object) para transferencia de dados. Seu feedback e sempre bem-vindo,
+O projeto está em fase inicial, com foco na estruturação de testes antes das implementações mais complexas, como a integração com o banco de dados. Atualmente, estou trabalhando na base do projeto com operações básicas CRUD, sempre buscando uma abordagem mais performática. Além disso, estamos utilizando a biblioteca xUnit para testes unitários durante a fase de implementação e DTOs (Data Transfer Objects) para a transferência de dados. Seu feedback é sempre bem-vindo.
+
 ## 🆕 Atualizações Recentes
 
-Mudança significativas de toda base para uma arquitetura limpa. 
+Implementações CRUD para Product e Category: Melhorias foram feitas nas operações CRUD para Produtos e Categorias para aprimorar a performance e a manutenção. A abordagem foi otimizada para facilitar a adição de novas funcionalidades.
+
+Testes em Camadas: Os testes agora estão separados em camadas—Infraestrutura, Aplicação e Domínio—para garantir a integridade dos dados que passam pela aplicação. Essa separação ajuda a verificar se todos os componentes estão funcionando corretamente.
+
+Interfaces Genéricas: Interfaces genéricas foram criadas para facilitar a reutilização de código para funções comuns, promovendo consistência e reduzindo a duplicação.
+
+Comentários no Código: Todo o código está bem comentado para melhorar a legibilidade e a compreensão dos métodos e classes.
+
+Requisitos das Entidades: As entidades estão agora definidas com propriedades obrigatórias e tamanhos de dados mínimos e máximos apropriados. Isso garante que a validação dos dados seja aplicada e que erros sejam retornados ao frontend se os dados não atenderem aos critérios esperados.
 
 
 ## Roadmap
@@ -37,10 +52,25 @@ Mudança significativas de toda base para uma arquitetura limpa.
 ### 📖 Próximas Releases
 
 1. **API:**
-   - ✔️ Teste unitário e implementações CRUD product.
+   - ✔️ Etidades definidas com propriedades obrigatória.
+   - ✔️ Teste unitário e implementações CRUD Product.
+   - ✔️ Teste unitário e implementações CRUD Category. 
+   - ✔️ Todo código comentado. 
    - ✔️ Arquitetura limpa.
-   - ⏳ Teste nos controllers.
-   - ⏳ Teste unitário e implementações CRUD para category. 
+   - ⏳ Teste unitário e implementações CRUD para AddCartItem. 
+   - ⏳ Teste unitário e implementações CRUD para Address.
+   - ⏳ Teste unitário e implementações CRUD para Assessment. 
+   - ⏳ Teste unitário e implementações CRUD para Attribute. 
+   - ⏳ Teste unitário e implementações CRUD para Availability.
+   - ⏳ Teste unitário e implementações CRUD para CartItem.
+   - ⏳ Teste unitário e implementações CRUD para Dimensions.
+   - ⏳ Teste unitário e implementações CRUD para Image.
+   - ⏳ Teste unitário e implementações CRUD para Revision.
+   - ⏳ Teste unitário e implementações CRUD para ShoppingCart.
+   - ⏳ Teste unitário e implementações CRUD para UpdateCartQuantity.
+   - ⏳ Teste unitário e implementações CRUD para User com implementação de autenticação via IdentityUser Asp Net Core, Google Sign-In.
+   - ⏳ Criação de logs. 
+   - ⏳ Teste e criação do controllers Product.
    - ⏳ Criação das migrations.
 
 2. **Cadastro de Usuário:**
@@ -49,14 +79,23 @@ Mudança significativas de toda base para uma arquitetura limpa.
 ### 🚀 Futuras Implementações
 
 1. **Aplicativo de Gerenciamento Interno:**
-   - Desenvolver um aplicativo separado para gerenciar adições de pizzas, bebidas e monitoramento de cadastros de usuários no site principal.
+   - Desenvolver um aplicativo separado para gerenciar o site e-commerce, monitoramento e cadastros de produtos, usuários e muito mais no site principal.
 
 ## 🤓 Boas Práticas
 
-O projeto BlazingPizzaria segue boas práticas de desenvolvimento, como:
-- Separação clara de responsabilidades entre componentes.
-- Uso de técnicas de armazenamento em cache para melhorar o desempenho.
-- Utilização de padrões de nomenclatura consistentes e legíveis.
+O projeto Blazing segue várias boas práticas de desenvolvimento para garantir qualidade e eficiência, incluindo:
+
+ - Separação Clara de Responsabilidades: O projeto adota uma arquitetura em camadas, separando claramente as responsabilidades entre a apresentação, a lógica de aplicação e a camada de dados. Isso facilita a manutenção, a escalabilidade e a compreensão do código.
+
+ - Uso de Armazenamento em Cache: São aplicadas técnicas de armazenamento em cache para otimizar o desempenho da aplicação, reduzindo o tempo de resposta e melhorando a experiência do usuário. Isso ajuda a minimizar a carga no servidor e a melhorar a eficiência das operações.
+
+ - Padrões de Nomenclatura Consistentes: O projeto utiliza padrões de nomenclatura consistentes e legíveis para facilitar a compreensão do código e promover boas práticas de codificação. Nomes de variáveis, métodos e classes são claros e descritivos, o que melhora a legibilidade e a manutenção do código.
+
+ - Documentação e Comentários: Todo o código é bem comentado e documentado para fornecer contexto e explicações sobre a funcionalidade dos métodos e classes. Isso ajuda os desenvolvedores a entender rapidamente o propósito do código e a colaborar de forma mais eficaz.
+
+ - Validação e Tratamento de Erros: São implementadas práticas robustas de validação e tratamento de erros para garantir a integridade dos dados e a confiabilidade da aplicação. Isso inclui validações em nível de entrada e tratamento apropriado de exceções.
+
+ - Testes Abrangentes: O projeto é acompanhado por uma suíte abrangente de testes unitários e de integração, garantindo que as funcionalidades sejam validadas em diferentes camadas e que qualquer mudança no código não introduza novos problemas.
 
 ## 💬 Contribuindo
 
