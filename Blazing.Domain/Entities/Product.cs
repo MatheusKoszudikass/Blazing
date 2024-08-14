@@ -7,11 +7,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for general product information.
     /// </summary>
-    public class Product
+    public sealed class Product : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [Required(ErrorMessage = "O nome do produto é obrigatório.")]
         [StringLength(100, ErrorMessage = "O nome do produto não pode ter mais de 100 caracteres.")]
         public string? Name { get; set; }
@@ -57,6 +54,11 @@ namespace Blazing.Domain.Entities
         public Guid AssessmentId { get; set; }
 
         /// <summary>
+        /// Product review details.
+        /// </summary>
+        public Assessment? Assessment { get; set; }
+
+        /// <summary>
         /// Product attribute identifier.
         /// </summary>
         [ForeignKey("Attributes")]
@@ -86,8 +88,8 @@ namespace Blazing.Domain.Entities
         public Guid ImageId { get; set; } 
 
         /// <summary>
-    /// Product image.
-    /// </summary>
+        /// Product image.
+        /// </summary>
         public Image? Image { get; set; }
     }
     #endregion

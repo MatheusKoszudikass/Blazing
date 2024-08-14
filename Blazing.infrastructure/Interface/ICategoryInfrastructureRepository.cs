@@ -1,23 +1,18 @@
 ﻿using Blazing.Application.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blazing.infrastructure.Interface
 {
     public interface ICategoryInfrastructureRepository
     {
-        Task<IEnumerable<CategoryDto?>> AddCategories(IEnumerable<CategoryDto> productDto);
+        Task<IEnumerable<CategoryDto?>> AddCategories(IEnumerable<CategoryDto> productDto, CancellationToken cancellationToken);
 
-        Task<IEnumerable<CategoryDto?>> UpdateCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto> productDto);
+        Task<IEnumerable<CategoryDto?>> UpdateCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto> productDto, CancellationToken cancellationToken);
 
-        Task<IEnumerable<CategoryDto?>> DeleteCategory(IEnumerable<Guid> id);
+        Task<IEnumerable<CategoryDto?>> DeleteCategory(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
-        Task<IEnumerable<CategoryDto?>> GetCategoryById(IEnumerable<Guid> id);
+        Task<IEnumerable<CategoryDto?>> GetCategoryById(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
-        Task<IEnumerable<CategoryDto?>> GetAll();
+        Task<IEnumerable<CategoryDto?>> GetAll(CancellationToken cancellationToken);
 
     }
 }

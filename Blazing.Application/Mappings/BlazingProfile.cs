@@ -20,8 +20,10 @@ namespace Blazing.Application.Mappings
             CreateMap<Assessment, AssessmentDto>().ReverseMap();
             CreateMap<Attributes, AttributeDto>().ReverseMap();
             CreateMap<Availability, AvailabilityDto>().ReverseMap();
+            CreateMap<BaseEntity, BaseEntityDto>().ReverseMap();
             CreateMap<CartItem, CartItemDto>().ReverseMap();
             CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<CreateCategory, CreateCategoryDto>().ReverseMap();
             CreateMap<Dimensions, DimensionsDto>().ReverseMap();
             CreateMap<Image, ImageDto>().ReverseMap();
             CreateMap<Product, ProductDto>().ReverseMap();

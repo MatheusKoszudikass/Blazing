@@ -11,6 +11,7 @@ using Moq;
 using Blazing.Application.Mappings;
 using Blazing.infrastructure.Service;
 using Blazing.Domain.Interfaces.Services;
+using Blazing.Application.Dto;
 
 namespace Blazing.Test.Infrastructure
 {
@@ -32,7 +33,7 @@ namespace Blazing.Test.Infrastructure
         /// <summary>
         /// Gets the AppDbContext instance.
         /// </summary>
-        public AppDbContext DbContext { get; }
+        public BlazingDbContext DbContext { get; }
 
         /// <summary>
         /// Gets the DependencyInjection instance.
@@ -87,13 +88,13 @@ namespace Blazing.Test.Infrastructure
             InjectServiceDbContext = new DependencyInjection(DbContext, Mapper);
 
             // Create a new instance of the Mock<IProductDomainRepository<Product>> class
-            var productRepositoryMock = new Mock<ICrudDomainRepository<Product>>();
+            var productRepositoryMock = new Mock<ICrudDomainService<Product>>();
 
             // Create a new instance of the ProductDomainService class
-            var productDomainServices = new ProductDomainService(productRepositoryMock.Object);
+            var IcrudDomainRepository = new Mock<ICrudDomainService<Product>>();
 
             // Create a new instance of the ProductAppService class
-            ProductAppService = new ProductAppService(productDomainServices, Mapper);
+            ProductAppService = new ProductAppService(Mapper, productRepositoryMock.Object);
 
             // Create a new instance of the ProductInfrastructureRepository class
             ProductInfrastructureRepository = new ProductInfrastructureRepository(InjectServiceDbContext, ProductAppService);
@@ -103,10 +104,10 @@ namespace Blazing.Test.Infrastructure
 
 
             // Create a new instance of the Mock<ICrudDomainRepository<Category>> class
-            var categoryRepositoryMock = new Mock<ICrudDomainRepository<Category>>();
+            var categoryRepositoryMock = new Mock<ICrudDomainService<Category>>();
 
             // Create a new instance of the CategoryDomainService class
-            var categoryDomainServices = new CategoryDomainService(categoryRepositoryMock.Object);
+            var categoryDomainServices = new CategoryDomainService();
 
             // Create a new instance of the CategoryAppService class
             CategoryAppService = new CategoryAppService(categoryDomainServices, Mapper);

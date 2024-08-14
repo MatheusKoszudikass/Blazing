@@ -7,13 +7,8 @@ using Blazing.Domain.Interfaces.Services;
 namespace Blazing.Domain.Services
 {
     #region Category domain service.
-    public class CategoryDomainService(ICrudDomainRepository<Category> crudDomainRepository) : ICrudDomainService<Category>
+    public class CategoryDomainService: ICrudDomainService<Category>
     {
-
-        private readonly ICrudDomainRepository<Category> _crudDomainRepository = crudDomainRepository 
-            ?? throw new ArgumentNullException(nameof(crudDomainRepository));
-
-
         /// <summary>
         /// Adds a collection of categories to the repository.
         /// Throws a CategoryNotFoundExceptions if the input list is empty,
@@ -28,13 +23,10 @@ namespace Blazing.Domain.Services
                 throw new CategoryNotFoundExceptions(categories ?? []);
             }
 
-            var categoryNames = categories.Select(n => n.Name).ToList();
-
             try
             {
-
-                await _crudDomainRepository.AddAsync(categories);
-                return categories;
+                await Task.CompletedTask;
+                return  categories;
             }
             catch (DomainException)
             {
@@ -50,7 +42,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The IDs of the categories to update.</param>
         /// <param name="categories">The categories with updated information.</param>
         /// <returns>The updated categories.</returns>
-        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> id, IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> id, IEnumerable<Category> categories, IEnumerable<Category> categoriesUpdate)
         {
             if (id == null || !id.Any())
             {
@@ -63,13 +55,17 @@ namespace Blazing.Domain.Services
 
             try
             {
-                await _crudDomainRepository.UpdateAsync(id, categories);
 
-                if (categories == null)
+                foreach (var category in categories)
                 {
-                    throw new CategoryInvalidExceptions(new Category());
+                    var updateCategoryDto = categoriesUpdate.Where(x => x.Id == category.Id).FirstOrDefault();
+                    if (updateCategoryDto != null)
+                    {
+                        category.Name = updateCategoryDto.Name;
+                    }
                 }
 
+                await Task.CompletedTask;
                 return categories;
             }
             catch (DomainException)
@@ -99,13 +95,11 @@ namespace Blazing.Domain.Services
 
             try
             {
-                await _crudDomainRepository.DeleteByIdAsync(id, categories);
-
                 if (!categories.Any())
                 {
                     throw new CategoryNotFoundExceptions(categories);
                 }
-
+                await Task.CompletedTask;
                 return categories;
             }
             catch (DomainException)
@@ -122,7 +116,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The IDs of the categories to retrieve.</param>
         /// <param name="categories">The categories with the given IDs.</param>
         /// <returns>The retrieved categories.</returns>
-        public async Task<IEnumerable<Category?>> GetById(IEnumerable<Guid> id, IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> GetById(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any())
             {
@@ -135,7 +129,7 @@ namespace Blazing.Domain.Services
 
             try
             {
-                await _crudDomainRepository.GetByIdAsync(id, categories);
+                await Task.CompletedTask;
                 return categories;
             }
             catch (DomainException)
@@ -151,7 +145,7 @@ namespace Blazing.Domain.Services
         /// </summary>
         /// <param name="categories">The categories to retrieve.</param>
         /// <returns>The retrieved categories.</returns>
-        public async Task<IEnumerable<Category?>> GetAll(IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> GetAll(IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
             {
@@ -160,13 +154,12 @@ namespace Blazing.Domain.Services
 
             try
             {
-                 await _crudDomainRepository.GetAllAsync(categories);
-
                 if (categories == null || !categories.Any())
                 {
                     throw new CategoryNotFoundExceptions(categories ?? []);
                 }
 
+                await Task.CompletedTask;
                 return categories;
             }
             catch (DomainException)
@@ -180,25 +173,25 @@ namespace Blazing.Domain.Services
         /// </summary>
         /// <param name="exists">The boolean value to check.</param>
         /// <returns>True if the value exists, false otherwise.</returns>
-        public async Task<bool> ExistsAsync(bool exists)
+        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories)
         {
 
             try
             {
 
-                if (exists)
+                if (id)
                 {
-                    await _crudDomainRepository.ExistsAsync(exists);
 
-
-                    return true;
+                    await Task.CompletedTask;
+                    return id;
                 }
                 else
                 {
-
-                    return false;
+                    await Task.CompletedTask;
+                    return id;
                 }
 
+               
             }
             catch (DomainException)
             {

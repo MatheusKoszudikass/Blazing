@@ -42,23 +42,24 @@ namespace Blazing.Test.Infrastructure
         [Fact]
         public async Task CategoriesAllTest()
         {
+            var cts = CancellationToken.None;
             // Add categories to the repository
-            var resultAddAsync = await _fixture.CategoryInfrastructureRepository.AddCategories(_AddCategories);
+            var resultAddAsync = await _fixture.CategoryInfrastructureRepository.AddCategories(_AddCategories, cts);
 
             // Update categories in the repository
-            var resultUpdateAsync = await _fixture.CategoryInfrastructureRepository.UpdateCategory(_categoryIds, _categories);
+            var resultUpdateAsync = await _fixture.CategoryInfrastructureRepository.UpdateCategory(_categoryIds, _categories, cts);
 
             // Get category by ID
-            var resultGetByIdAsync = await _fixture.CategoryInfrastructureRepository.GetCategoryById(_categoryIds);
+            var resultGetByIdAsync = await _fixture.CategoryInfrastructureRepository.GetCategoryById(_categoryIds, cts);
 
             // Get all categories
-            var resultGetAllAsync = await _fixture.CategoryInfrastructureRepository.GetAll();
+            var resultGetAllAsync = await _fixture.CategoryInfrastructureRepository.GetAll(cts);
 
             // Check if category exists
             var resultNameExiste = await _fixture.CategoryInfrastructureRepository.ExistsAsync(_categories);
 
             // Delete categories
-            var resultDeleteAsync = await _fixture.CategoryInfrastructureRepository.DeleteCategory(_categoryIds);
+            var resultDeleteAsync = await _fixture.CategoryInfrastructureRepository.DeleteCategory(_categoryIds, cts);
 
 
 

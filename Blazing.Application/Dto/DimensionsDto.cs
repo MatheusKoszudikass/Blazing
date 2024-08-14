@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the product dimensions.
     /// </summary>
-    public class DimensionsDto
+    public sealed class DimensionsDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [Range(0.0, double.MaxValue, ErrorMessage = "O peso deve ser um valor positivo.")]
         public double Weight { get; set; }
 

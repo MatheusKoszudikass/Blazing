@@ -6,10 +6,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the user.
     /// </summary>
-    public class User
+    public sealed class User : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
         [Required(ErrorMessage = "O primeiro nome é obrigatório.")]
         [StringLength(50, ErrorMessage = "O primeiro nome não pode ter mais de 50 caracteres.")]
         public string? FirstName { get; set; }

@@ -6,11 +6,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for providing information on whether the product is available.
     /// </summary>
-    public class Availability
+    public sealed class Availability : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [Required(ErrorMessage = "A disponibilidade deve ser informada!.")]
         public bool IsAvailable { get; set; }
 

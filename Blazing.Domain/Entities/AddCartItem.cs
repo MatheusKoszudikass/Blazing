@@ -8,11 +8,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for adding items to the shopping cart.
     /// </summary>
-    public class AddCartItem
+    public sealed class AddCartItem : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [Required]
         public Guid ProductId { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using Blazing.Domain.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Blazing.Application.Dto
 {
@@ -8,12 +9,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for general product information.
     /// </summary>
-    public class ProductDto
+    public sealed class ProductDto : BaseEntityDto
     {
-
-        public Guid Id { get; set; }
-
-
         [Required(ErrorMessage = "O nome do produto é obrigatório.")]
         [StringLength(100, ErrorMessage = "O nome do produto não pode ter mais de 100 caracteres.")]
         public string? Name { get; set; }
@@ -50,6 +47,8 @@ namespace Blazing.Application.Dto
         /// </summary>
         [ForeignKey("Dimensions")]
         public Guid DimensionsId { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DimensionsDto? Dimensions { get; set; }
 
         /// <summary>
@@ -58,15 +57,19 @@ namespace Blazing.Application.Dto
         [ForeignKey("AssessmentId")]
         public Guid AssessmentId { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public AssessmentDto? Assessment { get; set; }
+
         /// <summary>
         /// Product attribute identifier.
         /// </summary>
         [ForeignKey("Attributes")]
-        public Guid AttributesId { get; set; }
+        public Guid AttributesId { get; set; } 
 
         /// <summary>
         /// Product attribute details.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public AttributeDto? Attributes { get; set; }
 
 
@@ -79,6 +82,7 @@ namespace Blazing.Application.Dto
         /// <summary>
         /// Product availability details.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public AvailabilityDto? Availability { get; set; }
 
         /// <summary>
@@ -90,6 +94,8 @@ namespace Blazing.Application.Dto
         /// <summary>
         /// Product image.
         /// </summary>
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ImageDto? Image { get; set; }
     }
     #endregion
