@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for providing information on whether the product is available.
     /// </summary>
-    public class AvailabilityDto
+    public sealed class AvailabilityDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "A disponibilidade deve ser informada!.")]
         public bool IsAvailable { get; set; }
 

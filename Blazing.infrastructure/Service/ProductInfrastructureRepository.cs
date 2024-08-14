@@ -2,6 +2,8 @@
 using Blazing.Application.Interfaces.Product;
 using Blazing.Application.Services;
 using Blazing.Domain.Entities;
+using Blazing.Domain.Exceptions;
+using Blazing.Domain.Exceptions.Produtos;
 using Blazing.Domain.Interfaces.Repository;
 using Blazing.infrastructure.Dependency;
 using Blazing.infrastructure.Interface;
@@ -14,10 +16,10 @@ namespace Blazing.infrastructure.Service
     /// <summary>
     /// Repository class for managing Product domain objects.
     /// </summary>
-    public class ProductInfrastructureRepository(DependencyInjection dbContext, ProductAppService productInfrastructureRepository) : IProductInfrastructureRepository
+    public class ProductInfrastructureRepository(DependencyInjection dbContext, IProductAppService<ProductDto> productInfrastructureRepository) : IProductInfrastructureRepository
     {
         private readonly DependencyInjection _dependencyInjection = dbContext;
-        private readonly ProductAppService _productAppService = productInfrastructureRepository;
+        private readonly IProductAppService<ProductDto> _productAppService = productInfrastructureRepository;
 
 
         /// <summary>
@@ -25,27 +27,19 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="product">The product to add.</param>
         /// <returns>The added product.</returns>
-        public async Task<IEnumerable<ProductDto?>> AddProducts(IEnumerable<ProductDto> productDto)
+        public async Task<IEnumerable<ProductDto?>> AddProducts(IEnumerable<ProductDto> productDto, CancellationToken cancellationToken )
         {
-            var productResult = await _productAppService.AddProducts(productDto);
+            await ExistsAsyncProduct(productDto, cancellationToken);
 
-            var resultExistsProduct = await ExistsAsyncProduct(productDto); 
+            var productDtoResult = await _productAppService.AddProducts(productDto, cancellationToken);
 
-            if (resultExistsProduct)
-            {
-                productDto = [];
-                return productDto;
-            }
-            else
-            {
-                var product = _dependencyInjection._mapper.Map<IEnumerable<Product>>(productResult);
+            var productResult  = _dependencyInjection._mapper.Map<IEnumerable<Product>>(productDtoResult);
 
-                await _dependencyInjection._appContext.Products.AddRangeAsync(product);
+                await _dependencyInjection._appContext.Products.AddRangeAsync(productResult, cancellationToken);
 
-                await _dependencyInjection._appContext.SaveChangesAsync();
+                await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
-                return productDto;
-            }
+                return productDtoResult;
 
         
         }
@@ -56,90 +50,44 @@ namespace Blazing.infrastructure.Service
         /// <param name="id">The ID of the product to update.</param>
         /// <param name="productDtos">The updated product.</param>
         /// <returns>The updated product.</returns>
-        public async Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDtos)
+        public async Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDtos, CancellationToken cancellationToken)
         {
-            await _productAppService.UpdateProduct(id, productDtos);
-
-            var existingProducts = await _dependencyInjection._appContext.Products
-                                      .Include(d => d.Dimensions)
-
-                                      .Include(a => a.Attributes)
-                                      .Include(a => a.Availability)
-                                      .Include(i => i.Image)
-                                      .Where(p => id.Contains(p.Id))
-                                      .ToListAsync();
-
-            var existingProductsDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(existingProducts);
-
-            await _productAppService.UpdateProduct(id, existingProductsDto);
-
-            foreach (var product in existingProducts)
+            if (!id.Any())
             {
-                var updatedProductDto = productDtos.FirstOrDefault(dto => dto.Id == product.Id);
-                if (updatedProductDto != null)
+                throw new ProductExceptions.IdentityProductInvalidException(id);
+            }
+
+            // Obtém os produtos existentes com as propriedades relacionadas carregadas
+            var existingProducts = await _dependencyInjection._appContext.Products
+                .Include(a => a.Assessment)
+                    .ThenInclude(r => r.RevisionDetail)
+                .Include(d => d.Dimensions)
+                .Include(a => a.Attributes)
+                .Include(a => a.Availability)
+                .Include(i => i.Image)
+                .Where(p => id.Contains(p.Id))
+                .ToListAsync(cancellationToken);
+
+            // Mapeia os produtos existentes para DTOs
+            var productDtoUpdate = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(existingProducts);
+
+            // Atualiza os produtos usando o serviço
+            var productDtoUpdateResult = await _productAppService.UpdateProduct(id, productDtoUpdate, productDtos, cancellationToken);
+
+            // Atualiza as propriedades das entidades existentes com base nos DTOs atualizados
+            foreach (var updatedProductDto in productDtoUpdateResult)
+            {
+                var existingProduct = existingProducts.SingleOrDefault(p => p.Id == updatedProductDto.Id);
+                if (existingProduct != null)
                 {
-                    // Atualizar as propriedades principais do produto
-                    product.Name = updatedProductDto.Name;
-                    product.Description = updatedProductDto.Description;
-                    product.Price = updatedProductDto.Price;
-                    product.Currency = updatedProductDto.Currency;
-                    product.CategoryId = updatedProductDto.CategoryId;
-                    product.Brand = updatedProductDto.Brand;
-                    product.SKU = updatedProductDto.SKU;
-                    product.StockQuantity = updatedProductDto.StockQuantity;
-                    product.AssessmentId = updatedProductDto.AssessmentId;
-
-                    product.DimensionsId = updatedProductDto.DimensionsId;
-                    if (updatedProductDto.Dimensions != null)
-                    {
-                        product.Dimensions ??= new Dimensions();
-                        product.Dimensions.Depth = updatedProductDto.Dimensions.Depth;
-                        product.Dimensions.Width = updatedProductDto.Dimensions.Width;
-                        product.Dimensions.Height = updatedProductDto.Dimensions.Height;
-                    }
-
-                    product.AttributesId = updatedProductDto.AttributesId;
-                    if (updatedProductDto.Attributes != null)
-                    {
-                        product.Attributes ??= new Attributes();
-                        product.Attributes.Color = updatedProductDto.Attributes.Color;
-                        product.Attributes.Material = updatedProductDto.Attributes.Material;
-                        product.Attributes.Model = updatedProductDto.Attributes.Model;
-                    }
-
-                    product.AvailabilityId = updatedProductDto.AvailabilityId;
-                    if (updatedProductDto.Availability != null)
-                    {
-                        product.Availability ??= new Availability();
-                        product.Availability.IsAvailable = updatedProductDto.Availability.IsAvailable;
-                        product.Availability.EstimatedDeliveryDate = updatedProductDto.Availability.EstimatedDeliveryDate;
-                    }
-
-                    product.ImageId = updatedProductDto.ImageId;
-                    if (updatedProductDto.Image != null)
-                    {
-                        product.Image ??= new Image();
-                        product.Image.Url = updatedProductDto.Image.Url;
-                        product.Image.AltText = updatedProductDto.Image.AltText;
-                    }
-
+                    _dependencyInjection._mapper.Map(updatedProductDto, existingProduct);
                 }
             }
 
-            await _dependencyInjection._appContext.SaveChangesAsync();
+            // Salva as alterações no banco de dados
+            await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
-            // Retornar os produtos atualizados como DTOs
-            var updatedProducts = await _dependencyInjection._appContext.Products
-                                          .Include(d => d.Dimensions)
-                                          .Include(a => a.Attributes)
-                                          .Include(a => a.Availability)
-                                          .Include(i => i.Image)
-                                          .Where(p => id.Contains(p.Id))
-                                          .ToListAsync();
-
-            var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(updatedProducts).AsEnumerable();
-
-            return productResultDto;
+            return productDtoUpdateResult;
         }
 
 
@@ -149,19 +97,20 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="id">The ID of the category.</param>
         /// <returns>The products in the category.</returns>
-        public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id)
+        public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, CancellationToken cancellationToken )
         {
 
             var ProductCategory = await _dependencyInjection._appContext.Products
-                                 .Include(d => d.Dimensions)
-                                 .Include(a => a.Attributes)
-                                 .Include(a => a.Availability)
-                                 .Include(i => i.Image)
-                                 .Where(p => id.Contains(p.CategoryId)).ToListAsync();
+                                         .Include(a => a.Assessment)
+                                                 .ThenInclude(r => r.RevisionDetail)
+                                         .Include(a => a.Attributes)
+                                         .Include(a => a.Availability)
+                                         .Include(i => i.Image)
+                                         .Where(p => id.Contains(p.CategoryId)).ToListAsync(cancellationToken);
 
-            var categoryResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto?>>(ProductCategory);
+            var categoryResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(ProductCategory);
 
-            await _productAppService.GetProductsByCategoryId(id, categoryResultDto);
+            await _productAppService.GetProductsByCategoryId(id, categoryResultDto, cancellationToken);
 
             return categoryResultDto;
 
@@ -172,19 +121,58 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="id">The IDs of the products to delete.</param>
         /// <returns>The deleted products.</returns>
-        public async Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id)
+        public async Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id, CancellationToken cancellationToken )
         {
             var products = await _dependencyInjection._appContext.Products
-                .Where(p => id.Contains(p.Id))
-                .ToListAsync();
+                                 .Include(d => d.Dimensions)
+                                 .Include(a => a.Assessment)
+                                          .ThenInclude(r => r.RevisionDetail)
+                                 .Include(a => a.Attributes)
+                                 .Include(a => a.Availability)
+                                 .Include(i => i.Image)
+                                 .Where(p => id.Contains(p.Id)).ToListAsync(cancellationToken);
+
+            foreach (var product in products)
+            {
+                // Remover entidades relacionadas
+                if (product.Dimensions != null)
+                {
+                    _dependencyInjection._appContext.Dimensions.RemoveRange(product.Dimensions);
+                }
+
+                if (product.Assessment != null)
+                {
+                    _dependencyInjection._appContext.Assessments.Remove(product.Assessment);
+
+                    if (product.Assessment.RevisionDetail != null && product.Assessment.RevisionDetail.Any())
+                    {
+                        _dependencyInjection._appContext.Revisions.RemoveRange(product.Assessment.RevisionDetail.ToList());
+                    }
+                }
+
+                if (product.Attributes != null)
+                {
+                    _dependencyInjection._appContext.Attributes.RemoveRange(product.Attributes);
+                }
+
+                if (product.Availability != null)
+                {
+                    _dependencyInjection._appContext.Availabilities.RemoveRange(product.Availability);
+                }
+
+                if (product.Image != null)
+                {
+                    _dependencyInjection._appContext.Image.RemoveRange(product.Image);
+                }
+            }
 
             var productDtos = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
-            await _productAppService.DeleteProducts(id, productDtos);
+            await _productAppService.DeleteProducts(id, productDtos, cancellationToken);
 
             _dependencyInjection._appContext.Products.RemoveRange(products);
 
-            await _dependencyInjection._appContext.SaveChangesAsync();
+            await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
             return productDtos;
         }
@@ -194,18 +182,20 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="id">The ID of the product.</param>
         /// <returns>The product.</returns>
-        public async Task<IEnumerable<ProductDto?>> GetProductById(IEnumerable<Guid> id)
+        public async Task<IEnumerable<ProductDto?>> GetProductById(IEnumerable<Guid> id, CancellationToken cancellationToken )
         {
             var product = await _dependencyInjection._appContext.Products
+                                .Include(a => a.Assessment)
+                                         .ThenInclude(r => r.RevisionDetail)
                                 .Include(d => d.Dimensions)
                                 .Include(a => a.Attributes)
                                 .Include(a => a.Availability)
                                 .Include(i => i.Image)
-                                .Where(p => id.Contains(p.Id)).ToListAsync();
+                                .Where(p => id.Contains(p.Id)).ToListAsync(cancellationToken);
 
             var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(product);
 
-            var productResult = await _productAppService.GetProductById(id, productResultDto);
+            var productResult = await _productAppService.GetProductById(id, productResultDto, cancellationToken);
 
             return productResultDto;
         }
@@ -215,20 +205,22 @@ namespace Blazing.infrastructure.Service
         /// Retrieves all products from the database, including related entities such as dimensions, assessments, attributes, and images.
         /// </summary>
         /// <returns>A collection of Product objects.</returns>
-        public async Task<IEnumerable<ProductDto?>> GetAll()
+        public async Task<IEnumerable<ProductDto?>> GetAll(CancellationToken cancellationToken )
         {
             var products = await _dependencyInjection._appContext.Products
+                                .Include(a => a.Assessment)
+                                         .ThenInclude(r => r.RevisionDetail)
                                 .Include(d => d.Dimensions)
                                 .Include(a => a.Attributes)
                                 .Include(a => a.Availability)
                                 .Include(i => i.Image)
-                                .ToListAsync();
+                                .ToListAsync(cancellationToken);
 
             var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
-            var productsResult = await _productAppService.GetAllProduct(productResultDto);
+            var productsResult = await _productAppService.GetAllProduct(productResultDto, cancellationToken);
 
-            return productsResult;
+            return productResultDto;
         }
 
         /// <summary>
@@ -236,13 +228,15 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="productNames">A collection of product names to check.</param>
         /// <returns>True if any products with the specified names exist, false otherwise.</returns>
-        public async Task<bool> ExistsAsyncProduct(IEnumerable<ProductDto?> productNames)
+        public async Task<bool> ExistsAsyncProduct(IEnumerable<ProductDto> product, CancellationToken cancellationToken)
         {
-            var productExists = await _dependencyInjection._appContext.Products.AnyAsync(p => productNames.Select(x => x.Name).Contains(p.Name));
-            
-            var productResultDto = await _productAppService.ExistsProduct(productExists);
+            var productId = await _dependencyInjection._appContext.Products.AnyAsync(p => product.Select(x => x.Id).Contains(p.Id),cancellationToken);
 
-            return productResultDto;
+            var nameExists = await _dependencyInjection._appContext.Products.AnyAsync(p => product.Select(x => x.Name).Contains(p.Name),cancellationToken);
+            
+             await _productAppService.ExistsProduct(nameExists, productId, product);
+
+            return nameExists;
         }
     }
     #endregion

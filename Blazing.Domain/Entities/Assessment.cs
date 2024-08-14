@@ -7,11 +7,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the product review.
     /// </summary>
-    public class Assessment
+    public sealed class Assessment : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [Range(0.0, 5.0, ErrorMessage = "A média deve estar entre 0.0 e 5.0")]
         public double Average { get; set; }
 
@@ -19,10 +16,11 @@ namespace Blazing.Domain.Entities
         public int NumberOfReviews { get; set; }
 
         [Required(ErrorMessage = "O ID da revisão é obrigatório.")]
-        [ForeignKey("ReviewId")]
+
+        [ForeignKey("RevisionId")]
         public Guid RevisionId { get; set; }
 
-        public Revision? RevisionDetail { get; set; }
+        public IEnumerable<Revision> RevisionDetail { get; set; } = [];
     }
     #endregion
 }

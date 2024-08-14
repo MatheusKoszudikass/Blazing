@@ -1,0 +1,41 @@
+version: '3.4'
+
+services:
+  blazing.api:
+    image: blazing-api
+    build:
+      context: .
+      dockerfile: Blazing.Api/Dockerfile
+    ports:
+         - 7239:8081
+         - 7238:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+    depends_on: ["blazing-api-sql"]
+    networks:
+       Blazing-networks:
+
+
+  blazing-api-sql:
+    image: mcr.microsoft.com/mssql/server:2022-preview-ubuntu-22.04
+    environment:
+      - ACCEPT_EULA=1
+      - MSSQL_SA_PASSWORD=019Uf%HG0!{ 
+      - MSSQL_PID=Evaluation
+    volumes:
+      - Blazing-api-sqlserver:/var/opt/mssql
+    networks:
+       Blazing-networks:
+
+    ports:
+      - 1200:1433
+ 
+
+volumes:
+  Blazing-api-sqlserver:
+
+networks:
+  Blazing-networks:
+    driver: bridge
+  

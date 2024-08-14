@@ -1,4 +1,5 @@
 ﻿using Blazing.Application.Dto;
+using Blazing.Application.Interfaces.Category;
 using Blazing.Application.Services;
 using Blazing.Domain.Entities;
 using Blazing.infrastructure.Dependency;
@@ -9,9 +10,9 @@ using System.Linq;
 namespace Blazing.infrastructure.Service
 {
     #region Responsibility for searching data in the database in the category table.
-    public class CategoryInfrastructureRepository(CategoryAppService categoryAppService, DependencyInjection dependencyInjection) : ICategoryInfrastructureRepository
+    public class CategoryInfrastructureRepository(ICategoryAppService<CategoryDto> categoryAppService, DependencyInjection dependencyInjection) : ICategoryInfrastructureRepository
     {
-        private readonly CategoryAppService _categoryAppService = categoryAppService;
+        private readonly ICategoryAppService<CategoryDto> _categoryAppService = categoryAppService;
         private readonly DependencyInjection _dependencyInjection = dependencyInjection;
 
         /// <summary>
@@ -19,15 +20,15 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="categoryDto">A collection of <see cref="CategoryDto"/> objects representing the categories to be added.</param>
         /// <returns>A task representing the asynchronous operation, with a result of the collection of <see cref="CategoryDto"/> that were added.</returns>
-        public async Task<IEnumerable<CategoryDto?>> AddCategories(IEnumerable<CategoryDto> categoryDto)
+        public async Task<IEnumerable<CategoryDto?>> AddCategories(IEnumerable<CategoryDto> categoryDto, CancellationToken cancellationToken)
         {
-            var categoryResult = await _categoryAppService.AddCategory(categoryDto);
+            var categoryResult = await _categoryAppService.AddCategory(categoryDto, cancellationToken);
 
             var category = _dependencyInjection._mapper.Map<IEnumerable<Category>>(categoryResult);
 
-            await _dependencyInjection._appContext.Category.AddRangeAsync(category);
+            await _dependencyInjection._appContext.Category.AddRangeAsync(category, cancellationToken);
 
-            await _dependencyInjection._appContext.SaveChangesAsync();
+            await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
             return categoryDto;
 
@@ -39,28 +40,18 @@ namespace Blazing.infrastructure.Service
         /// <param name="id">A collection of category IDs to be updated.</param>
         /// <param name="categoryDtos">A collection of <see cref="CategoryDto"/> objects containing the updated category information.</param>
         /// <returns>A task representing the asynchronous operation, with a result of the collection of <see cref="CategoryDto"/> that were updated.</returns>
-        public async Task<IEnumerable<CategoryDto?>> UpdateCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto> categoryDtos)
+        public async Task<IEnumerable<CategoryDto?>> UpdateCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto> categoryDtos, CancellationToken cancellationToken)
         {
-            var categoryResult = await _categoryAppService.UpdateCategory(id, categoryDtos);
-
             var existingCategory = await _dependencyInjection._appContext.Category
-                                         .ToListAsync();
+                                         .Where(c => id.Contains(c.Id))
+                                         .ToListAsync(cancellationToken: cancellationToken);
 
-            var existingCategoryDto = _dependencyInjection._mapper.Map<IEnumerable<CategoryDto>>(existingCategory);
+            var categoryUpdate = _dependencyInjection._mapper.Map<IEnumerable<CategoryDto>>(existingCategory);
 
-            await _categoryAppService.UpdateCategory(id, existingCategoryDto);
+            var categoryResult = await _categoryAppService.UpdateCategory(id, categoryDtos, categoryUpdate, cancellationToken);
 
-            foreach (var category in existingCategory)
-            {
-                var updateCategoryDto = categoryDtos.Where(x => x.Id == category.Id).FirstOrDefault();
-                if (updateCategoryDto != null)
-                {
-                    category.Name = updateCategoryDto.Name;
-                }
-            }
-
-            await _dependencyInjection._appContext.SaveChangesAsync();
-            return categoryDtos;
+            await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
+            return categoryResult;
         }
 
 
@@ -69,18 +60,18 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="id">A collection of category IDs to be deleted.</param>
         /// <returns>A task representing the asynchronous operation, with a result of the collection of <see cref="CategoryDto"/> that were deleted.</returns>
-        public async Task<IEnumerable<CategoryDto?>> DeleteCategory(IEnumerable<Guid> id)
+        public async Task<IEnumerable<CategoryDto?>> DeleteCategory(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var category = await _dependencyInjection._appContext.Category
-                                 .Where(c => id.Contains(c.Id)).ToListAsync();
+                                 .Where(c => id.Contains(c.Id)).ToListAsync(cancellationToken: cancellationToken);
 
             var categoryDto = _dependencyInjection._mapper.Map<IEnumerable<CategoryDto>>(category);
 
-            await _categoryAppService.DeleteCategory(id, categoryDto);
+            await _categoryAppService.DeleteCategory(id, categoryDto, cancellationToken);
 
             _dependencyInjection._appContext.Category.RemoveRange(category);
 
-            await _dependencyInjection._appContext.SaveChangesAsync();
+            await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
             return categoryDto;
         }
@@ -91,14 +82,17 @@ namespace Blazing.infrastructure.Service
         /// </summary>
         /// <param name="id">A collection of category IDs.</param>
         /// <returns>A task representing the asynchronous operation, with a result of the collection of <see cref="CategoryDto"/> objects that match the specified IDs.</returns>
-        public async Task<IEnumerable<CategoryDto?>> GetCategoryById(IEnumerable<Guid> id)
+        public async Task<IEnumerable<CategoryDto?>> GetCategoryById(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var category = await _dependencyInjection._appContext.Category
-                                 .Where(c => id.Contains(c.Id)).ToListAsync();
+                                 .Include(p => p.Products)
+                                          .ThenInclude(a => a.Assessment)
+                                          .ThenInclude(r => r.RevisionDetail)
+                                 .Where(c => id.Contains(c.Id)).ToListAsync(cancellationToken: cancellationToken);
 
             var categoryDto = _dependencyInjection._mapper.Map<IEnumerable<CategoryDto>>(category);
 
-            await _categoryAppService.GetById(id, categoryDto);
+            await _categoryAppService.GetById(id, categoryDto, cancellationToken);
 
             return categoryDto;
         }
@@ -107,15 +101,17 @@ namespace Blazing.infrastructure.Service
         /// Retrieves all categories from the repository.
         /// </summary>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of all <see cref="CategoryDto"/> objects.</returns>
-        public async Task<IEnumerable<CategoryDto?>> GetAll()
+        public async Task<IEnumerable<CategoryDto?>> GetAll(CancellationToken cancellationToken)
         {
             var categories = await _dependencyInjection._appContext.Category
                              .Include(p => p.Products)
-                             .ToListAsync();
+                                      .ThenInclude(a => a.Assessment)
+                                      .ThenInclude(r => r.RevisionDetail)
+                             .ToListAsync(cancellationToken: cancellationToken);
 
             var categoryDto = _dependencyInjection._mapper.Map<IEnumerable<CategoryDto>>(categories);
 
-            await _categoryAppService.GetAll(categoryDto);
+            await _categoryAppService.GetAll(categoryDto, cancellationToken);
 
             return categoryDto;
 

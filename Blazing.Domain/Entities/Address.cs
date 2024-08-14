@@ -6,9 +6,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the address.
     /// </summary>
-    public class Address
+    public sealed class Address : BaseEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "Rua é obrigatória.")]
         [StringLength(100, ErrorMessage = "Rua deve ter entre 3 e 100 caracteres.", MinimumLength = 3)]

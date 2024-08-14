@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Blazing.Domain.Entities;
+using System.Text.Json.Serialization;
 
 namespace Blazing.Application.Dto
 {
@@ -7,10 +9,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the product AssessmentDto.
     /// </summary>
-    public class AssessmentDto
+    public sealed class AssessmentDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [Range(0.0, 5.0, ErrorMessage = "A média deve estar entre 0.0 e 5.0")]
         public double Average { get; set; }
 
@@ -20,7 +20,9 @@ namespace Blazing.Application.Dto
         [Required(ErrorMessage = "O ID da revisão é obrigatório.")]
         [ForeignKey("ReviewId")]
         public Guid RevisionId { get; set; }
-        public RevisionDto? RevisionDetail { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IEnumerable<RevisionDto?> RevisionDetail { get; set; } = new List<RevisionDto?>();
     }
     #endregion
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the user.
     /// </summary>
-    public class UserDto
+    public sealed class UserDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "O primeiro nome é obrigatório.")]
         [StringLength(50, ErrorMessage = "O primeiro nome não pode ter mais de 50 caracteres.")]
         public string? FirstName { get; set; }

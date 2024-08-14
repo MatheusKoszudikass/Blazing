@@ -7,11 +7,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the shopping cart creation linked with the logged-in user in the system.
     /// </summary>
-    public class ShoppingCart
+    public sealed class ShoppingCart : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [ForeignKey("User")]
         [Required(ErrorMessage = "O identificador do usuário é obrigatório.")]
         public Guid UserId { get; set; }
@@ -24,7 +21,8 @@ namespace Blazing.Domain.Entities
         [Required(ErrorMessage = "A lista de itens é obrigatória.")]
         public IEnumerable<CartItem?> Items { get; set; } = [];
 
-        [Range(0, double.MaxValue, ErrorMessage = "O valor total deve ser um valor positivo.")]
+        [Required(ErrorMessage = "O valor total é obrigatório.")]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal TotalValue { get; set; }
 
         [Required(ErrorMessage = "A data de criação é obrigatória.")]

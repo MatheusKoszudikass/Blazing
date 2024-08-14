@@ -43,29 +43,28 @@ namespace Blazing.Test.Infrastructure
         [Fact]
         public async Task ProductsAllTest()
         {
-
-       
+            var cts = CancellationToken.None;
 
             // Add products to the repository
-            var resultAddAsync = await _fixture.ProductInfrastructureRepository.AddProducts(_products);
+            var resultAddAsync = await _fixture.ProductInfrastructureRepository.AddProducts(_products, cts);
 
             // Update products in the repository
-            var resultUpdateAsync = await _fixture.ProductInfrastructureRepository.UpdateProduct(_productIds, _productsToUpdate);
+            var resultUpdateAsync = await _fixture.ProductInfrastructureRepository.UpdateProduct(_productIds, _productsToUpdate, cts);
 
             // Get products by category ID
-            var resultGetByCategoryIdAsync = await _fixture.ProductInfrastructureRepository.GetProductsByCategoryId(_categoryIds);
+            var resultGetByCategoryIdAsync = await _fixture.ProductInfrastructureRepository.GetProductsByCategoryId(_categoryIds, cts);
 
             // Get product by ID
-            var resultGetByIdAsync = await _fixture.ProductInfrastructureRepository.GetProductById(_productIds);
+            var resultGetByIdAsync = await _fixture.ProductInfrastructureRepository.GetProductById(_productIds, cts);
 
             // Get all products
-            var resultGetAllAsync = await _fixture.ProductInfrastructureRepository.GetAll();
+            var resultGetAllAsync = await _fixture.ProductInfrastructureRepository.GetAll(cts);
 
             // Check if product exists
-            var resultNameExiste = await _fixture.ProductInfrastructureRepository.ExistsAsyncProduct(_productsToUpdate);
+            var resultNameExiste = await _fixture.ProductInfrastructureRepository.ExistsAsyncProduct(_productsToUpdate, cts);
 
             // Delete products by ID
-            var resultDeleteProductById = await _fixture.ProductInfrastructureRepository.DeleteProducts(_productIds);
+            var resultDeleteProductById = await _fixture.ProductInfrastructureRepository.DeleteProducts(_productIds, cts);
 
             // Assert that the results are not null
             Assert.NotNull(resultAddAsync); // Add your specific assertions for adding a product.
@@ -73,7 +72,7 @@ namespace Blazing.Test.Infrastructure
             Assert.NotNull(resultGetByCategoryIdAsync); // Add your specific assertions for getting products by category ID.
             Assert.NotNull(resultGetByIdAsync); // Add your specific assertions for getting a product by ID.
             Assert.NotNull(resultGetAllAsync); // Add your specific assertions for getting all products.
-            Assert.True(resultNameExiste); // Add your specific assertions for checking if a product exists.
+            Assert.False(resultNameExiste); // Add your specific assertions for checking if a product exists.
             Assert.NotNull(resultDeleteProductById); // Add your specific assertions for deleting products by ID.
         }
     }

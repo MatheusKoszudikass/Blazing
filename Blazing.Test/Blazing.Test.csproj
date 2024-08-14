@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blazing.Api\Blazing.Api.csproj" />
     <ProjectReference Include="..\Blazing.Domain\Blazing.Domain.csproj" />
     <ProjectReference Include="..\Blazing.infrastructure\Blazing.infrastructure.csproj" />
   </ItemGroup>

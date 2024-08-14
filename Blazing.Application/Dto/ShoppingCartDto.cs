@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the shopping cart creation linked with the logged-in user in the system.
     /// </summary>
-    public class ShoppingCartDto
+    public sealed class ShoppingCartDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "O identificador do usuário é obrigatório.")]
         public Guid UserId { get; set; }
 

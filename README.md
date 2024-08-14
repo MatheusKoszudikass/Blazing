@@ -36,15 +36,17 @@ O projeto está em fase inicial, com foco na estruturação de testes antes das 
 
 ## 🆕 Atualizações Recentes
 
-Implementações CRUD para Product e Category: Melhorias foram feitas nas operações CRUD para Produtos e Categorias para aprimorar a performance e a manutenção. A abordagem foi otimizada para facilitar a adição de novas funcionalidades.
+O Docker foi integrado ao projeto, configurando um contêiner do projeto que possui API, banco de dados SQL Server. Ambos estão operando em um ambiente Linux, Utilizando ambiente de produção.
 
-Testes em Camadas: Os testes agora estão separados em camadas—Infraestrutura, Aplicação e Domínio—para garantir a integridade dos dados que passam pela aplicação. Essa separação ajuda a verificar se todos os componentes estão funcionando corretamente.
+Foram implementadas melhorias nas exceções de domínio, agora validando as coleções de produtos tanto para adição quanto para atualização. O sistema verifica se os produtos já existem e se a coleção de atualização foi efetivamente modificada antes de aplicar as mudanças no banco de dados. Em caso de conflitos, o middleware retorna o status code, message apropriado, garantindo um tratamento de erros.
 
-Interfaces Genéricas: Interfaces genéricas foram criadas para facilitar a reutilização de código para funções comuns, promovendo consistência e reduzindo a duplicação.
+Diversos testes automatizados foram feitos utilizando o Postman. Em anexo, estão alguns prints dos resultados, demonstrando o progresso e a evolução da API.
 
-Comentários no Código: Todo o código está bem comentado para melhorar a legibilidade e a compreensão dos métodos e classes.
+![alt text](image.png)
 
-Requisitos das Entidades: As entidades estão agora definidas com propriedades obrigatórias e tamanhos de dados mínimos e máximos apropriados. Isso garante que a validação dos dados seja aplicada e que erros sejam retornados ao frontend se os dados não atenderem aos critérios esperados.
+
+Resultado mais detalhado do ultimo teste:
+[text](<New Collection Product..postman_test_run.json>)
 
 
 ## Roadmap
@@ -57,6 +59,9 @@ Requisitos das Entidades: As entidades estão agora definidas com propriedades o
    - ✔️ Teste unitário e implementações CRUD Category. 
    - ✔️ Todo código comentado. 
    - ✔️ Arquitetura limpa.
+   - ✔️ Teste Automatizados.
+   - ✔️ Tratamento de erros do dominio Product .
+   - ✔️ Tratamento de erros middleware.
    - ⏳ Teste unitário e implementações CRUD para AddCartItem. 
    - ⏳ Teste unitário e implementações CRUD para Address.
    - ⏳ Teste unitário e implementações CRUD para Assessment. 

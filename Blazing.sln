@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.Api", "Blazing.Api\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.infrastructure", "Blazing.infrastructure\Blazing.infrastructure.csproj", "{00532580-A9E9-439D-ABA9-23356D56A2F5}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FB974F86-1429-45FB-846D-190A749E27D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{00532580-A9E9-439D-ABA9-23356D56A2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00532580-A9E9-439D-ABA9-23356D56A2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00532580-A9E9-439D-ABA9-23356D56A2F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB974F86-1429-45FB-846D-190A749E27D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB974F86-1429-45FB-846D-190A749E27D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB974F86-1429-45FB-846D-190A749E27D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB974F86-1429-45FB-846D-190A749E27D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

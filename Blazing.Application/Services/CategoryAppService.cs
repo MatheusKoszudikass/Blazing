@@ -2,6 +2,8 @@
 using Blazing.Application.Dto;
 using Blazing.Application.Interfaces.Category;
 using Blazing.Domain.Entities;
+using Blazing.Domain.Interfaces.Repository;
+using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -12,25 +14,25 @@ using System.Threading.Tasks;
 namespace Blazing.Application.Services
 {
     #region Category Services.
-    public class CategoryAppService(CategoryDomainService categoriasDomainService, IMapper mapper) : ICategoryAppService
+    public class CategoryAppService(ICrudDomainService<Category> categoriasDomainService, IMapper mapper) : ICategoryAppService<CategoryDto>
     {
        
-        private readonly CategoryDomainService _categoriaDomainService = categoriasDomainService;   
+        private readonly ICrudDomainService<Category> _categoriaDomainService = categoriasDomainService;   
         private readonly IMapper _mapper = mapper;
 
 
         /// <summary>
         /// Adds a list of category to the domain.
         /// </summary>
-        /// <param name="categoryDtos">The list of categoryDtos to be added.</param>
+        /// <param name="categoryDto">The list of categoryDtos to be added.</param>
         /// <returns>The list of categoryDtos that have been added.</returns>
-        public async Task<IEnumerable<CategoryDto?>> AddCategory(IEnumerable<CategoryDto> categoryDtos)
+        public async Task<IEnumerable<CategoryDto?>> AddCategory(IEnumerable<CategoryDto> categoryDto, CancellationToken cancellationToken)
         {
-            var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
+            var category = _mapper.Map<IEnumerable<Category>>(categoryDto);
 
             await _categoriaDomainService.Add(category);
 
-            return categoryDtos;
+            return categoryDto;
         }
 
         /// <summary>
@@ -39,11 +41,12 @@ namespace Blazing.Application.Services
         /// <param name="id">The ID of the categoryDtos to update.</param>
         /// <param name="categoryDtos">The categoryDtos object containing the updated data.</param>
         /// <returns>The updated categoryDtos, if found.</returns>
-        public async Task<IEnumerable<CategoryDto?>> UpdateCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto> categoryDtos)
+        public async Task<IEnumerable<CategoryDto?>> UpdateCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto> categoryDtos, IEnumerable<CategoryDto> categoriesDtosUpdate, CancellationToken cancellationToken)
         {
             var category =  _mapper.Map<IEnumerable<Category>>(categoryDtos);
+            var categoryUpdate = _mapper.Map<IEnumerable<Category>>(categoriesDtosUpdate);
 
-            await _categoriaDomainService.Update(id, category);
+            await _categoriaDomainService.Update(id, category, categoryUpdate);
 
             return categoryDtos;
         }
@@ -53,7 +56,7 @@ namespace Blazing.Application.Services
         /// </summary>
         /// <param name="id">The list of categoryDtos IDs to be deleted.</param>
         /// <returns>The list of categoryDtos that were deleted.</returns>
-        public async Task<IEnumerable<CategoryDto?>> DeleteCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto?> categoryDtos)
+        public async Task<IEnumerable<CategoryDto?>> DeleteCategory(IEnumerable<Guid> id, IEnumerable<CategoryDto?> categoryDtos, CancellationToken cancellationToken)
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
 
@@ -67,11 +70,11 @@ namespace Blazing.Application.Services
         /// </summary>
         /// <param name="id">The ID of the categoryDtos to get.</param>
         /// <returns>The categoryDtos corresponding to the given ID.</returns>
-        public async Task<IEnumerable<CategoryDto?>> GetById(IEnumerable<Guid> id, IEnumerable<CategoryDto?> categoryDtos)
+        public async Task<IEnumerable<CategoryDto?>> GetById(IEnumerable<Guid> id, IEnumerable<CategoryDto?> categoryDtos, CancellationToken cancellationToken)
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
 
-            await _categoriaDomainService.GetById(id, category);
+            await _categoriaDomainService.GetById(id, category, cancellationToken);
 
             return categoryDtos;
         }
@@ -82,11 +85,11 @@ namespace Blazing.Application.Services
         /// </summary>
         /// <param name="categoryDtos">The list of categoryDtos to be added.</param>
         /// <returns>The list of all categoryDtos.</returns>
-        public async Task<IEnumerable<CategoryDto?>> GetAll(IEnumerable<CategoryDto?> categoryDtos)
+        public async Task<IEnumerable<CategoryDto?>> GetAll(IEnumerable<CategoryDto?> categoryDtos, CancellationToken cancellationToken)
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
 
-            await _categoriaDomainService.GetAll(category);
+            await _categoriaDomainService.GetAll(category, cancellationToken);
 
             return categoryDtos;
         }
@@ -97,10 +100,11 @@ namespace Blazing.Application.Services
         /// <param name="existsCategories">A boolean flag indicating the existence check.</param>
         public async Task<bool?> ExistsCategories(bool existsCategories)
         {
-           
-           var result = await _categoriaDomainService.ExistsAsync(existsCategories);
 
-            return result;
+            //var result = await _categoriaDomainService.ExistsAsync(existsCategories);
+
+            await Task.CompletedTask;
+            return existsCategories;
         }
     }
     #endregion

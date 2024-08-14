@@ -6,11 +6,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the item cart
     /// </summary>
-    public class CartItem
+    public sealed class CartItem : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [Required(ErrorMessage = "O ID do produto é obrigatório.")]
         public Guid ProductId { get; set; }
         public Product? Product { get; set; }

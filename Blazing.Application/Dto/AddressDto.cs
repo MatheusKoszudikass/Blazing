@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the address.
     /// </summary>
-    public class AddressDto
-    {
-        public Guid Id { get; set; }
-
+    public sealed class AddressDto : BaseEntityDto
+    { 
         [Required(ErrorMessage = "Rua é obrigatória.")]
         [StringLength(100, ErrorMessage = "Rua deve ter entre 3 e 100 caracteres.", MinimumLength = 3)]
         public string? Street { get; set; }

@@ -10,7 +10,7 @@ namespace Blazing.infrastructure.Data
     /// <remarks>
     /// This class inherits from DbContext and provides DbSet properties for each entity in the application's database.
     /// </remarks>
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public class BlazingDbContext(DbContextOptions<BlazingDbContext> options) : DbContext(options)
     {
         public DbSet<AddCartItem> AddCartItems { get; set; }
         public DbSet<Address> Addresses { get; set; }
@@ -28,9 +28,15 @@ namespace Blazing.infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer("Server=host.docker.internal,1200;Database=Blazing;User Id=sa;Password=019Uf%HG0!{;TrustServerCertificate=True", sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 5, // Número máximo de tentativas
+                    maxRetryDelay: TimeSpan.FromSeconds(30), // Tempo máximo de espera entre tentativas
+                    errorNumbersToAdd: null); // Lista de números de erro adicionais para tratar como transitórios
+            });
         }
 
+        }
     }
     #endregion
-}

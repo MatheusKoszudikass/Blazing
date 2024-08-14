@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the item cart
     /// </summary>
-    public class CartItemDto
+    public sealed class CartItemDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "O ID do produto é obrigatório.")]
         public Guid ProductId { get; set; }
         public ProductDto? Product { get; set; }

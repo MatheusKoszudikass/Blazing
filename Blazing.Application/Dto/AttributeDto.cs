@@ -1,4 +1,5 @@
 ﻿
+using Blazing.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
@@ -7,10 +8,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for the product attributes.
     /// </summary>
-    public class AttributeDto
+    public sealed class AttributeDto : BaseEntityDto
     {
-        public Guid Id { get; set; }
-
         [StringLength(50, ErrorMessage = "A cor não pode ter mais de 50 caracteres")]
         public string? Color { get; set; }
 

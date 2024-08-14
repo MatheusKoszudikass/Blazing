@@ -6,11 +6,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the product dimensions.
     /// </summary>
-    public class Dimensions
+    public sealed class Dimensions : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [Range(0.0, double.MaxValue, ErrorMessage = "O peso deve ser um valor positivo.")]
         public double Weight { get; set; }
 

@@ -6,11 +6,8 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the product attributes.
     /// </summary>
-    public class Attributes
+    public sealed class Attributes : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         [StringLength(50, ErrorMessage ="A cor não pode ter mais de 50 caracteres")]
         public string? Color { get; set; }
 

@@ -6,7 +6,7 @@ namespace Blazing.Domain.Interfaces.Services
     /// <summary>
     /// Product domain layer interface
     /// </summary>
-    public interface ICrudDomainService<T>
+    public interface ICrudDomainService<T> where T : BaseEntity
     {
         /// <summary>
         /// Adds a collection of object.
@@ -21,7 +21,7 @@ namespace Blazing.Domain.Interfaces.Services
         /// <param name="id">The ID of the object to be updated.</param>
         /// <param name="obj">The updated object details.</param>
         /// <returns>A task representing the asynchronous operation, with the updated object.</returns>
-        Task<IEnumerable<T?>> Update(IEnumerable<Guid> id, IEnumerable<T> obj);
+        Task<IEnumerable<T?>> Update(IEnumerable<Guid> id, IEnumerable<T> obj, IEnumerable<T> objUpdate);
 
         /// <summary>
         /// Deletes a collection of object by their IDs.
@@ -37,21 +37,21 @@ namespace Blazing.Domain.Interfaces.Services
         /// <param name="id">The ID of the object to be retrieved.</param>
         /// <param name="obj">The product details.</param>
         /// <returns>A task representing the asynchronous operation, with the object details.</returns>
-        Task<IEnumerable<T?>> GetById(IEnumerable<Guid> id, IEnumerable<T> obj);
+        Task<IEnumerable<T?>> GetById(IEnumerable<Guid> id, IEnumerable<T> obj, CancellationToken cancellationToken);
 
         /// <summary>
         /// Retrieves all object.
         /// </summary>
         /// <param name="obj">The object details.</param>
         /// <returns>A task representing the asynchronous operation, with a collection of all object.</returns>
-        Task<IEnumerable<T?>> GetAll(IEnumerable<T> obj);
+        Task<IEnumerable<T?>> GetAll(IEnumerable<T> obj, CancellationToken cancellationToken);
 
         /// <summary>
         /// Checks if a specified condition exists asynchronously.
         /// </summary>
         /// <param name="boolean">A boolean value indicating whether the condition to check exists.</param>
         /// <returns>A Task representing the asynchronous operation, with a boolean result indicating the existence of the condition.</returns>
-        Task<bool> ExistsAsync(bool boolean);
+        Task<bool> ExistsAsync(bool boolean, bool booleanName, IEnumerable<T> obj);
     }
     #endregion
 }

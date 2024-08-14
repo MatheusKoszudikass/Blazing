@@ -1,7 +1,9 @@
-﻿namespace Blazing.Domain.Interfaces.Repository
+﻿using Blazing.Domain.Entities;
+
+namespace Blazing.Domain.Interfaces.Repository
 {
     #region Contract object .
-    public interface ICrudDomainRepository<T>
+    public interface ICrudDomainRepository<T> where T : BaseEntity
     {
         /// <summary>
         /// Adds a collection of object asynchronously.

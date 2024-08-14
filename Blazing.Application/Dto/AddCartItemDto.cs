@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blazing.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazing.Application.Dto
 {
@@ -6,10 +7,8 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for adding items to the shopping cart.
     /// </summary>
-    public class AddCartItemDto
+    public sealed class AddCartItemDto : BaseEntityDto
     {
-        public Guid Id { get; set; } 
-
         public Guid ProductId { get; set; }
 
         public ProductDto? Product { get; set; }
