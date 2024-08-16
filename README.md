@@ -36,9 +36,11 @@ O projeto está em fase inicial, com foco na estruturação de testes antes das 
 
 ## 🆕 Atualizações Recentes
 
-Refatoração da regra de negócio para a atualização de produtos e categorias, agora utilizando uma abordagem que verifica se o usuário realmente editou uma propriedade de uma coleção. Espaços em branco, por exemplo, serão descartados da coleção se forem apenas um descuido do usuário. Assim, somente os itens com propriedades realmente modificadas serão mantidos.
+Foi adicionado bibliotecas de logs. Para ajudar no detalhamento de Exceções: Os logs de erro contêm stack traces detalhados que ajudam a identificar a origem do problema. Isso é necessário para depurar exceções e corrigir bugs. Informações contextuais Logs como RequestId, RequestPath, e ConnectionId para ajudar a rastrear a execução das requisições e identificar problemas específicos relacionados a uma requisição. Registro de sucesso e falhas das operações: Logs informativos como “Produtos adicionados com sucesso” ajudam a monitorar operações bem-sucedidas e a verificar se o comportamento da aplicação está ocorrendo com o esperado. Registro de ips informações sobre o endereço IP do usuário para caso de auditoria. 
 
-Além disso, houve melhorias no código para torná-lo mais legível. O método AreProductCollectionsEqual foi removido e substituído por uma verificação de coleções usando LINQ. A verificação das propriedades da coleção é realizada pelo método AreProductEqual, que por sua vez chama o método NormalizeString para garantir que as comparações sejam precisas.
+Os logs estruturados estão em fase inicial de implementação, sendo salvos em arquivos no formato JSON, localizados em ./Blazing.Api/logs (por exemplo, log-development-20240816.json). Além disso, as operações críticas, como exceções, são salvas tanto no arquivo quanto no banco de dados SQL Server. No entanto, estou em dúvida sobre manter os logs em um banco de dados relacional.
+
+Bibliotecas utilizadas:![alt text](image.png)
 
 
 ## Roadmap
