@@ -2,6 +2,8 @@
 using Blazing.Api.Erros.ControllerExceptions;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.Produtos;
+using Serilog;
+using System.Net;
 using System.Text.Json;
 
 namespace Blazing.Api.Middleware
@@ -21,13 +23,15 @@ namespace Blazing.Api.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
+            var ipAddress = context.Connection.RemoteIpAddress.ToString();
+
             try
             {
                 await _next(context);
             }
             catch (DomainException ex)
             {
-                await DetermineException(context, ex);
+                await DetermineException(context, ex, ipAddress);
             }
         }
 
@@ -46,14 +50,14 @@ namespace Blazing.Api.Middleware
             await context.Response.WriteAsync(json);
         }
 
-        private async Task DetermineException(HttpContext context, DomainException ex)
+        private async Task DetermineException(HttpContext context, DomainException ex, string ipAddress)
         {
             if (ex is ProductExceptions.ProductAlreadyExistsException ||
                   ex is ProductExceptions.IdentityProductInvalidException ||
                   ex is ProductExceptions.ProductInvalidException ||
                   ex is ProductExceptions.ProductNotFoundException)
             {
-                await HandleProductException(context, ex);
+                await HandleProductException(context, ex, ipAddress);
             }
             else if (ex is CategoryExceptions.CategoryAlreadyExistsException ||
                      ex is CategoryExceptions.IdentityCategoryInvalidException ||
@@ -62,20 +66,18 @@ namespace Blazing.Api.Middleware
             {
                 await HandleCategoryException(context, ex);
             }
-            {
-                // You can add handling for other types of exceptions here if needed.
-                await HandleProductException(context, ex);
-            }
         }
 
-        private async Task HandleProductException(HttpContext context, DomainException ex)
+        private async Task HandleProductException(HttpContext context, DomainException ex, string ipAddress)
         {
             string? message = string.Empty;
+
 
             switch (ex)
             {
                 case ProductExceptions.ProductAlreadyExistsException:
                     context.Response.StatusCode = StatusCodes.Status409Conflict;
+                    _logger.LogWarning(message: ex.Message, ipAddress);
                     message = ex.Message;
                     break;
                 case ProductExceptions.ProductNotFoundException:
@@ -84,6 +86,7 @@ namespace Blazing.Api.Middleware
                     break;
                 case ProductExceptions.IdentityProductInvalidException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    Log.Warning(ex.Message, ipAddress);
                     message = ex.Message;
                     break;
                 case ProductExceptions.ProductInvalidException:

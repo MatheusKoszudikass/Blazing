@@ -10,6 +10,7 @@ using Blazing.infrastructure.Data;
 using Blazing.infrastructure.Interface;
 using Blazing.infrastructure.Service;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,19 +21,10 @@ namespace Blazing.Api.Dependencies
         public static IServiceCollection AddConfig(
             this IServiceCollection Services, IConfiguration Config)
         {
-            //Services.AddDbContext<BlazingDbContext>(options => options.UseSqlServer
-            //(Config.GetConnectionString("DevConnection") ?? throw new
-            //InvalidOperationException("Problema com a string de conexão. Verifique o arquivo appsettings.json")));
-
-
-            //Services.AddDbContext<AppDbContext>(options =>
-            //options.UseInMemoryDatabase("InMemoryDb"));
-
-            //Services.AddDbContext<AppDbContext>(options => 
-            //options.UseSqlite(Config.GetConnectionString($"DevConnect")));
-
 
             Services.AddAutoMapper(typeof(BlazingProfile));
+
+            Services.AddDbContext<BlazingDbContext>();
 
             //Product dependencies
             Services.AddScoped<IProductInfrastructureRepository, ProductInfrastructureRepository>();
@@ -44,8 +36,7 @@ namespace Blazing.Api.Dependencies
             Services.AddScoped<ICategoryAppService<CategoryDto>, CategoryAppService>();
             Services.AddScoped<ICrudDomainService<Category>, CategoryDomainService>();
 
-            Services.AddDbContext<BlazingDbContext>();
-
+             
             JsonSerializerOptions options = new ()
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
@@ -53,6 +44,5 @@ namespace Blazing.Api.Dependencies
 
             return Services;
         }
-
     }
 }
