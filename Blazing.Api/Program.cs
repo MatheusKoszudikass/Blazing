@@ -14,6 +14,8 @@ using Blazing.infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using Serilog;
+using System.Configuration;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddConfig(builder.Configuration);
 
+//Add Serilog.
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
 {
@@ -52,6 +63,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
+//app.UseStaticFiles();
+
+//app.UseSerilogRequestLogging();
+
 app.UseMiddleware<ExceptionMiddleware>(); // <--- Add this line -->
 
 app.UseHttpsRedirection();
@@ -61,3 +76,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+Log.Fatal(new Exception(), "Blazing API Failed to start");

@@ -35,12 +35,13 @@ namespace Blazing.Api.Controllers.Product
         [HttpPost]
         public async Task<ActionResult<IEnumerable<ProductDto>>> AddProducts([FromBody] IEnumerable<ProductDto> newProductsDto, CancellationToken cancellationToken)
         {
-                var produtosAdicionados = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
-            if (produtosAdicionados == null || !produtosAdicionados.Any())
-            {
-                return Conflict("Nome do produto ja existe.");
-            }
-                return Ok(produtosAdicionados); // Status 200
+               var ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+
+               var produtosAdicionados = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
+            _logger.LogInformation("Produtos adicionados com sucesso. Total de produtos: {TotalProducts}. IP: {IpAddress}",
+                    produtosAdicionados.Count(), ipAddress);
+
+            return Ok(produtosAdicionados); // Status 200
         }
 
         /// <summary>
@@ -111,6 +112,7 @@ namespace Blazing.Api.Controllers.Product
         {
  
                 var produtoDeletados = await _productInfraRepository.DeleteProducts(id, cancellationToken);
+                _logger.LogInformation($"Produtos excluídos com sucesso. Total de produtos excluídos: {produtoDeletados.Count()}.");
                 return Ok(produtoDeletados); // Status 200
         }
 
