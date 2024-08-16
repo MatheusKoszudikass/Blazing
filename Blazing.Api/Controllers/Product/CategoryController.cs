@@ -23,22 +23,9 @@ namespace BlazingPizza.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<IEnumerable<CategoryDto?>>> AddCategories([FromBody]IEnumerable<CategoryDto> newCategorias, CancellationToken cancellationToken)
         {
-            if (newCategorias == null || !newCategorias.Any())
-            {
-                return BadRequest("A lista de categorias não pode estar vazia."); // Status 400
-            }
-
-            try
-            {
                 var produtosAdicionados = await _categoriaRepository.AddCategories(newCategorias, cancellationToken);
 
-                return Ok(produtosAdicionados); // Status 200
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao adicionar novas categorias."); // Log do erro
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor"); // Status 500
-            }
+                return Ok(produtosAdicionados);
         }
         #endregion
 
@@ -51,22 +38,11 @@ namespace BlazingPizza.Api.Controllers
         /// <returns>Updated category DTO.</returns>
         /// <exception cref="ArgumentException">Thrown when the category ID is invalid or the category is not found.</exception>
         /// <exception cref="InvalidOperationException">Thrown when an error occurs while updating the category.</exception>
-        [HttpPut("Api/Category/update")]
+        [HttpPut("update")]
         public async Task<ActionResult<IEnumerable<CategoryDto?>>> UpdateCategories([FromBody]IEnumerable<CategoryDto> categories, CancellationToken cancellationToken)
         {
-           var ids = categories.Select(p => p.Id).ToList();
-            if (categories == null || !categories.Any())
-            {
-                return BadRequest(); // Status 400
-            }
-  
+            var ids = categories.Select(p => p.Id).ToList();
             var editProduto = await _categoriaRepository.UpdateCategory(ids, categories, cancellationToken);
-
-            if (editProduto == null)
-            {
-                return NotFound(); // Status 404
-            }
-
             return Ok(editProduto); // Status 200
         }
         #endregion
@@ -136,20 +112,9 @@ namespace BlazingPizza.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllProdutos(CancellationToken cancellationToken)
         {
-            try
-            {
                 var produtos = await _categoriaRepository.GetAll(cancellationToken);
-                if (produtos == null || !produtos.Any())
-                {
-                    return NotFound("Nenhum produto foi localizado"); // Status 404
-                }
 
                 return Ok(produtos); // Status 200
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor"); // Status 500
-            }
         }
         #endregion
     }

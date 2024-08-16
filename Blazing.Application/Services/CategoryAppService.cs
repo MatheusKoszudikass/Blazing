@@ -30,7 +30,9 @@ namespace Blazing.Application.Services
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDto);
 
-            await _categoriaDomainService.Add(category);
+            var categoryResult = await _categoriaDomainService.Add(category);
+
+            categoryDto = _mapper.Map<IEnumerable<CategoryDto>>(categoryResult);
 
             return categoryDto;
         }
@@ -46,7 +48,9 @@ namespace Blazing.Application.Services
             var category =  _mapper.Map<IEnumerable<Category>>(categoryDtos);
             var categoryUpdate = _mapper.Map<IEnumerable<Category>>(categoriesDtosUpdate);
 
-            await _categoriaDomainService.Update(id, category, categoryUpdate);
+            var categoryResultDto =  await _categoriaDomainService.Update(id, category, categoryUpdate);
+
+            categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(categoryResultDto);
 
             return categoryDtos;
         }
@@ -98,13 +102,13 @@ namespace Blazing.Application.Services
         /// Checks if categories exist based on the provided flag.
         /// </summary>
         /// <param name="existsCategories">A boolean flag indicating the existence check.</param>
-        public async Task<bool?> ExistsCategories(bool existsCategories)
+        public async Task<bool?> ExistsCategories(bool id, bool existsName, IEnumerable<CategoryDto?> categoryDtos)
         {
-
-            //var result = await _categoriaDomainService.ExistsAsync(existsCategories);
+            var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
+            await _categoriaDomainService.ExistsAsync(id, existsName, category);
 
             await Task.CompletedTask;
-            return existsCategories;
+            return id;
         }
     }
     #endregion

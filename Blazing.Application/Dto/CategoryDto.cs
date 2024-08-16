@@ -15,7 +15,7 @@ namespace Blazing.Application.Dto
         public string? Name { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ICollection<ProductDto?> Products { get; set; } = [];
+        public IEnumerable<ProductDto?> Products { get; set; } = new List<ProductDto?>();
     }
     #endregion
 }

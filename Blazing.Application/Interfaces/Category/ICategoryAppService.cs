@@ -48,8 +48,9 @@ namespace Blazing.Application.Interfaces.Category
         /// <summary>
         /// Checks if categoriesDto exist based on the provided flag.
         /// </summary>
-        /// <param name="existsCategories">A boolean flag indicating whether to check for the existence of categoriesDto.</param>
-        Task<bool?> ExistsCategories(bool existsCategories);
+        /// <param name="id">A boolean flag indicating whether to check for the existence of categoriesDto.</param>
+        /// <param name="nameExists">A boolean flag indicating whether to check for the existence of categoriesDto.</param>
+        Task<bool?> ExistsCategories(bool id, bool nameExists, IEnumerable<CategoryDto?> categoryDtos);
     }
     #endregion
 }

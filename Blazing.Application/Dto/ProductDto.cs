@@ -19,7 +19,6 @@ namespace Blazing.Application.Dto
         public string? Description { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser um valor positivo.")]
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "A moeda é obrigatória.")]
