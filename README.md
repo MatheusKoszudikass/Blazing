@@ -36,17 +36,9 @@ O projeto está em fase inicial, com foco na estruturação de testes antes das 
 
 ## 🆕 Atualizações Recentes
 
-O Docker foi integrado ao projeto, configurando um contêiner do projeto que possui API, banco de dados SQL Server. Ambos estão operando em um ambiente Linux, Utilizando ambiente de produção.
+Refatoração da regra de negócio para a atualização de produtos e categorias, agora utilizando uma abordagem que verifica se o usuário realmente editou uma propriedade de uma coleção. Espaços em branco, por exemplo, serão descartados da coleção se forem apenas um descuido do usuário. Assim, somente os itens com propriedades realmente modificadas serão mantidos.
 
-Foram implementadas melhorias nas exceções de domínio, agora validando as coleções de produtos tanto para adição quanto para atualização. O sistema verifica se os produtos já existem e se a coleção de atualização foi efetivamente modificada antes de aplicar as mudanças no banco de dados. Em caso de conflitos, o middleware retorna o status code, message apropriado, garantindo um tratamento de erros.
-
-Diversos testes automatizados foram feitos utilizando o Postman. Em anexo, estão alguns prints dos resultados, demonstrando o progresso e a evolução da API.
-
-![alt text](image.png)
-
-
-Resultado mais detalhado do ultimo teste:
-[text](<New Collection Product..postman_test_run.json>)
+Além disso, houve melhorias no código para torná-lo mais legível. O método AreProductCollectionsEqual foi removido e substituído por uma verificação de coleções usando LINQ. A verificação das propriedades da coleção é realizada pelo método AreProductEqual, que por sua vez chama o método NormalizeString para garantir que as comparações sejam precisas.
 
 
 ## Roadmap
@@ -62,6 +54,7 @@ Resultado mais detalhado do ultimo teste:
    - ✔️ Teste Automatizados.
    - ✔️ Tratamento de erros do dominio Product .
    - ✔️ Tratamento de erros middleware.
+   - ⏳ Implementar logs.
    - ⏳ Teste unitário e implementações CRUD para AddCartItem. 
    - ⏳ Teste unitário e implementações CRUD para Address.
    - ⏳ Teste unitário e implementações CRUD para Assessment. 

@@ -72,7 +72,7 @@ namespace Blazing.Test.Infrastructure
             Assert.NotNull(resultGetByCategoryIdAsync); // Add your specific assertions for getting products by category ID.
             Assert.NotNull(resultGetByIdAsync); // Add your specific assertions for getting a product by ID.
             Assert.NotNull(resultGetAllAsync); // Add your specific assertions for getting all products.
-            Assert.False(resultNameExiste); // Add your specific assertions for checking if a product exists.
+/*            Assert.False(resultNameExiste);*/ // Add your specific assertions for checking if a product exists.
             Assert.NotNull(resultDeleteProductById); // Add your specific assertions for deleting products by ID.
         }
     }

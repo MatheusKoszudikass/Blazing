@@ -55,7 +55,13 @@ namespace Blazing.Api.Middleware
             {
                 await HandleProductException(context, ex);
             }
-            else
+            else if (ex is CategoryExceptions.CategoryAlreadyExistsException ||
+                     ex is CategoryExceptions.IdentityCategoryInvalidException ||
+                     ex is CategoryExceptions.CategoryInvalidExceptions ||
+                     ex is CategoryExceptions.CategoryInvalidExceptions)
+            {
+                await HandleCategoryException(context, ex);
+            }
             {
                 // You can add handling for other types of exceptions here if needed.
                 await HandleProductException(context, ex);
@@ -93,5 +99,35 @@ namespace Blazing.Api.Middleware
             await HandleExceptionAsync(context, ex, message);
         }
 
+        private async Task HandleCategoryException(HttpContext context, DomainException ex)
+        {
+            string? message = string.Empty;
+
+            switch (ex)
+            {
+                case CategoryExceptions.CategoryAlreadyExistsException:
+                    context.Response.StatusCode = StatusCodes.Status409Conflict;
+                    message = ex.Message;
+                    break;
+                case CategoryExceptions.CategoryNotFoundException:
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    message = ex.Message;
+                    break;
+                case CategoryExceptions.IdentityCategoryInvalidException:
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    message = ex.Message;
+                    break;
+                case CategoryExceptions.CategoryInvalidExceptions:
+                    context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+                    message = ex.Message;
+                    break;
+                default:
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    message = "An unexpected error occurred.";
+                    break;
+            }
+
+            await HandleExceptionAsync(context, ex, message);
+        }
     }
 }

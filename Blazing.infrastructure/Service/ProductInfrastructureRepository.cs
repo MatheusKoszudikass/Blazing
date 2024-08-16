@@ -35,11 +35,11 @@ namespace Blazing.infrastructure.Service
 
             var productResult  = _dependencyInjection._mapper.Map<IEnumerable<Product>>(productDtoResult);
 
-                await _dependencyInjection._appContext.Products.AddRangeAsync(productResult, cancellationToken);
+            await _dependencyInjection._appContext.Products.AddRangeAsync(productResult, cancellationToken);
 
-                await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
+            await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
-                return productDtoResult;
+            return productDtoResult;
 
         
         }
@@ -50,7 +50,7 @@ namespace Blazing.infrastructure.Service
         /// <param name="id">The ID of the product to update.</param>
         /// <param name="productDtos">The updated product.</param>
         /// <returns>The updated product.</returns>
-        public async Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDtos, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDtoUpdate, CancellationToken cancellationToken)
         {
             if (!id.Any())
             {
@@ -69,13 +69,13 @@ namespace Blazing.infrastructure.Service
                 .ToListAsync(cancellationToken);
 
             // Mapeia os produtos existentes para DTOs
-            var productDtoUpdate = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(existingProducts);
+            var productDtos = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(existingProducts);
 
             // Atualiza os produtos usando o serviço
-            var productDtoUpdateResult = await _productAppService.UpdateProduct(id, productDtoUpdate, productDtos, cancellationToken);
+            var productDtoUpdateResult = await _productAppService.UpdateProduct(id, productDtos, productDtoUpdate, cancellationToken);
 
             // Atualiza as propriedades das entidades existentes com base nos DTOs atualizados
-            foreach (var updatedProductDto in productDtoUpdateResult)
+            foreach (var updatedProductDto in productDtoUpdate)
             {
                 var existingProduct = existingProducts.SingleOrDefault(p => p.Id == updatedProductDto.Id);
                 if (existingProduct != null)
@@ -134,10 +134,9 @@ namespace Blazing.infrastructure.Service
 
             foreach (var product in products)
             {
-                // Remover entidades relacionadas
                 if (product.Dimensions != null)
                 {
-                    _dependencyInjection._appContext.Dimensions.RemoveRange(product.Dimensions);
+                    _dependencyInjection._appContext.Dimensions.Remove(product.Dimensions);
                 }
 
                 if (product.Assessment != null)
@@ -146,25 +145,26 @@ namespace Blazing.infrastructure.Service
 
                     if (product.Assessment.RevisionDetail != null && product.Assessment.RevisionDetail.Any())
                     {
-                        _dependencyInjection._appContext.Revisions.RemoveRange(product.Assessment.RevisionDetail.ToList());
+                        _dependencyInjection._appContext.Revisions.RemoveRange(product.Assessment.RevisionDetail);
                     }
                 }
 
                 if (product.Attributes != null)
                 {
-                    _dependencyInjection._appContext.Attributes.RemoveRange(product.Attributes);
+                    _dependencyInjection._appContext.Attributes.Remove(product.Attributes);
                 }
 
                 if (product.Availability != null)
                 {
-                    _dependencyInjection._appContext.Availabilities.RemoveRange(product.Availability);
+                    _dependencyInjection._appContext.Availabilities.Remove(product.Availability);
                 }
 
                 if (product.Image != null)
                 {
-                    _dependencyInjection._appContext.Image.RemoveRange(product.Image);
+                    _dependencyInjection._appContext.Image.Remove(product.Image);
                 }
             }
+
 
             var productDtos = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
@@ -234,9 +234,9 @@ namespace Blazing.infrastructure.Service
 
             var nameExists = await _dependencyInjection._appContext.Products.AnyAsync(p => product.Select(x => x.Name).Contains(p.Name),cancellationToken);
             
-             await _productAppService.ExistsProduct(nameExists, productId, product);
+             await _productAppService.ExistsProduct(productId, nameExists, product);
 
-            return nameExists;
+            return productId;
         }
     }
     #endregion

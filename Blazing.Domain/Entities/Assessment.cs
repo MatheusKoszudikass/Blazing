@@ -20,7 +20,7 @@ namespace Blazing.Domain.Entities
         [ForeignKey("RevisionId")]
         public Guid RevisionId { get; set; }
 
-        public IEnumerable<Revision> RevisionDetail { get; set; } = [];
+        public IEnumerable<Revision> RevisionDetail { get; set; } = new List<Revision>();
     }
     #endregion
 }

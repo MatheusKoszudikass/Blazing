@@ -14,7 +14,7 @@ namespace Blazing.Domain.Entities
         [StringLength(100, ErrorMessage = "O nome da categoria não pode ter mais de 100 caracteres.")]
         public string? Name { get; set; }
 
-        public ICollection<Product?> Products { get; set; } = [];
+        public IEnumerable<Product?> Products { get; set; } = new List<Product?>();
     }
     #endregion
 }

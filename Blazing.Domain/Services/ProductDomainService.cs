@@ -3,6 +3,7 @@ using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.Produtos;
 using Blazing.Domain.Interfaces.Repository;
 using Blazing.Domain.Interfaces.Services;
+using System.Text;
 
 namespace Blazing.Domain.Services
 {
@@ -20,9 +21,7 @@ namespace Blazing.Domain.Services
         public async Task<IEnumerable<Product?>> Add(IEnumerable<Product> product)
         {
             if (product == null || !product.Any())
-            {
                 throw new ProductExceptions.ProductNotFoundException([]);
-            }
 
             try
             { 
@@ -32,43 +31,35 @@ namespace Blazing.Domain.Services
                    item.DataUpdated = null;
                    item.DataDeleted = null;
                     if (item.Dimensions != null)
-                    {
                         item.Dimensions.DataCreated = DateTime.Now;
                         item.Dimensions.DataUpdated = null;
                         item.Dimensions.DataDeleted = null;
-                    }
 
                     if (item.Assessment != null)
-                    {
                         item.Assessment.DataCreated = DateTime.Now;
                         item.Assessment.DataUpdated = null;
                         item.Assessment.DataDeleted = null;
-                    }
 
                     if (item.Attributes != null)
-                    {
                         item.Attributes.DataCreated = DateTime.Now;
                         item.Attributes.DataUpdated = null;
                         item.Attributes.DataDeleted = null;
-                    }
+                    
 
                     if (item.Availability != null)
-                    {
                         item.Availability.DataCreated = DateTime.Now;
                         item.Availability.DataUpdated = null;
                         item.Availability.DataDeleted = null;
-                    }
+                    
 
                     if (item.Image != null)
-                    {
                         item.Image.DataCreated = DateTime.Now;
                         item.Image.DataUpdated = null;
                         item.Image.DataDeleted = null;
-                    }
+                    
                 }
-                await Task.CompletedTask;
 
-                return product;
+                return await Task.FromResult(product);
             }
             catch (DomainException)
             {
@@ -87,93 +78,41 @@ namespace Blazing.Domain.Services
         /// <exception cref="ProductExceptions.ProductNotFoundException">Thrown when no products matching the provided IDs are found in the current product collection.</exception>
         /// <exception cref="ProductExceptions.ProductAlreadyExistsException">Thrown when the updated product collection is identical to the existing product collection.</exception>
         /// <exception cref="DomainException">Thrown when a domain-related error occurs during the update process.</exception>
-        public async Task<IEnumerable<Product?>> Update(IEnumerable<Guid> id, IEnumerable<Product> products, IEnumerable<Product> productsUpdate)
+        public async Task<IEnumerable<Product?>> Update(IEnumerable<Guid> id, IEnumerable<Product> originalProducts, IEnumerable<Product> updatedProducts)
         {
             if (id == null || !id.Any() || id.Contains(Guid.Empty))
-            {
                 throw new ProductExceptions.IdentityProductInvalidException(id ?? []);
-            }
-            else if (!products.Any(p => id.Contains(p.Id)) || !productsUpdate.Any(p => id.Contains(p.Id)))
-            {
-                if (!products.Any(p => id.Contains(p.Id)))
-                {
-                    throw new ProductExceptions.IdentityProductInvalidException(id ?? []);
-                }
-                if (!productsUpdate.Any(p => id.Contains(p.Id)))
-                {
-                    throw new ProductExceptions.ProductNotFoundException(products);
-                }
-            }
-            else if (AreProductCollectionsEqual(products, productsUpdate))
-            {
-                throw new ProductExceptions.ProductAlreadyExistsException(productsUpdate);
-            }
+
+
+            var productsDict  = originalProducts.Where(p => id.Contains(p.Id)).ToDictionary(p => p.Id);
+            var updatesDict = updatedProducts.Where(p => id.Contains(p.Id)).ToDictionary(p => p.Id);
+
+            if (productsDict.Count == 0)
+                throw new ProductExceptions.ProductNotFoundException(originalProducts);
 
             try
-                {
-                    var productDict = products.ToDictionary(p => p.Id);
-                    var productUpdateDict = productsUpdate.ToDictionary(p => p.Id);
-                    var filteredId = id.Where(id => id != Guid.Empty).ToList();
-
-                    var acceptedProducts = new List<Product>();
-
-                    foreach (var productId in filteredId)
-                    {
-
-                        if (productDict.TryGetValue(productId, out var originalProduct) &&
-                            productUpdateDict.TryGetValue(productId, out var updatedProduct))
-                        {
-                                updatedProduct.DataCreated = originalProduct.DataCreated;
-                                updatedProduct.Assessment.DataCreated = originalProduct.Assessment.DataCreated;
-                                updatedProduct.Dimensions.DataCreated = originalProduct.Dimensions.DataCreated;
-                                updatedProduct.Attributes.DataCreated = originalProduct.Attributes.DataCreated;
-                                updatedProduct.Availability.DataCreated = originalProduct.Availability.DataCreated;
-                                updatedProduct.Image.DataCreated = originalProduct.Image.DataCreated;
-
-                                updatedProduct.DataUpdated = DateTime.Now;
-                                updatedProduct.Assessment.DataUpdated = DateTime.Now;
-                                updatedProduct.Dimensions.DataUpdated = DateTime.Now;
-                                updatedProduct.Attributes.DataUpdated = DateTime.Now;
-                                updatedProduct.Availability.DataUpdated = DateTime.Now;
-                                updatedProduct.Image.DataUpdated = DateTime.Now;
-
-
-                                acceptedProducts.Add(updatedProduct);
-                            
-                        }
-                    }
-
-                    await Task.CompletedTask;
-                    return acceptedProducts;
-                }
-                catch (DomainException)
-                {
-                    throw;
-                }
-            
-        }
-
-        /// <summary>
-        /// Determines whether two collections of products are equal by comparing their contents.
-        /// </summary>
-        /// <param name="collection1">The first collection of products.</param>
-        /// <param name="collection2">The second collection of products.</param>
-        /// <returns><c>true</c> if the collections contain the same products with the same properties; otherwise, <c>false</c>.</returns>
-        private static bool AreProductCollectionsEqual(IEnumerable<Product> collection1, IEnumerable<Product> collection2)
-        {
-            var list1 = collection1.ToList();
-            var list2 = collection2.ToList();
-
-            if (list1.Count != list2.Count)
-                return false;
-
-            for (int i = 0; i < list1.Count; i++)
             {
-                if (!AreProductsEqual(list1[i], list2[i]))
-                    return false;
-            }
+                var modifiedProducts = updatesDict
+                 .Where(update => productsDict.TryGetValue(update.Key, out var original) && !AreProductsEqual(original, update.Value))
+                 .Select(update =>
+                 {
+                   var updatedProduct = update.Value;
+                   updatedProduct.DataCreated = productsDict[update.Key].DataCreated;
+                   updatedProduct.DataUpdated = DateTime.Now;
+                   return updatedProduct;
+                 }).ToList();
 
-            return true;
+                if(modifiedProducts.Count == 0)
+                   throw new ProductExceptions.ProductAlreadyExistsException(updatedProducts);
+
+                return await Task.FromResult(modifiedProducts);
+            }
+            catch (DomainException)
+            {
+
+                throw;
+            }
+            
         }
 
         /// <summary>
@@ -187,48 +126,55 @@ namespace Blazing.Domain.Services
             if (product1 == null && product2 == null)
                 return false;
 
-            return product1.Id == product2.Id &&
-                   product1.Name == product2.Name &&
-                   product1.Description == product2.Description &&
-                   product1.Price == product2.Price &&
-                   product1.Currency == product2.Currency &&
-                   product1.CategoryId == product2.CategoryId &&
-                   product1.Brand == product2.Brand &&
-                   product1.SKU == product2.SKU &&
-                   product1.StockQuantity == product2.StockQuantity &&
-                   product1.StockLocation == product2.StockLocation &&
+            return   product1.Id == product2.Id &&
+                     NormalizeString(product1.Name) == NormalizeString(product2.Name) &&
+                     NormalizeString(product1.Description) == NormalizeString(product2.Description) &&
+                     NormalizeString(product1.Price.ToString()) == NormalizeString(product2.Price.ToString()) &&
+                     NormalizeString(product1.Currency) == NormalizeString(product2.Currency) &&
+                     product1.CategoryId == product2.CategoryId &&
+                     NormalizeString(product1.Brand) == NormalizeString(product2.Brand) &&
+                     NormalizeString(product1.SKU) == NormalizeString(product2.SKU) &&
+                     product1.StockQuantity == product2.StockQuantity &&
+                     NormalizeString(product1.StockLocation) == NormalizeString(product2.StockLocation) &&
 
-                   product1.DimensionsId == product2.DimensionsId &&
+                     product1.DimensionsId == product2.DimensionsId &&
 
-                   product1.Dimensions.Weight == product2.Dimensions.Weight &&
-                   product1.Dimensions.Height == product2.Dimensions.Height &&
-                   product1.Dimensions.Width == product2.Dimensions.Width &&
-                   product1.Dimensions.Depth == product2.Dimensions.Depth &&
-                   product1.Dimensions.Unit == product2.Dimensions.Unit &&
+                     product1.Dimensions.Weight == product2.Dimensions.Weight &&
+                     product1.Dimensions.Height == product2.Dimensions.Height &&
+                     product1.Dimensions.Width == product2.Dimensions.Width &&
+                     product1.Dimensions.Depth == product2.Dimensions.Depth &&
+                     NormalizeString(product1.Dimensions.Unit) == NormalizeString(product2.Dimensions.Unit) &&
 
-                   product1.AssessmentId == product2.AssessmentId &&
+                     product1.AssessmentId == product2.AssessmentId &&
 
-                   product1.Assessment.Average == product2.Assessment.Average &&
-                   product1.Assessment.NumberOfReviews == product2.Assessment.NumberOfReviews &&
-                   product1.Assessment.RevisionId == product2.Assessment.RevisionId &&
+                     product1.Assessment.Average == product2.Assessment.Average &&
+                     product1.Assessment.NumberOfReviews == product2.Assessment.NumberOfReviews &&
+                     product1.Assessment.RevisionId == product2.Assessment.RevisionId &&
 
-                   product1.AttributesId == product2.AttributesId &&
+                     product1.AttributesId == product2.AttributesId &&
 
-                   product1.Attributes.Color == product2.Attributes.Color &&
-                   product1.Attributes.Material == product2.Attributes.Material &&
-                   product1.Attributes.Model == product2.Attributes.Model &&
+                     NormalizeString(product1.Attributes.Color) == NormalizeString(product2.Attributes.Color) &&
+                     NormalizeString(product1.Attributes.Material) == NormalizeString(product2.Attributes.Material) &&
+                     NormalizeString(product1.Attributes.Model) == NormalizeString(product2.Attributes.Model) &&
 
-                   product1.AvailabilityId == product2.AvailabilityId &&
+                     product1.AvailabilityId == product2.AvailabilityId &&
 
-                   product1.Availability.IsAvailable == product2.Availability.IsAvailable &&
-                   product1.Availability.EstimatedDeliveryDate == product2.Availability.EstimatedDeliveryDate &&
+                     product1.Availability.IsAvailable == product2.Availability.IsAvailable &&
+                     product1.Availability.EstimatedDeliveryDate == product2.Availability.EstimatedDeliveryDate &&
 
-                   product1.ImageId == product2.ImageId &&
+                     product1.ImageId == product2.ImageId &&
 
-                   product1.Image.Url == product2.Image.Url &&
-                   product1.Image.AltText == product2.Image.AltText;
+                     NormalizeString(product1.Image.Url) == NormalizeString(product2.Image.Url) &&
+                     NormalizeString(product1.Image.AltText) == NormalizeString(product2.Image.AltText);
         }
 
+        private static string NormalizeString(string? input)
+        {
+            if (input == null)
+                return string.Empty;
+            else
+                return input.Trim().Normalize(NormalizationForm.FormC).ToLowerInvariant();
+        }
 
         /// <summary>
         /// Deletes products based on a list of provided IDs.
@@ -240,52 +186,37 @@ namespace Blazing.Domain.Services
         public async Task<IEnumerable<Product?>> Delete(IEnumerable<Guid> id, IEnumerable<Product> product)
         {
             if (!id.Any())
-            {
                 throw new ProductExceptions.IdentityProductInvalidException(id);
-            }
+
             else if(!product.Any(p => p.Id == id.FirstOrDefault()))
-            {
                 throw new ProductExceptions.ProductNotFoundException(product);
-            }
+
 
             try
             {
-                if (!product.Any())
-                {
-                    throw new ProductExceptions.ProductNotFoundException([]);
-                }
 
                 foreach (var item in product)
                 {
                     item.DataDeleted = DateTime.Now;
 
                     if (item.Dimensions != null)
-                    {
                         item.Dimensions.DataDeleted = DateTime.Now;
-                    }
+                    
 
                     if (item.Assessment != null)
-                    {
                         item.Assessment.DataDeleted = DateTime.Now;
-                    }
 
                     if (item.Attributes != null)
-                    {
                         item.Attributes.DataDeleted = DateTime.Now;
-                    }
 
                     if (item.Availability != null)
-                    {
                         item.Availability.DataDeleted = DateTime.Now;
-                    }
 
                     if (item.Image != null)
-                    {
                         item.Image.DataDeleted = DateTime.Now;
-                    }
                 }
-                await Task.CompletedTask;
-                return product;
+
+                return await Task.FromResult(product);
 
 
             }
@@ -305,27 +236,23 @@ namespace Blazing.Domain.Services
         public async Task<IEnumerable<Product?>> GetById(IEnumerable<Guid> id, IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (!id.Any())
-            {
                 throw new ProductExceptions.IdentityProductInvalidException(id);
-            }
+           
 
             var firstId = id.FirstOrDefault();
             if (!product.Any(p => p.Id == firstId))
-            {
                 if (!product.Any(c => c.CategoryId == firstId))
-                {
                     throw new ProductExceptions.ProductNotFoundException(product);
-                }
-            }
+                
+         
 
             try
             {
                 if (!product.Any())
-                {
                     throw new ProductExceptions.ProductNotFoundException(product);
-                }
-                await Task.CompletedTask;
-                return product;
+                
+     
+                return await Task.FromResult(product);
             }
             catch (DomainException)
             {
@@ -343,23 +270,20 @@ namespace Blazing.Domain.Services
         public async Task<IEnumerable<Product?>> GetAll(IEnumerable<Product> products, CancellationToken cancellationToken)
         {
             if (!products.Any())
-            {
                 throw new ProductExceptions.ProductNotFoundException(products);
-            }
+            
 
             try
             {
                 if (products == null || !products.Any())
-                {
                     throw new ProductExceptions.ProductNotFoundException(products ?? []);
-                }
 
-                await Task.CompletedTask;
-                return products;
+
+                return await Task.FromResult(products);
             }
-            catch (Exception ex)
+            catch (DomainException)
             {
-                throw new DomainException(ex.Message);
+                throw;
             }
         }
 
@@ -367,28 +291,24 @@ namespace Blazing.Domain.Services
         /// <summary>
         /// Checks if a specified condition exists asynchronously by calling the repository's ExistsAsync method.
         /// </summary>
-        /// <param name="exists">A boolean value indicating whether the condition to check exists.</param>
+        /// <param name="existsName">A boolean value indicating whether the condition to check exists.</param>
         /// <returns>A Task representing the asynchronous operation, with a boolean result indicating the existence of the condition.</returns>
         /// <exception cref="DomainException">Thrown when an error occurs during the repository check.</exception>
         public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Product> products)
         {
             try
             {
-             
-                if (id)
-                {
-                    var produtsId = products.Select(p => p.Id).ToList();
-                    throw new ProductExceptions.IdentityProductInvalidException(produtsId, id);
-                }
-                else if (existsName)
-                {
-                    var nameProduct = products.Select(p => p.Name).ToList();
+                var produtsId = products.Select(p => p.Id).ToList();
+                var nameProduct = products.Select(p => p.Name).ToList();
 
+                if (id)
+                    throw new ProductExceptions.IdentityProductInvalidException(produtsId, id);
+                
+                else if (existsName)
                     throw new ProductExceptions.ProductAlreadyExistsException(nameProduct);
 
-                }
-                await Task.CompletedTask;
-                return id;
+
+                return await Task.FromResult(id);
             }
             catch (DomainException)
             {
