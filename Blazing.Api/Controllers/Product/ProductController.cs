@@ -1,9 +1,8 @@
 ﻿using Blazing.Api.Erros.ControllerExceptions;
 using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.Product;
 using Blazing.infrastructure.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace Blazing.Api.Controllers.Product
 {
@@ -15,8 +14,8 @@ namespace Blazing.Api.Controllers.Product
     /// <remarks>
     /// This class requires an instance of ILogger and IProductAppService to be passed in the constructor.
     /// </remarks>
-    /// <typeparam name="TLogger">The type of the logger.</typeparam>
-    /// <typeparam name="TProdutoAppService">The type of the product app service.</typeparam>
+    /// <typeparam name="_logger">The type of the logger.</typeparam>
+    /// <typeparam name="_productInfraRepository">The type of the product infrastructure service.</typeparam>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController(ILogger<ProductController> logger, IProductInfrastructureRepository produtoRepository) : ControllerBase
@@ -30,116 +29,82 @@ namespace Blazing.Api.Controllers.Product
         /// </summary>
         /// <param name="newProductsDto">List of DTOs of productsDto to be added.</param>
         /// <returns>List of added productsDto.</returns>
-        /// <response code="400">If the productsDto list is null or empty.</response>
-        /// <response code="500">If an error occurs while adding productsDto.</response>
         [HttpPost]
         public async Task<ActionResult<IEnumerable<ProductDto>>> AddProducts([FromBody] IEnumerable<ProductDto> newProductsDto, CancellationToken cancellationToken)
         {
-               var ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            var productAdded = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
+            var productName = productAdded.Select(x => x.Name).ToList();
 
-               var produtosAdicionados = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
-            _logger.LogInformation("Produtos adicionados com sucesso. Total de produtos: {TotalProducts}. IP: {IpAddress}",
-                    produtosAdicionados.Count(), ipAddress);
+            _logger.LogInformation("Produtos adicionados com sucesso. nomes dos produtos: {names}. Total de produtos: {TotalProducts}.",
+                     productName, productAdded.Count());
 
-            return Ok(produtosAdicionados); // Status 200
+            return Ok(productAdded); // Status 200
         }
-
         /// <summary>
         /// Edit an existing productDto.
         /// </summary>
-        /// <param name="id">ID of the productDto to be edited.</param>
+        /// <param name="id">The identifier of the productDto to be edited.</param>
         /// <param name="productDto">DTO with updated productDto data.</param>
         /// <returns>DTO of the edited product.</returns>
-        /// <response code="400">If the productDto  is null or the ID does not match.</response>F
-        /// <response code="404">If the productDto is not found.</response>
-        /// <response code="200">If the productDto is edited successfully.</response>
-        [HttpPut("Update")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduto([FromBody]IEnumerable<ProductDto> productDto, CancellationToken cancellationToken)
+        [HttpPut("update")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduto([FromBody] IEnumerable<ProductDto> updateProductDto, CancellationToken cancellationToken)
         {
-            var id = productDto.Select(x => x.Id).ToList();
-            if (productDto == null || id.Count == 0)
-            {
-                return BadRequest(); // Status 400
-            }
+            var id = updateProductDto.Select(x => x.Id).ToList();
+            var productUpdated = await _productInfraRepository.UpdateProduct(id, updateProductDto, cancellationToken);
 
-            var editProduto = await _productInfraRepository.UpdateProduct(id, productDto, cancellationToken);
+            _logger.LogInformation("Produtos foram atualizados com sucesso utilizando os identificadores: {id}. Total de produtos editados: {TotalProducts}.",
+                id, productUpdated.Count());
 
-            if (editProduto == null)
-            {
-                return NotFound(); // Status 404
-            }
-
-            return Ok(editProduto); // Status 200
+            return Ok(productUpdated); // Status 200
         }
 
         /// <summary>
-        /// Gets productsDto from a specific categoryDto.
+        /// Get productsDto from a specific categoryDto.
         /// </summary>
-        /// <param name="id">categoryDto ID.</param>
-        /// <returns>List of products in the categoryDto.</returns>
-        /// <response code="404">If no categoryDto is found.</response>
-        /// <response code="500">If an error occurs while getting the categoryDto.</response>
+        /// <param name="id">the identifier of categoryDto.</param>
+        /// <returns>List of products in categoryDto.</returns>
         [HttpGet("categoryId")]
-        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId([FromQuery]IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            try
-            {
-                var categorias = await _productInfraRepository.GetProductsByCategoryId(id, cancellationToken);
+            var produtcsCategories = await _productInfraRepository.GetProductsByCategoryId(id, cancellationToken);
 
-                if (categorias == null || !categorias.Any())
-                {
-                    return NotFound("Categorias não foi encontrado"); // Status 404
-                }
+            _logger.LogInformation("Produtos recuperados com sucesso utilizando os identificadores de categoria: {id}. Total de produtos: {TotalProducts}.",
+                id, produtcsCategories.Count());
 
-                return Ok(categorias); // Status 200
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor"); // Status 500
-            }
+            return Ok(produtcsCategories); // Status 200
         }
 
 
         /// <summary>
         /// Deletes a productDto list.
         /// </summary>
-        /// <param name="id">List of productDto IDs to be deleted.</param>
-        /// <returns>List of excluded productDto.</returns>
-        /// <response code="404">If no productDto are found to delete.</response>
-        /// <response code="500">If an error occurs while deleting productDto.</response>
-        [HttpDelete("Delete")]
-        public async Task<ActionResult<ProductDto>> DeleteProducts([FromBody] IEnumerable<Guid> id, CancellationToken cancellationToken)
+        /// <param name="id">List of productDto and the identifier to delete.</param>
+        /// <returns>List of deleted productDto.</returns>
+        [HttpDelete("delete")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> DeleteProducts([FromBody] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
- 
-                var produtoDeletados = await _productInfraRepository.DeleteProducts(id, cancellationToken);
-                _logger.LogInformation($"Produtos excluídos com sucesso. Total de produtos excluídos: {produtoDeletados.Count()}.");
-                return Ok(produtoDeletados); // Status 200
+            var productsDeleted = await _productInfraRepository.DeleteProducts(id, cancellationToken);
+
+            _logger.LogInformation("Produtos excluídos com sucesso dos identificadores: {id}. Total de produtos excluídos: {TotalProducts}.",
+                id, productsDeleted.Count());
+
+            return Ok(productsDeleted); // Status 200
         }
 
         /// <summary>
-        /// Gets a specific productDto by ID.
+        /// Gets a specific productDto by its identifier.
         /// </summary>
-        /// <param name="id">productDto ID.</param>
+        /// <param name="id">the identifier of the productDto.</param>
         /// <returns>productDto.</returns>
-        /// <response code="404">If the productDto is not found.</response>
-        /// <response code="500">If an error occurs while retrieving the productDto.</response>
-        [HttpGet("ProductId")]
-        public async Task<ActionResult<ProductDto>> GetProductById([FromQuery]IEnumerable<Guid> id, CancellationToken cancellationToken)
+        [HttpGet("productId")]
+        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductById([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            try
-            {
-                var produto = await _productInfraRepository.GetProductById(id, cancellationToken);
-                if (produto == null)
-                {
-                    return NotFound("Produto não localizado"); // Status 404
-                }
+            var productsById = await _productInfraRepository.GetProductById(id, cancellationToken);
 
-                return Ok(produto); // Status 200
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro interno do servidor"); // Status 500
-            }
+            _logger.LogInformation("Produtos recuperados com sucesso utilizando o identificador: {id}. Total de produtos: {TotalProducts}.",
+                id, productsById.Count());
+
+            return Ok(productsById); // Status 200
         }
 
 
@@ -147,20 +112,15 @@ namespace Blazing.Api.Controllers.Product
         /// Gets all productsDto.
         /// </summary>
         /// <returns>List of product DTOs.</returns>
-        /// <response code="404">If no productDto are found.</response>
-        /// <response code="500">If an error occurs while retrieving productDto.</response>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(CancellationToken cancellationToken)
         {
-           
-                var produtos = await _productInfraRepository.GetAll(cancellationToken);
-                if (!produtos.Any())
-                {
-                   throw new NotFoundException("Produtos não encontrados");
-                }
+            var products = await _productInfraRepository.GetAll(cancellationToken);
 
-                return Ok(produtos); // Status 200
-            
+            _logger.LogInformation("Produtos recuperados com sucesso. Total de produtos: {TotalProducts}.",
+                products.Count());
+
+            return Ok(products); // Status 200
         }
     }
     #endregion
