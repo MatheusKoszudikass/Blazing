@@ -3,7 +3,9 @@ using Blazing.Api.Erros.ControllerExceptions;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.Produtos;
 using Serilog;
+using Serilog.Context;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace Blazing.Api.Middleware
@@ -21,23 +23,49 @@ namespace Blazing.Api.Middleware
             _env = env;
         }
 
+        public void InforLogs(HttpContext context)
+        {
+            //Client IP information.
+            string ipAddress = context.Connection.RemoteIpAddress.ToString();
+            string port = context.Connection.RemotePort.ToString();
+
+            //Information about the operating system where the API is running.
+            string osVersion = RuntimeInformation.OSDescription.ToString();
+            string processorCount = Environment.ProcessorCount.ToString();
+
+            //Browser header information.
+            string userAgent = context.Request.Headers["User-Agent"].ToString();
+            string acceptLanguage = context.Request.Headers["Accept-Language"].ToString();
+            string referer = context.Request.Headers["Referer"].ToString();
+            string authorization = context.Request.Headers["Authorization"].ToString();
+
+            //Adding ingormation to the log.
+            LogContext.PushProperty("IpAddress", ipAddress);
+            LogContext.PushProperty("Port", port);
+            LogContext.PushProperty("Operating System", osVersion);
+            LogContext.PushProperty("Core Processors", processorCount);
+            LogContext.PushProperty("User Agent", userAgent);
+            LogContext.PushProperty("Accept Language", acceptLanguage);
+            LogContext.PushProperty("Referer", referer);
+            LogContext.PushProperty("Authorization", authorization);
+
+        }
+
         public async Task InvokeAsync(HttpContext context)
         {
-            var ipAddress = context.Connection.RemoteIpAddress.ToString();
-
             try
             {
+                InforLogs(context);
                 await _next(context);
             }
             catch (DomainException ex)
             {
-                await DetermineException(context, ex, ipAddress);
+                await DetermineException(context, ex);
             }
         }
 
         private async Task HandleExceptionAsync(HttpContext context, DomainException ex, string message)
         {
-            _logger.LogError(ex, ex.Message);
             context.Response.ContentType = "application/json";
 
             var response = _env.IsDevelopment()
@@ -50,14 +78,14 @@ namespace Blazing.Api.Middleware
             await context.Response.WriteAsync(json);
         }
 
-        private async Task DetermineException(HttpContext context, DomainException ex, string ipAddress)
+        private async Task DetermineException(HttpContext context, DomainException ex)
         {
             if (ex is ProductExceptions.ProductAlreadyExistsException ||
                   ex is ProductExceptions.IdentityProductInvalidException ||
                   ex is ProductExceptions.ProductInvalidException ||
                   ex is ProductExceptions.ProductNotFoundException)
             {
-                await HandleProductException(context, ex, ipAddress);
+                await HandleProductException(context, ex);
             }
             else if (ex is CategoryExceptions.CategoryAlreadyExistsException ||
                      ex is CategoryExceptions.IdentityCategoryInvalidException ||
@@ -68,16 +96,15 @@ namespace Blazing.Api.Middleware
             }
         }
 
-        private async Task HandleProductException(HttpContext context, DomainException ex, string ipAddress)
+        private async Task HandleProductException(HttpContext context, DomainException ex)
         {
             string? message = string.Empty;
-
 
             switch (ex)
             {
                 case ProductExceptions.ProductAlreadyExistsException:
                     context.Response.StatusCode = StatusCodes.Status409Conflict;
-                    _logger.LogWarning(message: ex.Message, ipAddress);
+                    _logger.LogError(ex.Message);
                     message = ex.Message;
                     break;
                 case ProductExceptions.ProductNotFoundException:
@@ -86,7 +113,7 @@ namespace Blazing.Api.Middleware
                     break;
                 case ProductExceptions.IdentityProductInvalidException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    Log.Warning(ex.Message, ipAddress);
+                    Log.Warning(ex.Message);
                     message = ex.Message;
                     break;
                 case ProductExceptions.ProductInvalidException:
