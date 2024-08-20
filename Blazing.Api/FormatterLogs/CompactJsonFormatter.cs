@@ -29,10 +29,10 @@ namespace Blazing.Api.FormatterLogs
             if (valueFormatter == null) throw new ArgumentNullException(nameof(valueFormatter));
 
             // Ajusta o timestamp para UTC +3
-            var adjustedTimestamp = logEvent.Timestamp.ToUniversalTime().AddHours(3);
+            var adjustedTimestamp = DateTime.Now;
 
             output.Write("{\"@t\":\"");
-            output.Write(adjustedTimestamp.ToString("O"));
+            output.Write(adjustedTimestamp.ToString());
             output.Write("\",\"@mt\":");
             JsonValueFormatter.WriteQuotedJsonString(logEvent.MessageTemplate.Text, output);
 
