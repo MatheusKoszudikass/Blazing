@@ -29,7 +29,7 @@ namespace Blazing.Application.Mappings
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Revision, RevisionDto>().ReverseMap();
             CreateMap<ShoppingCart, ShoppingCartDto>().ReverseMap();
-            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, ApplicationUser>().ReverseMap();
         }
     }
     #endregion
