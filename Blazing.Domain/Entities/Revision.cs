@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blazing.Domain.Entities
 {
@@ -8,8 +9,7 @@ namespace Blazing.Domain.Entities
     /// </summary>
     public sealed class Revision : BaseEntity
     {
-
-        public string? User { get; set; }
+        public User? User { get; set; }
 
         public string? Comment { get; set; }
 

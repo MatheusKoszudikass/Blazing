@@ -30,7 +30,7 @@ namespace Blazing.Application.Services
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDto);
 
-            var categoryResult = await _categoriaDomainService.Add(category);
+            var categoryResult = await _categoriaDomainService.Add(category, cancellationToken);
 
             categoryDto = _mapper.Map<IEnumerable<CategoryDto>>(categoryResult);
 
@@ -48,7 +48,7 @@ namespace Blazing.Application.Services
             var category =  _mapper.Map<IEnumerable<Category>>(categoryDtos);
             var categoryUpdate = _mapper.Map<IEnumerable<Category>>(categoriesDtosUpdate);
 
-            var categoryResultDto =  await _categoriaDomainService.Update(id, category, categoryUpdate);
+            var categoryResultDto =  await _categoriaDomainService.Update(id, category, categoryUpdate, cancellationToken);
 
             categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(categoryResultDto);
 
@@ -64,7 +64,7 @@ namespace Blazing.Application.Services
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
 
-            await _categoriaDomainService.Delete(id, category);
+            await _categoriaDomainService.Delete(id, category, cancellationToken);
 
             return categoryDtos;
         }
@@ -102,10 +102,10 @@ namespace Blazing.Application.Services
         /// Checks if categories exist based on the provided flag.
         /// </summary>
         /// <param name="existsCategories">A boolean flag indicating the existence check.</param>
-        public async Task<bool?> ExistsCategories(bool id, bool existsName, IEnumerable<CategoryDto?> categoryDtos)
+        public async Task<bool?> ExistsCategories(bool id, bool existsName, IEnumerable<CategoryDto?> categoryDtos, CancellationToken cancellationToken)
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDtos);
-            await _categoriaDomainService.ExistsAsync(id, existsName, category);
+            await _categoriaDomainService.ExistsAsync(id, existsName, category, cancellationToken);
 
             await Task.CompletedTask;
             return id;

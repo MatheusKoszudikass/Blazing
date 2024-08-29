@@ -1,21 +1,11 @@
 using Blazing.Api.Dependencies;
 using Blazing.Api.Middleware;
-using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.Product;
-using Blazing.Application.Mappings;
-using Blazing.Application.Services;
-using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Services;
-using Blazing.Domain.Services;
-using Blazing.infrastructure.Data;
-using Blazing.infrastructure.Dependency;
-using Blazing.infrastructure.Interface;
-using Blazing.infrastructure.Service;
+using Blazing.Ecommerce.Dependency;
+using Blazing.Identity.Dependencies;
+using Blazing.Identity.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Serilog;
-using System.Configuration;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,8 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-
-builder.Services.AddConfig(builder.Configuration);
+builder.Services.AddConfigInfraEcommerce(builder.Configuration);
+builder.Services.AddConfigInfraIdentity(builder.Configuration);
+builder.Services.AddConfigApi(builder.Configuration);
 
 //Add Serilog.
 Log.Logger = new LoggerConfiguration()
@@ -74,6 +65,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapIdentityApi<ApplicationUser>();
 
 app.Run();
 

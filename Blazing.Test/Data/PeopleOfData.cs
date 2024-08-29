@@ -1,5 +1,7 @@
 ﻿using Blazing.Application.Dto;
 using Blazing.Domain.Entities;
+using Blazing.Identity.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace BlazingPizzaTest.Data
 {
@@ -24,6 +26,15 @@ namespace BlazingPizzaTest.Data
         public Guid AttributesId1 { get; set; } = Guid.NewGuid();
         public Guid AvailabilityId1 { get; set; } = Guid.NewGuid();
         public Guid ImageId1 { get; set; } = Guid.NewGuid();
+
+
+        //User
+        public Guid UserId { get; set; } = Guid.NewGuid();
+        public Guid UserId1 { get; set; } = Guid.NewGuid();
+        public Guid SecurityStampId { get; set; } = Guid.NewGuid();
+        public Guid SecurityStampId1 { get; set; } = Guid.NewGuid();
+        public Guid ConcurrencyStampId { get; set; } = Guid.NewGuid();
+        public Guid ConcurrencyStampId1 { get; set; } = Guid.NewGuid();
 
         #region Categories
         // Method to add categories.
@@ -116,6 +127,17 @@ namespace BlazingPizzaTest.Data
                 Unit = "cm"
             },
             AssessmentId = AssessmentId,
+            Assessment = new()
+            {
+                Id = AssessmentId,
+                RevisionDetail = 
+                [
+                    new()
+                    {
+
+                    }
+                ]
+            },
             AttributesId = AttributesId,
             Attributes = new ()
             {
@@ -161,7 +183,18 @@ namespace BlazingPizzaTest.Data
                 Depth = 30.0,
                 Unit = "cm"
             },
-            AssessmentId = AssessmentId,
+            AssessmentId = AssessmentId1,
+            Assessment = new()
+            {
+                Id = AssessmentId1,
+                RevisionDetail =
+                [
+                    new()
+                    {
+
+                    }
+                ]
+            },
             AttributesId = AttributesId1,
             Attributes = new ()
             {
@@ -216,6 +249,18 @@ namespace BlazingPizzaTest.Data
                             Unit = "cm Edit"
                         },
                         AssessmentId = AssessmentId,
+                        Assessment = new()
+                        {
+                           Id = AssessmentId,
+               
+                            RevisionDetail =
+                            [
+                                new()
+                                {
+                                  
+                                }
+                            ]
+                        },
                         AttributesId = AttributesId,
                         Attributes = new()
                         {
@@ -263,6 +308,17 @@ namespace BlazingPizzaTest.Data
                             Unit = "cm Edit"
                         },
                         AssessmentId = AssessmentId1,
+                        Assessment = new()
+                        {
+                            Id = AssessmentId1,
+                            RevisionDetail =
+                            [
+                                new()
+                                {
+
+                                }
+                            ]
+                        },
                         AttributesId = AttributesId1,
                         Attributes = new()
                         {
@@ -296,6 +352,156 @@ namespace BlazingPizzaTest.Data
                 ProductId1, ProductId
 
             ];
+        }
+
+
+        //User
+        public IEnumerable<Guid> GetUserId()
+        {
+            return
+            [
+               UserId, UserId1
+            ];
+        }
+
+        public IEnumerable<UserDto> GetAddUsers()
+        {
+            return
+            [
+                new ()
+                {
+                        Id = UserId,
+                        UserName = "john.doe",
+                        Email = "john.doe@example.com",
+                        FirstName = "John",
+                        LastName = "Doe",
+                        PasswordHash = "Matheus@2017",
+                        PhoneNumber = "123-456-7890",
+                        Addresses =
+                        [
+                            new()
+                            {
+                                UserId = UserId,
+                                Street = "Avenida Paulista",
+                                Number = "1000",
+                                Complement = "Apto 101",
+                                Neighborhood = "Bela Vista",
+                                City = "São Paulo",
+                                State = "SP",
+                                PostalCode = "01310-100"
+                            }
+                        ]
+                },
+                new ()
+                {
+                        Id = UserId1,
+                        UserName = "jane.smith",
+                        Email = "jane.smith@example.com",
+                        FirstName = "Jane",
+                        LastName = "Smith",
+                        PasswordHash = "Matheus@2017",
+                        PhoneNumber = "987-654-3210",
+                        Addresses = 
+                        [
+                            new ()
+                            {
+                                UserId = UserId1,
+                                Street = "Avenida Paulista",
+                                Number = "1000",
+                                Complement = "Apto 101",
+                                Neighborhood = "Bela Vista",
+                                City = "São Paulo",
+                                State = "SP",
+                                PostalCode = "01310-100"
+
+                            },
+                            new ()
+                            {
+                                UserId = UserId1,
+                                Street = "Rua XV de Novembro",
+                                Number = "500",
+                                Complement = "Sala 305",
+                                Neighborhood = "Centro",
+                                City = "Curitiba",
+                                State = "PR",
+                                PostalCode = "80020-310"
+                            }
+                        ]
+                }
+            ];
+        }
+
+        public IEnumerable<UserDto> GetUpdateUsers()
+        {
+            return
+            [
+                new ()
+                {
+                        Id = UserId,
+                        UserName = "john.doe edit",
+                        Email = "john.edit@example.com",
+                        FirstName = "John edit",
+                        LastName = "Doe edit",
+                        PhoneNumber = "123-456-7891",
+                        Addresses = 
+                        [
+                            new()
+                            {
+                                UserId = UserId,
+                                Street = "Avenida Paulista edit",
+                                Number = "1000",
+                                Complement = "Apto 101 edit",
+                                Neighborhood = "Bela Vista edit",
+                                City = "São Paulo edit",
+                                State = "SP edit",
+                                PostalCode = "01310-100"
+                            }
+                        ]
+                },
+                new ()
+                {
+                        Id = UserId1,
+                        UserName = "jane.smith edit",
+                        Email = "jane.edit@example.com",
+                        FirstName = "Jane edit",
+                        LastName = "Smith edit",
+                        PhoneNumber = "987-654-3212",
+                        Addresses =
+                        [
+                            new ()
+                            {
+                                UserId = UserId1,
+                                Street = "Avenida Paulista edit",
+                                Number = "1000",
+                                Complement = "Apto 101 edit",
+                                Neighborhood = "Bela Vista edit",
+                                City = "São Paulo edit",
+                                State = "SP edit",
+                                PostalCode = "01310-100"
+
+                            },
+                            new ()
+                            {
+                                UserId = UserId1,
+                                Street = "Rua XV de Novembro edit",
+                                Number = "500",
+                                Complement = "Sala 305 edit",
+                                Neighborhood = "Centro edit",
+                                City = "Curitiba edit ",
+                                State = "PR edit",
+                                PostalCode = "80020-310"
+                            }
+                        ]
+                }
+            ];
+        }
+
+        public string GeneratePasswordHash(string password)
+        {
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var user = new ApplicationUser();
+
+            return passwordHasher.HashPassword(user, password);
         }
         #endregion
     }

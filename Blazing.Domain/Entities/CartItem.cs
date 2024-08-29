@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blazing.Domain.Entities
 {
@@ -14,10 +15,6 @@ namespace Blazing.Domain.Entities
 
         [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser pelo menos 1.")]
         public int Quantity { get; set; }
-
-        [Required(ErrorMessage = "O ID do carrinho de compras é obrigatório.")]
-        public Guid ShoppingCartId { get; set; }
-        public ShoppingCart? ShoppingCart { get; set; }
     }
     #endregion
 }

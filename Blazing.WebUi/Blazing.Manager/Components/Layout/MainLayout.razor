@@ -1,0 +1,82 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudThemeProvider @ref="themeProvider" @bind-IsDarkMode="@_isDarkMode"  Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Primary" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3">Blazing</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Primary" Edge="Edge.End" />
+        <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" ThumbIcon="@(_isDarkMode ? Icons.Material.Filled.BrightnessLow : @Icons.Material.Filled.BrightnessHigh)" />
+        <AuthorizeView>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent  Class="mt-16 pa-4">
+            @Body
+    </MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private bool _drawerOpen = true;
+
+    private bool IsUserLoggedIn { get; set; }
+
+    private bool _isDarkMode;
+
+    private string currentTheme = "";
+
+    private MudThemeProvider themeProvider = new();
+
+    [CascadingParameter]
+    private RouteData RouteData { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await themeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
+        
+    }
+
+    private MudTheme _theme = new MudTheme
+        {
+            PaletteLight = new ()
+            {
+                Primary = "#000000",
+                Secondary = Colors.Amber.Lighten2,
+                AppbarBackground = Colors.Blue.Darken4,
+                // Success = Colors.Green.Accent4,
+                // Warning = Colors.Orange.Darken3,
+                // Error = Colors.Red.Accent4,
+                // Info = Colors.Blue.Accent3
+            },
+
+            PaletteDark = new ()
+            {
+                Primary = "#C0C0C0"
+            },
+        };
+
+    private void DrawerToggle() => _drawerOpen = !_drawerOpen;
+
+}
+
+

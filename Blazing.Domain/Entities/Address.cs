@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blazing.Domain.Entities
 {
@@ -8,6 +9,8 @@ namespace Blazing.Domain.Entities
     /// </summary>
     public sealed class Address : BaseEntity
     {
+        public Guid UserId { get; set; }
+        public User? User { get; set; }
 
         [Required(ErrorMessage = "Rua é obrigatória.")]
         [StringLength(100, ErrorMessage = "Rua deve ter entre 3 e 100 caracteres.", MinimumLength = 3)]
@@ -36,9 +39,6 @@ namespace Blazing.Domain.Entities
         [Required(ErrorMessage = "CEP é obrigatorio.")]
         [StringLength(8, ErrorMessage = "CEP deve ter 8 caracteres.", MinimumLength = 8)]
         public string? PostalCode { get; set; }
-
-        [Required(ErrorMessage = "Usuario é obrigatorio.")]
-        public Guid UserId { get; set; }
     }
     #endregion
 }

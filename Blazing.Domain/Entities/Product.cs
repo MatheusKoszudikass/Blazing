@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Blazing.Domain.Entities
 {
@@ -56,6 +57,7 @@ namespace Blazing.Domain.Entities
         /// <summary>
         /// Product review details.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Assessment? Assessment { get; set; }
 
         /// <summary>
@@ -85,7 +87,7 @@ namespace Blazing.Domain.Entities
         /// Product image identifier.
         /// </summary>
         [ForeignKey("Image")]
-        public Guid ImageId { get; set; } 
+        public Guid ImageId { get; set; }
 
         /// <summary>
         /// Product image.

@@ -23,13 +23,12 @@ namespace Blazing.Application.Mappings
             CreateMap<BaseEntity, BaseEntityDto>().ReverseMap();
             CreateMap<CartItem, CartItemDto>().ReverseMap();
             CreateMap<Category, CategoryDto>().ReverseMap();
-            CreateMap<CreateCategory, CreateCategoryDto>().ReverseMap();
             CreateMap<Dimensions, DimensionsDto>().ReverseMap();
             CreateMap<Image, ImageDto>().ReverseMap();
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Revision, RevisionDto>().ReverseMap();
             CreateMap<ShoppingCart, ShoppingCartDto>().ReverseMap();
-            CreateMap<User, ApplicationUser>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
         }
     }
     #endregion

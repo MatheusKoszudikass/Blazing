@@ -18,7 +18,7 @@ namespace Blazing.Domain.Services
         /// </summary>
         /// <param name="categories">The categories to be added.</param>
         /// <returns>The added categories.</returns>
-        public async Task<IEnumerable<Category?>> Add(IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> Add(IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
             {
@@ -49,7 +49,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The IDs of the categories to update.</param>
         /// <param name="categories">The categories with updated information.</param>
         /// <returns>The updated categories.</returns>
-        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> ids, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories)
+        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> ids, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories, CancellationToken cancellationToken)
         {
             if (ids == null || !ids.Any() || ids.Contains(Guid.Empty))
                 throw new CategoryExceptions.IdentityCategoryInvalidException(ids ?? []);
@@ -119,7 +119,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The IDs of the categories to delete.</param>
         /// <param name="categories">The categories to delete.</param>
         /// <returns>The deleted categories.</returns>
-        public async Task<IEnumerable<Category?>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (id == null)
             {
@@ -210,15 +210,14 @@ namespace Blazing.Domain.Services
         /// </summary>
         /// <param name="exists">The boolean value to check.</param>
         /// <returns>True if the value exists, false otherwise.</returns>
-        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories)
+        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
-
             try
             {
                 if (id)
                 {
                     var categoriesId = categories.Select(c => c.Id).ToList();
-                    throw new CategoryExceptions.IdentityCategoryInvalidException(categoriesId, id);
+                    throw  DomainException.IdentityInvalidException.Identities(categoriesId);
                 }
                 else if (existsName)
                 {

@@ -1,0 +1,34 @@
+﻿﻿@using Microsoft.AspNetCore.Identity
+@inherits LayoutComponentBase
+
+
+<MudThemeProvider  @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudMainContent Class="mt-16 pa-4">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _isDarkMode = true;
+
+    private MudThemeProvider _mudThemeProvider = new();
+
+    private MudTheme _theme = new MudTheme
+    {
+        PaletteLight = new ()
+        {
+            Primary = "#000000"
+        },
+
+        PaletteDark = new()
+        {
+           Primary = "#FFFFFF"
+        }
+
+    };
+}

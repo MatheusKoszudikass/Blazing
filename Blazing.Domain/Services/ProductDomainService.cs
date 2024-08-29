@@ -18,7 +18,7 @@ namespace Blazing.Domain.Services
         /// <param name="product">The list of products to be added.</param>
         /// <returns>The list of products that have been added.</returns>
         /// <exception cref="ProductNotFoundExceptions">Thrown when the product list is null or empty.</exception>
-        public async Task<IEnumerable<Product?>> Add(IEnumerable<Product> product)
+        public async Task<IEnumerable<Product?>> Add(IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (product == null || !product.Any())
                 throw new ProductExceptions.ProductNotFoundException([]);
@@ -31,31 +31,41 @@ namespace Blazing.Domain.Services
                    item.DataUpdated = null;
                    item.DataDeleted = null;
                     if (item.Dimensions != null)
+                    {
                         item.Dimensions.DataCreated = DateTime.Now;
                         item.Dimensions.DataUpdated = null;
                         item.Dimensions.DataDeleted = null;
+                    }
 
                     if (item.Assessment != null)
+                    {
                         item.Assessment.DataCreated = DateTime.Now;
                         item.Assessment.DataUpdated = null;
                         item.Assessment.DataDeleted = null;
+                    }
 
                     if (item.Attributes != null)
+                    {
                         item.Attributes.DataCreated = DateTime.Now;
                         item.Attributes.DataUpdated = null;
                         item.Attributes.DataDeleted = null;
-                    
+                    }
+
 
                     if (item.Availability != null)
+                    {
                         item.Availability.DataCreated = DateTime.Now;
                         item.Availability.DataUpdated = null;
                         item.Availability.DataDeleted = null;
-                    
+                    }
+
 
                     if (item.Image != null)
+                    {
                         item.Image.DataCreated = DateTime.Now;
                         item.Image.DataUpdated = null;
                         item.Image.DataDeleted = null;
+                    }
                     
                 }
 
@@ -78,7 +88,7 @@ namespace Blazing.Domain.Services
         /// <exception cref="ProductExceptions.ProductNotFoundException">Thrown when no products matching the provided IDs are found in the current product collection.</exception>
         /// <exception cref="ProductExceptions.ProductAlreadyExistsException">Thrown when the updated product collection is identical to the existing product collection.</exception>
         /// <exception cref="DomainException">Thrown when a domain-related error occurs during the update process.</exception>
-        public async Task<IEnumerable<Product?>> Update(IEnumerable<Guid> id, IEnumerable<Product> originalProducts, IEnumerable<Product> updatedProducts)
+        public async Task<IEnumerable<Product?>> Update(IEnumerable<Guid> id, IEnumerable<Product> originalProducts, IEnumerable<Product> updatedProducts, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any() || id.Contains(Guid.Empty))
                 throw new ProductExceptions.IdentityProductInvalidException(id ?? []);
@@ -183,7 +193,7 @@ namespace Blazing.Domain.Services
         /// <returns>The list of products that were deleted.</returns>
         /// <exception cref="IdentityProductInvalidException">Thrown when the list of provided IDs is empty.</exception>
         /// <exception cref="ProductNotFoundExceptions">Throws when no product is deleted.</exception>
-        public async Task<IEnumerable<Product?>> Delete(IEnumerable<Guid> id, IEnumerable<Product> product)
+        public async Task<IEnumerable<Product?>> Delete(IEnumerable<Guid> id, IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (!id.Any())
                 throw new ProductExceptions.IdentityProductInvalidException(id);
@@ -294,7 +304,7 @@ namespace Blazing.Domain.Services
         /// <param name="existsName">A boolean value indicating whether the condition to check exists.</param>
         /// <returns>A Task representing the asynchronous operation, with a boolean result indicating the existence of the condition.</returns>
         /// <exception cref="DomainException">Thrown when an error occurs during the repository check.</exception>
-        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Product> products)
+        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Product> products, CancellationToken cancellationToken)
         {
             try
             {

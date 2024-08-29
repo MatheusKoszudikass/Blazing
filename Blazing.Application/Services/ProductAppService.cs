@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Blazing.Application.Dto;
 using Blazing.Application.Interfaces.Product;
-using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Entities;
+using Blazing.Domain.Interfaces.Services;
 
 namespace Blazing.Application.Services
 {
@@ -22,7 +22,7 @@ namespace Blazing.Application.Services
         {
             var products = _mapper.Map<IEnumerable<Product>>(productDto);
 
-            var productResut = await _produtoDomainService.Add(products);
+            var productResut = await _produtoDomainService.Add(products, cancellationToken);
 
             var productDtoResult = _mapper.Map<IEnumerable<ProductDto>>(productResut);
 
@@ -40,7 +40,7 @@ namespace Blazing.Application.Services
             var products = _mapper.Map<IEnumerable<Product>>(productDto);
             var productsUpdate = _mapper.Map<IEnumerable<Product>>(productsDtoUpdate);
 
-            var productResultDto =  await _produtoDomainService.Update(id, products, productsUpdate);
+            var productResultDto = await _produtoDomainService.Update(id, products, productsUpdate, cancellationToken);
 
             productDto = _mapper.Map<IEnumerable<ProductDto>>(productResultDto);
 
@@ -66,17 +66,17 @@ namespace Blazing.Application.Services
         /// <summary>
         /// Deletes productsDto based on a list of provided IDs.
         /// </summary>
-        /// <param name="ids">The list of productDto IDs to be deleted.</param>
+        /// <param name="id">The list of productDto IDs to be deleted.</param>
         /// <returns>The list of productsDto that were deleted.</returns>
-        public async Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id, IEnumerable<ProductDto> productDto,  CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id, IEnumerable<ProductDto> productDto, CancellationToken cancellationToken)
         {
             var products = _mapper.Map<IEnumerable<Product>>(productDto);
 
-            var productResult = await _produtoDomainService.Delete(id, products);
+            var productResult = await _produtoDomainService.Delete(id, products, cancellationToken);
 
-            var productDtoResult = _mapper.Map<IEnumerable<ProductDto>>(productResult);
+            productDto = _mapper.Map<IEnumerable<ProductDto>>(productResult);
 
-            return productDtoResult;
+            return productDto;
 
         }
 
@@ -113,11 +113,11 @@ namespace Blazing.Application.Services
         /// Checks if productsDto exist based on the provided flag.
         /// </summary>
         /// <param name="existsProducts">A boolean flag indicating the existence check.</param>
-        public async Task<bool?> ExistsProduct(bool id, bool nameExists, IEnumerable<ProductDto> productDtos)
+        public async Task<bool?> ExistsProduct(bool id, bool nameExists, IEnumerable<ProductDto> productDtos, CancellationToken cancellationToken)
         {
-           var product = _mapper.Map<IEnumerable<Product>>(productDtos);
+            var product = _mapper.Map<IEnumerable<Product>>(productDtos);
 
-           await _produtoDomainService.ExistsAsync(id, nameExists, product);
+            await _produtoDomainService.ExistsAsync(id, nameExists, product, cancellationToken);
 
             return nameExists;
         }

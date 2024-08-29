@@ -1,6 +1,6 @@
-﻿using Blazing.Api.Erros.ControllerExceptions;
-using Blazing.Application.Dto;
-using Blazing.infrastructure.Interface;
+﻿using Blazing.Application.Dto;
+using Blazing.Ecommerce.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -29,9 +29,10 @@ namespace Blazing.Api.Controllers.Product
         /// </summary>
         /// <param name="newProductsDto">List of DTOs of productsDto to be added.</param>
         /// <returns>List of added productsDto.</returns>
-        [HttpPost]
+       [HttpPost]
         public async Task<ActionResult<IEnumerable<ProductDto>>> AddProducts([FromBody] IEnumerable<ProductDto> newProductsDto, CancellationToken cancellationToken)
         {
+            
             var productAdded = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
             var productName = productAdded.Select(x => x.Name).ToList();
 
@@ -40,6 +41,7 @@ namespace Blazing.Api.Controllers.Product
 
             return Ok(productAdded); // Status 200
         }
+
         /// <summary>
         /// Edit an existing productDto.
         /// </summary>
@@ -112,6 +114,7 @@ namespace Blazing.Api.Controllers.Product
         /// Gets all productsDto.
         /// </summary>
         /// <returns>List of product DTOs.</returns>
+        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(CancellationToken cancellationToken)
         {

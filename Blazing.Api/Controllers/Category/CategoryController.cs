@@ -1,5 +1,5 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.infrastructure.Interface;
+using Blazing.Ecommerce.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blazing.Api.Controllers.Category

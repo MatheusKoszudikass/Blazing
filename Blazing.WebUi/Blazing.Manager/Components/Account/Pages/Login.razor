@@ -1,0 +1,179 @@
+﻿@page "/Account/Login"
+
+
+@using System.ComponentModel.DataAnnotations
+@using Blazing.Manager.Components.Layout
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILogger<Login> Logger
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@inject UserManager<ApplicationUser> UserManager
+
+<PageTitle>Log in</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
+<MudGrid Justify="Justify.Center">
+    <MudItem md="6" sm="1">
+        <StatusMessage Message="@errorMessage" />
+        <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+            <DataAnnotationsValidator />
+            <MudGrid Justify="Justify.Center">
+                <MudItem md="12">
+                    <MudStaticTextField For="@(() => Input.Email)" @bind-Value="Input.Email" 
+                        Label="Email" Placeholder="name@example.com" Variant= "Variant.Outlined" 
+                        UserAttributes="@(new() { { "autocomplete", "true" }, { "aria-required", "true" } } )" />
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticTextField For="@(() => Input.Password)" @bind-Value="Input.Password" 
+                        Label="Password" InputType="InputType.Password" Placeholder="password" Variant="Variant.Outlined"
+                        UserAttributes="@(new() { { "autocomplete", "current-password" }, { "aria-required", "true" } } )" />
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticCheckBox For="@(() => Input.RememberMe)" @bind-Value="Input.RememberMe">Remember me</MudStaticCheckBox>
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticButton Variant="Variant.Filled" Color="Color.Success" FullWidth="true" FormAction="FormAction.Submit">Entrar</MudStaticButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+
+@*         <MudGrid Class="mt-4">
+            <MudItem md="12">
+                <MudLink Href="Account/ForgotPassword">Esqueceu a senha ?</MudLink><br />
+             <MudLink Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</MudLink><br />
+                <MudLink Href="Account/ResendEmailConfirmation">Resend email confirmation</MudLink>
+            </MudItem>
+        </MudGrid> *@
+    </MudItem>
+    <MudItem md="6">
+        @* <ExternalLoginPicker /> *@
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? errorMessage;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        {
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+    }
+
+    // public async Task LoginUser()
+    // {
+    //     // This doesn't count login failures towards account lockout
+    //     // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+    //     var user = await UserManager.FindByEmailAsync(Input.Email);
+    //     if (user != null)
+    //     {
+    //         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+
+    //         if (result.Succeeded)
+    //         {
+
+    //             if (HttpContext.Request.Cookies.ContainsKey("FirstLogin")) 
+    //             {
+    //                 if (!user.EmailConfirmed)
+    //                 {
+
+    //                     await SignInManager.SignOutAsync();
+    //                     Logger.LogInformation("Você precisa confirmar seu e-mail antes de fazer login.");
+    //                     errorMessage = "Você precisa confirmar seu e-mail antes de fazer login.";
+
+    //                 }
+
+    //                 var cookieOptions = new CookieOptions
+    //                 {
+    //                         HttpOnly = true,
+    //                         Expires = DateTimeOffset.UtcNow.AddYears(1)
+    //                 };
+    //                 HttpContext.Response.Cookies.Append("FirstLogin", "true", cookieOptions);
+    //             }
+    //             RedirectManager.RedirectTo(ReturnUrl);
+
+    //         }
+    //         else if (result.RequiresTwoFactor)
+    //         {
+    //             RedirectManager.RedirectTo(
+    //                 "Account/LoginWith2fa",
+    //                 new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+
+    //         }
+    //         else if (result.IsLockedOut)
+    //         {
+    //             Logger.LogWarning("Conta de usuário bloqueada.");
+
+    //             RedirectManager.RedirectTo("Account/Lockout");
+    //         }
+    //         else
+    //         {
+    //             errorMessage = "Erro: tentativa de login inválida.";
+    //         }
+
+    //     }
+    // }
+
+    public async Task LoginUser()
+    {
+        // This doesn't count login failures towards account lockout
+        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+        if (result.Succeeded)
+        {
+            Logger.LogInformation("Usuário logado.");
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
+        else if (result.RequiresTwoFactor)
+        {
+            RedirectManager.RedirectTo(
+                "Account/LoginWith2fa",
+                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+        }
+        else if (result.IsLockedOut)
+        {
+
+            Logger.LogWarning("Conta de usuário bloqueada.");
+
+            RedirectManager.RedirectTo("Account/Lockout");
+        }
+        else
+        {
+
+            errorMessage = "Erro: tentativa de login inválida.";
+
+        }
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+
+        [EmailAddress(ErrorMessage = "Email e obrigatório")]
+
+        [Display(Name = "Email")]
+
+        public string Email { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
+}
