@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Blazing.Domain.Exceptions
 {
-    #region Exceptions
+    #region DomainExceptions
     /// <summary>
     /// Represents exceptions that occur within the domain.
     /// </summary>
@@ -40,6 +41,48 @@ namespace Blazing.Domain.Exceptions
         public DomainException(string message, StackTrace stackTrace) : base(message)
         {
             ExceptionStackTrace = stackTrace;
+        }
+
+        /// <summary>
+        /// Exception that is thrown when a Identity Guid is found to be invalid.
+        /// </summary>
+        public class IdentityInvalidException : DomainException
+        {
+            private IdentityInvalidException(string message)
+                : base(message) { }
+
+            public static IdentityInvalidException Identity(Guid id)
+            {
+                return new IdentityInvalidException(
+                    $"Identificador inválido: {id}");
+            }
+
+            public static IdentityInvalidException Identities(IEnumerable<Guid> id)
+            {
+                return new IdentityInvalidException(
+                    $"Identificadores inválidos: {string.Join(", ", id)}");
+            }
+
+            public static IdentityInvalidException IdentitiesExist(IEnumerable<Guid> id)
+            {
+                return new IdentityInvalidException(
+                    $"Identificadores já existem: {string.Join(", ", id)}");
+            }
+        }
+
+        /// <summary>
+        /// Exception that is thrown when a list of is empty or not found.
+        /// </summary>
+        public class NotFoundException : DomainException
+        {
+            private NotFoundException(string message)
+                : base(message) { }
+
+            public static NotFoundException FoundException()
+            {
+                 return new NotFoundException(
+                    $"A lista está vazia.");
+            }
         }
     }
     #endregion

@@ -18,7 +18,7 @@ namespace Blazing.Domain.Services
         /// </summary>
         /// <param name="categories">The categories to be added.</param>
         /// <returns>The added categories.</returns>
-        public async Task<IEnumerable<Category?>> Add(IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> Add(IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
             {
@@ -33,6 +33,7 @@ namespace Blazing.Domain.Services
                 }
 
                 await Task.CompletedTask;
+
                 return  categories;
             }
             catch (DomainException)
@@ -49,7 +50,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The IDs of the categories to update.</param>
         /// <param name="categories">The categories with updated information.</param>
         /// <returns>The updated categories.</returns>
-        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> ids, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories)
+        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> ids, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories, CancellationToken cancellationToken)
         {
             if (ids == null || !ids.Any() || ids.Contains(Guid.Empty))
                 throw new CategoryExceptions.IdentityCategoryInvalidException(ids ?? []);
@@ -74,7 +75,7 @@ namespace Blazing.Domain.Services
                 .ToList();
 
                 if (modifiedCategories.Count == 0)
-                    throw new CategoryExceptions.CategoryAlreadyExistsException(updatedCategories);
+                    throw  CategoryExceptions.CategoryAlreadyExistsException.FromExistingUsers(updatedCategories);
 
                 return await Task.FromResult(modifiedCategories);
             }
@@ -82,7 +83,6 @@ namespace Blazing.Domain.Services
             {
                 throw;
             }
-    
         }
 
         /// <summary>
@@ -100,10 +100,14 @@ namespace Blazing.Domain.Services
             return category1.Id == category2.Id &&
                   NormalizeString(category1.Name) == NormalizeString(category2.Name) &&
                    category1.DataCreated == category2.DataCreated;
-
         }
 
-
+        /// <summary>
+        /// Normalizes a string by trimming leading and trailing whitespace, normalizing it to the specified form,
+        /// and converting it to lowercase.
+        /// </summary>
+        /// <param name="input">The string to normalize. Can be null.</param>
+        /// <returns>The normalized string. If the input is null, returns an empty string.</returns>
         private static string NormalizeString(string? input)
         {
             if (input == null)
@@ -111,6 +115,7 @@ namespace Blazing.Domain.Services
             else
                 return input.Trim().Normalize(NormalizationForm.FormC).ToLowerInvariant();
         }
+
         /// <summary>
         /// Deletes categories based on their IDs.
         /// Throws IdentityCategoryInvalidException if no IDs are provided,
@@ -119,7 +124,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The IDs of the categories to delete.</param>
         /// <param name="categories">The categories to delete.</param>
         /// <returns>The deleted categories.</returns>
-        public async Task<IEnumerable<Category?>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories)
+        public async Task<IEnumerable<Category?>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (id == null)
             {
@@ -206,25 +211,29 @@ namespace Blazing.Domain.Services
         }
 
         /// <summary>
-        /// Checks if a given boolean value exists in the repository.
+        /// Checks if the specified categories exist in the repository.
+        /// Throws a CategoryAlreadyExistsException if the categories already exist.
         /// </summary>
-        /// <param name="exists">The boolean value to check.</param>
-        /// <returns>True if the value exists, false otherwise.</returns>
-        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories)
+        /// <param name="id">A flag indicating whether the categories exist by ID.</param>
+        /// <param name="existsName">A flag indicating whether the categories exist by name.</param>
+        /// <param name="categories">The categories to check for existence.</param>
+        /// <param name="cancellationToken">A cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation, with a result indicating whether the categories exist (<c>true</c> if they exist, <c>false</c> otherwise).</returns>
+        /// <exception cref="CategoryAlreadyExistsException">Thrown if the categories already exist.</exception>
+        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
-
             try
             {
                 if (id)
                 {
                     var categoriesId = categories.Select(c => c.Id).ToList();
-                    throw new CategoryExceptions.IdentityCategoryInvalidException(categoriesId, id);
+                    throw  CategoryExceptions.CategoryAlreadyExistsException.FromExistingId(categoriesId);
                 }
                 else if (existsName)
                 {
                     var categoriesName = categories.Select(c => c.Name).ToList();
 
-                    throw new CategoryExceptions.CategoryAlreadyExistsException(categoriesName);
+                    throw  CategoryExceptions.CategoryAlreadyExistsException.FromExistingName(categoriesName);
                 }
 
                 await Task.CompletedTask;

@@ -7,14 +7,9 @@ using Serilog.Parsing;
 
 namespace Blazing.Api.FormatterLogs
 {
-    public class CompactJsonFormatter : ITextFormatter
+    public class CompactJsonFormatter(JsonValueFormatter? valueFormatter = null) : ITextFormatter
     {
-        readonly JsonValueFormatter _valueFormatter;
-
-        public CompactJsonFormatter(JsonValueFormatter? valueFormatter = null)
-        {
-            _valueFormatter = valueFormatter ?? new JsonValueFormatter(typeTagName: "$type");
-        }
+        readonly JsonValueFormatter _valueFormatter = valueFormatter ?? new JsonValueFormatter(typeTagName: "$type");
 
         public void Format(LogEvent logEvent, TextWriter output)
         {
@@ -28,7 +23,6 @@ namespace Blazing.Api.FormatterLogs
             if (output == null) throw new ArgumentNullException(nameof(output));
             if (valueFormatter == null) throw new ArgumentNullException(nameof(valueFormatter));
 
-            // Ajusta o timestamp para UTC +3
             var adjustedTimestamp = DateTime.Now;
 
             output.Write("{\"@t\":\"");

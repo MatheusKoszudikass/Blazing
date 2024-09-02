@@ -1,5 +1,6 @@
 ﻿using Blazing.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blazing.Application.Dto
 {
@@ -9,16 +10,9 @@ namespace Blazing.Application.Dto
     /// </summary>
     public sealed class CartItemDto : BaseEntityDto
     {
-        [Required(ErrorMessage = "O ID do produto é obrigatório.")]
         public Guid ProductId { get; set; }
         public ProductDto? Product { get; set; }
-
-        [Range(1, int.MaxValue, ErrorMessage = "A quantidade deve ser pelo menos 1.")]
         public int Quantity { get; set; }
-
-        [Required(ErrorMessage = "O ID do carrinho de compras é obrigatório.")]
-        public Guid ShoppingCartId { get; set; }
-        public ShoppingCartDto? ShoppingCart { get; set; }
     }
     #endregion
 }

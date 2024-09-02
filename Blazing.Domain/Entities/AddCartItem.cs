@@ -11,6 +11,7 @@ namespace Blazing.Domain.Entities
     public sealed class AddCartItem : BaseEntity
     {
         [Required]
+        [ForeignKey("ProductId")]
         public Guid ProductId { get; set; }
 
         public Product? Product { get; set; }

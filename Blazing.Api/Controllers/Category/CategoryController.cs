@@ -1,10 +1,12 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.infrastructure.Interface;
+using Blazing.Ecommerce.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blazing.Api.Controllers.Category
 {
     #region Controller categories.
+
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController(ILogger<CategoryController> logger, ICategoryInfrastructureRepository categoriaRepository) : ControllerBase
@@ -18,6 +20,7 @@ namespace Blazing.Api.Controllers.Category
         /// </summary>
         /// <param name="newCategorias">List of DTOs of the categories to be added..</param>
         /// <returns>List of categories added.</returns>
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<IEnumerable<CategoryDto?>>> AddCategories([FromBody] IEnumerable<CategoryDto> newCategorias, CancellationToken cancellationToken)
         {
@@ -36,6 +39,7 @@ namespace Blazing.Api.Controllers.Category
         /// Category ID and selected from the categories IEnumerable the id property to be updated.
         /// <param name="updateCategories">DTO containing the new category information.</param>
         /// <returns>DTO of the updated category.</returns>
+        [Authorize]
         [HttpPut("update")]
         public async Task<ActionResult<IEnumerable<CategoryDto?>>> UpdateCategories([FromBody] IEnumerable<CategoryDto> updateCategories, CancellationToken cancellationToken)
         {
@@ -53,6 +57,7 @@ namespace Blazing.Api.Controllers.Category
         /// </summary>
         /// <param name="id">List of category IDs to delete.</param>
         /// <returns>List of category DTOs to delete.</returns>
+        [Authorize]
         [HttpDelete("delete")]
         public async Task<ActionResult<CategoryDto?>> DeleteCategories(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
@@ -69,6 +74,7 @@ namespace Blazing.Api.Controllers.Category
         /// </summary>
         /// <param name="id">Category ID.</param>
         /// <returns>Category DTO.</returns>
+        [Authorize]
         [HttpGet("categoriesId")]
         public async Task<ActionResult<CategoryDto>> GetCategoryById([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
@@ -84,8 +90,9 @@ namespace Blazing.Api.Controllers.Category
         /// Get all categories.
         /// </summary>
         /// <returns>List of category DTOs.</returns>
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllProdutos(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories(CancellationToken cancellationToken)
         {
             var categories = await _categoriaRepository.GetAll(cancellationToken);
 

@@ -1,5 +1,6 @@
 ﻿using Blazing.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blazing.Application.Dto
 {
@@ -9,11 +10,8 @@ namespace Blazing.Application.Dto
     /// </summary>
     public sealed class RevisionDto : BaseEntityDto
     {
-        public string? User { get; set; }
-
+        public UserDto? User { get; set; }
         public string? Comment { get; set; }
-
-        [Required(ErrorMessage = "A data da revisão é obrigatória.")]
         public DateTime Date { get; set; } = DateTime.Now;
     } 
     #endregion

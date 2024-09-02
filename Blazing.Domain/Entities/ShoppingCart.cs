@@ -13,10 +13,7 @@ namespace Blazing.Domain.Entities
         [Required(ErrorMessage = "O identificador do usuário é obrigatório.")]
         public Guid UserId { get; set; }
 
-        /// <summary>
-        /// Details of the user associated with the shopping cart.
-        /// </summary>
-        public User? User { get; set; }
+        public User? User { get; set; } 
 
         [Required(ErrorMessage = "A lista de itens é obrigatória.")]
         public IEnumerable<CartItem?> Items { get; set; } = [];
@@ -24,9 +21,6 @@ namespace Blazing.Domain.Entities
         [Required(ErrorMessage = "O valor total é obrigatório.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalValue { get; set; }
-
-        [Required(ErrorMessage = "A data de criação é obrigatória.")]
-        public DateTime CreationDate { get; set; } = DateTime.Now;
     }
     #endregion
 }
