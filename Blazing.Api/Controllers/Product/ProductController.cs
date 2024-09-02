@@ -1,6 +1,6 @@
-﻿using Blazing.Api.Erros.ControllerExceptions;
-using Blazing.Application.Dto;
-using Blazing.infrastructure.Interface;
+﻿using Blazing.Application.Dto;
+using Blazing.Ecommerce.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -29,9 +29,11 @@ namespace Blazing.Api.Controllers.Product
         /// </summary>
         /// <param name="newProductsDto">List of DTOs of productsDto to be added.</param>
         /// <returns>List of added productsDto.</returns>
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<IEnumerable<ProductDto>>> AddProducts([FromBody] IEnumerable<ProductDto> newProductsDto, CancellationToken cancellationToken)
         {
+            
             var productAdded = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
             var productName = productAdded.Select(x => x.Name).ToList();
 
@@ -40,12 +42,14 @@ namespace Blazing.Api.Controllers.Product
 
             return Ok(productAdded); // Status 200
         }
+
         /// <summary>
         /// Edit an existing productDto.
         /// </summary>
         /// <param name="id">The identifier of the productDto to be edited.</param>
         /// <param name="productDto">DTO with updated productDto data.</param>
         /// <returns>DTO of the edited product.</returns>
+        [Authorize]
         [HttpPut("update")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduto([FromBody] IEnumerable<ProductDto> updateProductDto, CancellationToken cancellationToken)
         {
@@ -63,6 +67,7 @@ namespace Blazing.Api.Controllers.Product
         /// </summary>
         /// <param name="id">the identifier of categoryDto.</param>
         /// <returns>List of products in categoryDto.</returns>
+        [Authorize]
         [HttpGet("categoryId")]
         public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
@@ -80,6 +85,7 @@ namespace Blazing.Api.Controllers.Product
         /// </summary>
         /// <param name="id">List of productDto and the identifier to delete.</param>
         /// <returns>List of deleted productDto.</returns>
+        [Authorize]
         [HttpDelete("delete")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> DeleteProducts([FromBody] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
@@ -96,6 +102,7 @@ namespace Blazing.Api.Controllers.Product
         /// </summary>
         /// <param name="id">the identifier of the productDto.</param>
         /// <returns>productDto.</returns>
+        [Authorize]
         [HttpGet("productId")]
         public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductById([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
@@ -112,6 +119,7 @@ namespace Blazing.Api.Controllers.Product
         /// Gets all productsDto.
         /// </summary>
         /// <returns>List of product DTOs.</returns>
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(CancellationToken cancellationToken)
         {
