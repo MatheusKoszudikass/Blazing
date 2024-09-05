@@ -75,12 +75,12 @@ namespace Blazing.Api.Controllers.Category
         /// <param name="id">Category ID.</param>
         /// <returns>Category DTO.</returns>
         [Authorize]
-        [HttpGet("categoriesId")]
+        [HttpGet("id")]
         public async Task<ActionResult<CategoryDto>> GetCategoryById([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var categoria = await _categoriaRepository.GetCategoryById(id, cancellationToken);
 
-            _logger.LogInformation("Categorias recuperados com sucesso utilizando os indentificadores de categoria: {id}. Total de produtos: {TotalCategories}",
+            _logger.LogInformation("Categorias recuperados com sucesso utilizando os identificadores de categoria: {id}. Total de produtos: {TotalCategories}",
                 id, categoria.Count());
 
             return Ok(categoria); // Status 200

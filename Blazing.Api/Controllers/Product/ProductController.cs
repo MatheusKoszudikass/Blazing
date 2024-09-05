@@ -114,16 +114,15 @@ namespace Blazing.Api.Controllers.Product
             return Ok(productsById); // Status 200
         }
 
-
         /// <summary>
         /// Gets all productsDto.
         /// </summary>
         /// <returns>List of product DTOs.</returns>
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll([FromQuery]int page, int pageSize, CancellationToken cancellationToken)
         {
-            var products = await _productInfraRepository.GetAll(cancellationToken);
+            var products = await _productInfraRepository.GetAll(page, pageSize, cancellationToken);
 
             _logger.LogInformation("Produtos recuperados com sucesso. Total de produtos: {TotalProducts}.",
                 products.Count());

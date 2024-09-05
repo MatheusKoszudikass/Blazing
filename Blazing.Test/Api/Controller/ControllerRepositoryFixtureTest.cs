@@ -1,6 +1,5 @@
 ﻿using Blazing.Api.Controllers.Product;
-using Blazing.infrastructure.Data;
-using Blazing.infrastructure.Interface;
+using Blazing.Ecommerce.Repository;
 using Blazing.Test.Data;
 using BlazingPizzaTest.Controller;
 using BlazingPizzaTest.Data;

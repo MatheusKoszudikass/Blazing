@@ -7,8 +7,9 @@ namespace Blazing.Domain.Entities
     /// <summary>
     /// Entity responsible for the address.
     /// </summary>
-    public sealed class Address : BaseEntity
+    public class Address : BaseEntity
     {
+
         public Guid UserId { get; set; }
 
         [Required(ErrorMessage = "Rua é obrigatório.")]
@@ -38,6 +39,8 @@ namespace Blazing.Domain.Entities
         [Required(ErrorMessage = "CEP é obrigatório.")]
         [StringLength(8, ErrorMessage = "CEP deve ter 8 caracteres.", MinimumLength = 8)]
         public string? PostalCode { get; set; }
+
+
     }
     #endregion
 }
