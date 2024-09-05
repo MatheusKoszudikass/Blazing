@@ -1,6 +1,6 @@
 ﻿using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
-using Blazing.Domain.Exceptions.Produtos;
+using Blazing.Domain.Exceptions.Category;
 using Blazing.Domain.Interfaces.Repository;
 using Blazing.Domain.Interfaces.Services;
 using System.Text;
@@ -8,18 +8,18 @@ using System.Text;
 namespace Blazing.Domain.Services
 {
     #region Domain product service.
-    public class ProductDomainService: ICrudDomainService<Product>
+    public class ProductDomainService : ICrudDomainService<Product>
     {
         /// <summary>
         /// Adds a list of products to the repository.
         /// </summary>
         /// <param name="product">The list of products to be added.</param>
         /// <returns>The list of products that have been added.</returns>
-        /// <exception cref="ProductNotFoundExceptions">Thrown when the product list is null or empty.</exception>
+        /// <exception cref="ProductExceptions.ProductNotFoundException">Thrown when the product list is null or empty.</exception>
         public async Task<IEnumerable<Product?>> Add(IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (product == null || !product.Any())
-                throw new ProductExceptions.ProductNotFoundException([]);
+                throw new ProductExceptions.ProductNotFoundException(product ?? []);
 
             try
             { 
@@ -279,13 +279,15 @@ namespace Blazing.Domain.Services
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the list of products.</returns>
         /// <exception cref="ProductExceptions.ProductNotFoundException">Thrown when no products are found.</exception>
-        public async Task<IEnumerable<Product?>> GetAll(IEnumerable<Product> products, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Product?>> GetAll(IEnumerable<Product?> products,
+            CancellationToken cancellationToken)
         {
             if (products == null || !products.Any())
                 throw new ProductExceptions.ProductNotFoundException(products ?? []);
             try
             {
                 await Task.CompletedTask;
+
                 return products;
             }
             catch (DomainException)
@@ -299,13 +301,14 @@ namespace Blazing.Domain.Services
         /// Throws an exception if the products already exist.
         /// </summary>
         /// <param name="id">A flag indicating whether the products exist by ID.</param>
-        /// <param name="existsName">A flag indicating whether the products exist by name.</param>
+        /// <param name="existsName"></param>
         /// <param name="products">The products to check for existence.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task representing the asynchronous operation, with a result indicating whether the products exist (<c>true</c> if they exist, <c>false</c> otherwise).</returns>
         /// <exception cref="ProductExceptions.IdentityProductInvalidException">Thrown if the products already exist by ID.</exception>
         /// <exception cref="ProductExceptions.ProductAlreadyExistsException">Thrown if the products already exist by name.</exception>
-        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Product> products, CancellationToken cancellationToken)
+        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Product> products,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -324,7 +327,6 @@ namespace Blazing.Domain.Services
             }
             catch (DomainException)
             {
-
                 throw;
             }
         }

@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Blazing.Api.Erros;
 using Blazing.Domain.Exceptions;
-using Blazing.Domain.Exceptions.Produtos;
+using Blazing.Domain.Exceptions.Category;
 using Blazing.Domain.Exceptions.User;
 using Serilog.Context;
 
@@ -11,8 +11,6 @@ namespace Blazing.Api.Middleware
     #region ExceptionsControllers
     public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IWebHostEnvironment env)
     {
-
-
         /// <summary>
         /// Logs information about the HTTP request and the system where the API is running.
         /// </summary>
@@ -108,11 +106,12 @@ namespace Blazing.Api.Middleware
                 default:
                 {
                     if (ex is CategoryExceptions.CategoryAlreadyExistsException ||
-                        ex is CategoryExceptions.IdentityCategoryInvalidException ||
+                        ex is CategoryExceptions.CategoryNotFoundException ||
                         ex is CategoryExceptions.CategoryInvalidExceptions ||
                         ex is CategoryExceptions.CategoryInvalidExceptions)
                         await HandleCategoryException(context, ex);
                     else if (ex is UserException.UserAlreadyExistsException ||
+                             ex is UserException.UserLockedOutException ||
                              ex is UserException.IdentityAddUserException ||
                              ex is UserException.UserInvalidException ||
                              ex is UserException.UserNotFoundException)
@@ -186,11 +185,6 @@ namespace Blazing.Api.Middleware
                     logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
                     message = ex.Message;
                     break;
-                case CategoryExceptions.IdentityCategoryInvalidException:
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
-                    message = ex.Message;
-                    break;
                 case CategoryExceptions.CategoryInvalidExceptions:
                     context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
                     logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
@@ -223,7 +217,11 @@ namespace Blazing.Api.Middleware
                     message = ex.Message;
                     logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
                     break;
-
+                case UserException.UserLockedOutException:
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    message = ex.Message;
+                    logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
+                    break;
                 case UserException.UserInvalidException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     message = ex.Message;

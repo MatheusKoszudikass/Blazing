@@ -50,8 +50,11 @@ namespace Blazing.Domain.Interfaces.Services
         /// Checks if a specified condition exists asynchronously.
         /// </summary>
         /// <param name="boolean">A boolean value indicating whether the condition to check exists.</param>
+        /// <param name="booleanI"></param>
+        /// <param name="obj"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A Task representing the asynchronous operation, with a boolean result indicating the existence of the condition.</returns>
-        Task<bool> ExistsAsync(bool boolean, bool booleanName, IEnumerable<T> obj, CancellationToken cancellationToken);
+        Task<bool> ExistsAsync(bool boolean, bool booleanI, IEnumerable<T> obj, CancellationToken cancellationToken);
     }
     #endregion
 }

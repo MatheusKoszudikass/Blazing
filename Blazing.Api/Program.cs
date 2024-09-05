@@ -1,3 +1,4 @@
+using BenchmarkDotNet.Running;
 using Blazing.Api.Dependencies;
 using Blazing.Api.Middleware;
 using Blazing.Ecommerce.Dependency;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Serilog;
 using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,6 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
-
 
 builder.Host.UseSerilog();
 
@@ -57,6 +58,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 //app.UseStaticFiles();
 
 //app.UseSerilogRequestLogging();
+
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.UseMiddleware<ExceptionMiddleware>(); // <--- Add this line -->
 

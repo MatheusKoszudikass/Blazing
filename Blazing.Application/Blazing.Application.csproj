@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="User\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Blazing.Domain\Blazing.Domain.csproj" />
   </ItemGroup>
 

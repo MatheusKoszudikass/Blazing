@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\**" />
+    <EmbeddedResource Remove="Core\**" />
+    <None Remove="Core\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -28,15 +34,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Blazing.Api\Blazing.Api.csproj" />
     <ProjectReference Include="..\Blazing.Domain\Blazing.Domain.csproj" />
-    <ProjectReference Include="..\Blazing.infrastructure\Blazing.infrastructure.csproj" />
+    <ProjectReference Include="..\Blazing.infrastructure\Blazing.Ecommerce\Blazing.Ecommerce.csproj" />
+    <ProjectReference Include="..\Blazing.infrastructure\Blazing.Identity\Blazing.Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Core\Blazing.Domain\Services\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using Blazing.Application.Dto;
+﻿using BenchmarkDotNet.Attributes;
+using Blazing.Application.Dto;
 
 
 namespace Blazing.Test.Infrastructure
@@ -18,8 +19,6 @@ namespace Blazing.Test.Infrastructure
         private readonly IEnumerable<Guid> _productIds;
         private readonly IEnumerable<ProductDto> _productsToUpdate;
         private readonly IEnumerable<Guid> _categoryIds;
-
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductRepositoryFixtureTest"/> class.
@@ -43,7 +42,12 @@ namespace Blazing.Test.Infrastructure
         [Fact]
         public async Task ProductsAllTest()
         {
+            int page = 1;
+            int pageSize = 2;
             var cts = CancellationToken.None;
+
+            // Check if product exists
+            var resultNameExists = await _fixture.ProductInfrastructureRepository.ExistsAsyncProduct(_products, cts);
 
             // Add products to the repository
             var resultAddAsync = await _fixture.ProductInfrastructureRepository.AddProducts(_products, cts);
@@ -58,21 +62,19 @@ namespace Blazing.Test.Infrastructure
             var resultGetByIdAsync = await _fixture.ProductInfrastructureRepository.GetProductById(_productIds, cts);
 
             // Get all products
-            var resultGetAllAsync = await _fixture.ProductInfrastructureRepository.GetAll(cts);
-
-            // Check if product exists
-            var resultNameExiste = await _fixture.ProductInfrastructureRepository.ExistsAsyncProduct(_productsToUpdate, cts);
+            var resultGetAllAsync = await _fixture.ProductInfrastructureRepository.GetAll(page, pageSize,cts);
 
             // Delete products by ID
             var resultDeleteProductById = await _fixture.ProductInfrastructureRepository.DeleteProducts(_productIds, cts);
 
             // Assert that the results are not null
+
             Assert.NotNull(resultAddAsync); // Add your specific assertions for adding a product.
             Assert.NotNull(resultUpdateAsync); // Add your specific assertions for updating a product.
             Assert.NotNull(resultGetByCategoryIdAsync); // Add your specific assertions for getting products by category ID.
             Assert.NotNull(resultGetByIdAsync); // Add your specific assertions for getting a product by ID.
             Assert.NotNull(resultGetAllAsync); // Add your specific assertions for getting all products.
-/*            Assert.False(resultNameExiste);*/ // Add your specific assertions for checking if a product exists.
+            Assert.False(resultNameExists); // Add your specific assertions for checking if a product exists.
             Assert.NotNull(resultDeleteProductById); // Add your specific assertions for deleting products by ID.
         }
     }

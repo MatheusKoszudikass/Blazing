@@ -1,28 +1,26 @@
 ﻿using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
-using Blazing.Domain.Exceptions.Produtos;
-using Blazing.Domain.Interfaces.Repository;
 using Blazing.Domain.Interfaces.Services;
 using System.Text;
+using Blazing.Domain.Exceptions.Category;
 
 namespace Blazing.Domain.Services
 {
     #region Category domain service.
-    public class CategoryDomainService(): ICrudDomainService<Category>
+    public class CategoryDomainService: ICrudDomainService<Category>
     {
-
         /// <summary>
         /// Adds a collection of categories to the repository.
-        /// Throws a CategoryNotFoundExceptions if the input list is empty,
-        /// and ExistingCategoryException if any categories already exist.
         /// </summary>
-        /// <param name="categories">The categories to be added.</param>
+        /// <param name="categories">The categories to add.</param>
+        /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
         /// <returns>The added categories.</returns>
+        /// <exception cref="CategoryExceptions.CategoryNotFoundException">Thrown when the input collection is null or empty.</exception>
         public async Task<IEnumerable<Category?>> Add(IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
             {
-                throw new CategoryExceptions.CategoryNotFoundException(categories ?? []);
+                throw  CategoryExceptions.CategoryNotFoundException.NotFoundCategories(categories ?? []);
             }
 
             try
@@ -43,23 +41,23 @@ namespace Blazing.Domain.Services
         }
 
         /// <summary>
-        /// Updates categories based on their IDs.
-        /// Throws IdentityCategoryInvalidException if no IDs are provided,
-        /// and CategoryNotFoundExceptions if no categories match the given IDs.
+        /// Updates categories based on their id.
+        /// Throws IdentityCategoryInvalidException if no id are provided,
+        /// and CategoryNotFoundExceptions if no categories match the given id.
         /// </summary>
-        /// <param name="id">The IDs of the categories to update.</param>
-        /// <param name="categories">The categories with updated information.</param>
+        /// <param name="id">The id of the categories to update.</param>
+        /// <param name="updatedCategories">The categories with updated information.</param>
         /// <returns>The updated categories.</returns>
-        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> ids, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> id, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories, CancellationToken cancellationToken)
         {
-            if (ids == null || !ids.Any() || ids.Contains(Guid.Empty))
-                throw new CategoryExceptions.IdentityCategoryInvalidException(ids ?? []);
+            if (id == null || !id.Any() || id.Contains(Guid.Empty))
+                throw DomainException.IdentityInvalidException.Identities(id ?? []);
 
-            var categoriesDict = originalCategories.Where(c => ids.Contains(c.Id)).ToDictionary(c => c.Id);
-            var updatesDict = updatedCategories.Where(c => ids.Contains(c.Id)).ToDictionary(c => c.Id);
+            var categoriesDict = originalCategories.Where(c => id.Contains(c.Id)).ToDictionary(c => c.Id);
+            var updatesDict = updatedCategories.Where(c => id.Contains(c.Id)).ToDictionary(c => c.Id);
 
             if (categoriesDict.Count == 0)
-                throw new CategoryExceptions.CategoryNotFoundException(originalCategories);
+                throw  CategoryExceptions.CategoryNotFoundException.NotFoundCategories(originalCategories);
 
             try
             {
@@ -71,6 +69,7 @@ namespace Blazing.Domain.Services
                     updatedCategory.DataCreated = categoriesDict[update.Key].DataCreated;
                     updatedCategory.DataUpdated = DateTime.Now;
                     return updatedCategory;
+
                 })
                 .ToList();
 
@@ -86,11 +85,11 @@ namespace Blazing.Domain.Services
         }
 
         /// <summary>
-        /// Compares two products to determine if they are equal based on their properties.
+        /// Determines if two categories are equal by comparing their properties.
         /// </summary>
-        /// <param name="product1">The first product to compare.</param>
-        /// <param name="product2">The second product to compare.</param>
-        /// <returns><c>true</c> if the products have the same values for all relevant properties; otherwise, <c>false</c>.</returns>
+        /// <param name="category1">The first category to compare.</param>
+        /// <param name="category2">The second category to compare.</param>
+        /// <returns>True if the categories are equal, false otherwise.</returns>
         private static bool AreProductsEqual(Category category1, Category category2)
         {
             if (category1 == null && category2 == null)
@@ -117,29 +116,29 @@ namespace Blazing.Domain.Services
         }
 
         /// <summary>
-        /// Deletes categories based on their IDs.
-        /// Throws IdentityCategoryInvalidException if no IDs are provided,
+        /// Deletes categories based on their id.
+        /// Throws IdentityCategoryInvalidException if no id are provided,
         /// and CategoryNotFoundExceptions if categories remain after deletion.
         /// </summary>
-        /// <param name="id">The IDs of the categories to delete.</param>
+        /// <param name="id">The id of the categories to delete.</param>
         /// <param name="categories">The categories to delete.</param>
         /// <returns>The deleted categories.</returns>
         public async Task<IEnumerable<Category?>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
-            if (id == null)
+            if (id == null || !id.Any() || id.Contains(Guid.Empty))
             {
-                throw new CategoryExceptions.IdentityCategoryInvalidException(id ?? []);
+                throw DomainException.IdentityInvalidException.Identities(id ?? []);
             }
             else if(!categories.Any(c => id.Contains(c.Id)))
             {
-                throw new CategoryExceptions.CategoryNotFoundException(categories ?? []);
+                throw  CategoryExceptions.CategoryNotFoundException.NotFoundCategories(categories ?? []);
             }
 
             try
             {
                 if (!categories.Any())
                 {
-                    throw new CategoryExceptions.CategoryNotFoundException(categories);
+                    throw CategoryExceptions.CategoryNotFoundException.NotFoundCategories(categories);
                 }
                 await Task.CompletedTask;
                 return categories;
@@ -151,22 +150,22 @@ namespace Blazing.Domain.Services
         }
 
         /// <summary>
-        /// Retrieves categories by their IDs.
-        /// Throws IdentityCategoryInvalidException if no IDs are provided,
-        /// and CategoryNotFoundExceptions if no categories are found with the given IDs.
+        /// Retrieves categories by their id.
+        /// Throws IdentityCategoryInvalidException if no id are provided,
+        /// and CategoryNotFoundExceptions if no categories are found with the given id.
         /// </summary>
-        /// <param name="id">The IDs of the categories to retrieve.</param>
-        /// <param name="categories">The categories with the given IDs.</param>
+        /// <param name="id">The id of the categories to retrieve.</param>
+        /// <param name="categories">The categories with the given id.</param>
         /// <returns>The retrieved categories.</returns>
         public async Task<IEnumerable<Category?>> GetById(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
-            if (id == null || !id.Any())
+            if (id == null || !id.Any() || Guid.Empty == id.First())
             {
-                throw new CategoryExceptions.IdentityCategoryInvalidException(id ?? []);
+                throw  DomainException.IdentityInvalidException.Identities(id ?? []);
             }
             else if (categories == null || !categories.Any(c => id.Contains(c.Id)))
             {
-                throw new CategoryExceptions.CategoryNotFoundException(categories ?? []);
+                throw CategoryExceptions.CategoryNotFoundException.NotFoundCategories(categories ?? []);
             }
 
             try
@@ -186,19 +185,21 @@ namespace Blazing.Domain.Services
         /// and if no categories are found in the repository.
         /// </summary>
         /// <param name="categories">The categories to retrieve.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The retrieved categories.</returns>
-        public async Task<IEnumerable<Category?>> GetAll(IEnumerable<Category> categories, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Category?>> GetAll(IEnumerable<Category?> categories,
+            CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
             {
-                throw new CategoryExceptions.CategoryNotFoundException(categories ?? []);
+                throw  CategoryExceptions.CategoryNotFoundException.NotFoundCategories(categories ?? []);
             }
 
             try
             {
                 if (categories == null || !categories.Any())
                 {
-                    throw new CategoryExceptions.CategoryNotFoundException(categories ?? []);
+                    throw CategoryExceptions.CategoryNotFoundException.NotFoundCategories(categories ?? []);
                 }
 
                 await Task.CompletedTask;
@@ -215,24 +216,25 @@ namespace Blazing.Domain.Services
         /// Throws a CategoryAlreadyExistsException if the categories already exist.
         /// </summary>
         /// <param name="id">A flag indicating whether the categories exist by ID.</param>
-        /// <param name="existsName">A flag indicating whether the categories exist by name.</param>
+        /// <param name="booleanI"></param>
+        /// <param name="booleanII"></param>
         /// <param name="categories">The categories to check for existence.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task representing the asynchronous operation, with a result indicating whether the categories exist (<c>true</c> if they exist, <c>false</c> otherwise).</returns>
-        /// <exception cref="CategoryAlreadyExistsException">Thrown if the categories already exist.</exception>
-        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories, CancellationToken cancellationToken)
+        /// <exception cref="DomainException.IdentityInvalidException.Identities">Thrown if the categories already exist.</exception>
+        public async Task<bool> ExistsAsync(bool id, bool existsName, IEnumerable<Category> categories,
+            CancellationToken cancellationToken)
         {
             try
             {
                 if (id)
                 {
                     var categoriesId = categories.Select(c => c.Id).ToList();
-                    throw  CategoryExceptions.CategoryAlreadyExistsException.FromExistingId(categoriesId);
+                    throw DomainException.IdentityInvalidException.Identities(categoriesId);
                 }
                 else if (existsName)
                 {
                     var categoriesName = categories.Select(c => c.Name).ToList();
-
                     throw  CategoryExceptions.CategoryAlreadyExistsException.FromExistingName(categoriesName);
                 }
 
@@ -241,7 +243,6 @@ namespace Blazing.Domain.Services
             }
             catch (DomainException)
             {
-
                 throw;
             }
         }

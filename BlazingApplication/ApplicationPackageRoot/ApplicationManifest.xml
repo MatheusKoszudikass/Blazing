@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest ApplicationTypeName="BlazingApplicationType"
+                     ApplicationTypeVersion="1.0.0"
+                     xmlns="http://schemas.microsoft.com/2011/01/fabric"
+                     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Parameters>
+  </Parameters>
+  <!-- Importe o ServiceManifest do ServicePackage. O ServiceManifestName e a ServiceManifestVersion 
+       devem corresponder aos atributos Name e Version do elemento ServiceManifest definido no arquivo 
+       ServiceManifest.xml. -->
+  <DefaultServices>
+    <!-- A seção abaixo cria instâncias dos tipos de serviço quando uma instância deste 
+         tipo de aplicativo é criada. Também é possível criar uma ou mais instâncias do tipo de serviço usando o 
+         módulo ServiceFabric do PowerShell.
+
+         O atributo ServiceTypeName abaixo deve corresponder ao nome definido no arquivo ServiceManifest.xml importado. -->
+  </DefaultServices>
+</ApplicationManifest>

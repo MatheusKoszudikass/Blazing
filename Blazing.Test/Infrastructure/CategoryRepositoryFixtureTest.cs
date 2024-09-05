@@ -43,6 +43,10 @@ namespace Blazing.Test.Infrastructure
         public async Task CategoriesAllTest()
         {
             var cts = CancellationToken.None;
+
+            // Check if category exists
+            var resultNameExiste = await _fixture.CategoryInfrastructureRepository.ExistsAsync(_categories, cts);
+
             // Add categories to the repository
             var resultAddAsync = await _fixture.CategoryInfrastructureRepository.AddCategories(_AddCategories, cts);
 
@@ -55,20 +59,17 @@ namespace Blazing.Test.Infrastructure
             // Get all categories
             var resultGetAllAsync = await _fixture.CategoryInfrastructureRepository.GetAll(cts);
 
-            // Check if category exists
-            var resultNameExiste = await _fixture.CategoryInfrastructureRepository.ExistsAsync(_categories, cts);
-
             // Delete categories
             var resultDeleteAsync = await _fixture.CategoryInfrastructureRepository.DeleteCategory(_categoryIds, cts);
 
 
 
-            //Assert.NotNull(resultAddAsync);
-            //Assert.NotNull(resultUpdateAsync);
-            //Assert.NotNull(resultGetByIdAsync);
-            //Assert.NotNull(resultGetAllAsync);
-            //Assert.True(resultNameExiste);
-            //Assert.NotNull(resultDeleteAsync);
+            Assert.NotNull(resultAddAsync);
+            Assert.NotNull(resultUpdateAsync);
+            Assert.NotNull(resultGetByIdAsync);
+            Assert.NotNull(resultGetAllAsync);
+            Assert.False(resultNameExiste);
+            Assert.NotNull(resultDeleteAsync);
 
         }
     }
