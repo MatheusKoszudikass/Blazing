@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Blazing.infrastructure.Migrations
+namespace Blazing.Ecommerce.Migrations
 {
     /// <inheritdoc />
-    public partial class CreatedToDataBase : Migration
+    public partial class CreateTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,9 +33,9 @@ namespace Blazing.infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Material = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Model = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Color = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    Material = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    Model = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -66,7 +66,7 @@ namespace Blazing.infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -85,7 +85,7 @@ namespace Blazing.infrastructure.Migrations
                     Height = table.Column<double>(type: "float", nullable: false),
                     Width = table.Column<double>(type: "float", nullable: false),
                     Depth = table.Column<double>(type: "float", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Unit = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -100,8 +100,8 @@ namespace Blazing.infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AltText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Url = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    AltText = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -116,13 +116,13 @@ namespace Blazing.infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    FirstName = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    LastName = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    UserName = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Email = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    PasswordHash = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -133,42 +133,19 @@ namespace Blazing.infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Revisions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    User = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AssessmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Revisions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Revisions_Assessments_AssessmentId",
-                        column: x => x.AssessmentId,
-                        principalTable: "Assessments",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Name = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Description = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                    Currency = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Brand = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    SKU = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Brand = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    SKU = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     StockQuantity = table.Column<int>(type: "int", nullable: false),
-                    StockLocation = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    StockLocation = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     DimensionsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssessmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttributesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -224,14 +201,14 @@ namespace Blazing.infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Complement = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Neighborhood = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    State = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    PostalCode = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Street = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Number = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Complement = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Neighborhood = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    City = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    State = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    PostalCode = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -248,13 +225,40 @@ namespace Blazing.infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Revisions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Comment = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AssessmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Revisions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Revisions_Assessments_AssessmentId",
+                        column: x => x.AssessmentId,
+                        principalTable: "Assessments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Revisions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShoppingCart",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TotalValue = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -299,7 +303,7 @@ namespace Blazing.infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    ShoppingCartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShoppingCartId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DataCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -317,8 +321,7 @@ namespace Blazing.infrastructure.Migrations
                         name: "FK_CartItems_ShoppingCart_ShoppingCartId",
                         column: x => x.ShoppingCartId,
                         principalTable: "ShoppingCart",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -375,6 +378,11 @@ namespace Blazing.infrastructure.Migrations
                 name: "IX_Revisions_AssessmentId",
                 table: "Revisions",
                 column: "AssessmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Revisions_UserId",
+                table: "Revisions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCart_UserId",
