@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.User;
+using Blazing.Application.Interface.User;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Interfaces.Services.User;
@@ -34,8 +34,11 @@ namespace Blazing.Application.Services
         /// </summary>
         /// <param name="id">The ID of the userDto to update.</param>
         /// <param name="usersDto">The userDto object containing the updated data.</param>
+        /// <param name="usersDtoUpdate"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The updated userDto, if found.</returns>
-        public async Task<IEnumerable<UserDto?>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto, IEnumerable<UserDto> usersDtoUpdate, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto?>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto,
+            IEnumerable<UserDto?> usersDtoUpdate, CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(usersDto);
             var userUpdate = _mapper.Map<IEnumerable<User>>(usersDtoUpdate);
@@ -51,8 +54,11 @@ namespace Blazing.Application.Services
         /// Deletes UserDto based on a list of provided IDs.
         /// </summary>
         /// <param name="id">The list of UserDto IDs to be deleted.</param>
+        /// <param name="usersDto"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The list of UserDto that were deleted.</returns>
-        public async Task<IEnumerable<UserDto?>> DeleteUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto?>> DeleteUsers(IEnumerable<Guid> id, IEnumerable<UserDto?> usersDto,
+            CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(usersDto);
 
@@ -96,7 +102,11 @@ namespace Blazing.Application.Services
         /// <summary>
         /// Checks if UserDto exist based on the provided flag.
         /// </summary>
-        /// <param name="nameExists">A boolean flag indicating the existence check.</param>
+        /// <param name="id">A boolean flag indicating the existence check.</param>
+        /// <param name="existsName"></param>
+        /// <param name="existsEmail"></param>
+        /// <param name="userDto"></param>
+        /// <param name="cancellationToken"></param>
         public async Task<bool?> ExistsUsers(bool id, bool existsName, bool existsEmail, IEnumerable<UserDto> userDto, CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(userDto);

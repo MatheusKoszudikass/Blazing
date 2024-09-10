@@ -36,7 +36,7 @@ namespace Blazing.Domain.Exceptions.User
             /// </summary>
             /// <param name="email">The email of the locked out user.</param>
             /// <returns>A new instance of the <see cref="UserLockedOutException"/> class.</returns>
-            public static UserLockedOutException FromLockedOutExceptionEmail(string email)
+            public static UserLockedOutException FromLockedOutExceptionEmail(string? email)
             {
                 return new UserLockedOutException(
                     $"Tentativa de login falhou. A conta está bloqueada. E-mail: {email}");
@@ -61,7 +61,7 @@ namespace Blazing.Domain.Exceptions.User
             /// </summary>
             /// <param name="id">The identifiers of the users that already exist.</param>
             /// <returns>A new instance of the <see cref="UserAlreadyExistsException"/> class.</returns>
-            public static UserAlreadyExistsException FromExistingId(string id)
+            public static UserAlreadyExistsException FromExistingId(string? id)
             {
                 return new UserAlreadyExistsException(
                     $"Identificador já existe: {string.Join(", ", id)}");
@@ -83,7 +83,7 @@ namespace Blazing.Domain.Exceptions.User
             /// </summary>
             /// <param name="usersName">The names of the users that already exist.</param>
             /// <returns>A new instance of the <see cref="UserAlreadyExistsException"/> class.</returns>
-            public static UserAlreadyExistsException FromNameExistingUser(string usersName)
+            public static UserAlreadyExistsException FromNameExistingUser(string? usersName)
             {
                 return new UserAlreadyExistsException(
                     $"O nome do usuário: {string.Join(", ", usersName)} já existe.");

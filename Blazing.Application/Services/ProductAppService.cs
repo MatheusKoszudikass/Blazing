@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.Product;
+using Blazing.Application.Interface.Product;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Interfaces.Services;
 

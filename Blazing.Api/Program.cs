@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Serilog;
 using System.Text.Json.Serialization;
+using Blazing.Ecommerce.Dependencies;
 
 
 var builder = WebApplication.CreateBuilder(args);
