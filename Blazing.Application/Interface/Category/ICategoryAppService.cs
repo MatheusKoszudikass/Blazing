@@ -1,11 +1,6 @@
 ﻿using Blazing.Application.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Blazing.Application.Interfaces.Category
+namespace Blazing.Application.Interface.Category
 {
     #region Interface Category App Service
     public interface ICategoryAppService<T> where T : BaseEntityDto
@@ -50,7 +45,10 @@ namespace Blazing.Application.Interfaces.Category
         /// </summary>
         /// <param name="id">A boolean flag indicating whether to check for the existence of categoriesDto.</param>
         /// <param name="nameExists">A boolean flag indicating whether to check for the existence of categoriesDto.</param>
-        Task<bool?> ExistsCategories(bool id, bool nameExists, IEnumerable<CategoryDto> categoryDto, CancellationToken cancellationToken);
+        /// <param name="categoryDto"></param>
+        /// <param name="cancellationToken"></param>
+        Task<bool?> ExistsCategories(bool id, bool nameExists, IEnumerable<CategoryDto?> categoryDto,
+            CancellationToken cancellationToken);
     }
     #endregion
 }

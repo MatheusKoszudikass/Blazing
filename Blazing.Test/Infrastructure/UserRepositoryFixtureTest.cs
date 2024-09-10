@@ -36,13 +36,14 @@ namespace Blazing.Test.Infrastructure
             _UserToUpdate = _fixture.PeopleOfData.GetUpdateUsers();
         }
 
-
         /// <summary>
         /// Tests the functionality of the UserEcommerceRepository class.
         /// </summary>
         [Fact]
         public async Task UserAllTest()
         {
+            int page = 1;
+            int pageSize = 3;
             // Create a cancellation token with no cancellation.
             var cts = CancellationToken.None;
 
@@ -53,7 +54,7 @@ namespace Blazing.Test.Infrastructure
             var resultAdd = await _fixture.UserEcommerceRepository.AddUsers(_user, cts);
 
             // Get all users from the repository.
-            var resultUserAll = await _fixture.UserEcommerceRepository.GetAllUsers(cts);
+            var resultUserAll = await _fixture.UserEcommerceRepository.GetAllUsers(page,pageSize,cts);
 
             // Update users in the repository.
             var resultToUpdate = await _fixture.UserEcommerceRepository.UpdateUsers(_userId, _UserToUpdate, cts);

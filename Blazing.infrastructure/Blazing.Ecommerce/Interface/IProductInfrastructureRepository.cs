@@ -1,7 +1,6 @@
 ﻿using Blazing.Application.Dto;
 
-
-namespace Blazing.Ecommerce.Repository
+namespace Blazing.Ecommerce.Interface
 {
     #region Interface Product Infrastructure Repository.
     public interface IProductInfrastructureRepository
@@ -10,6 +9,7 @@ namespace Blazing.Ecommerce.Repository
         /// Adds a collection of products to the repository.
         /// </summary>
         /// <param name="productDto">A collection of <see cref="ProductDto"/> objects representing the products to be added.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of <see cref="ProductDto"/> objects that were added.</returns>
         Task<IEnumerable<ProductDto?>> AddProducts(IEnumerable<ProductDto> productDto, CancellationToken cancellationToken);
 
@@ -18,6 +18,7 @@ namespace Blazing.Ecommerce.Repository
         /// </summary>
         /// <param name="id">A collection of product IDs to be updated.</param>
         /// <param name="productDto">A collection of <see cref="ProductDto"/> objects containing the updated product information.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of <see cref="ProductDto"/> objects that were updated.</returns>
         Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDto, CancellationToken cancellationToken);
 
@@ -25,6 +26,7 @@ namespace Blazing.Ecommerce.Repository
         /// Retrieves products that belong to specified categories.
         /// </summary>
         /// <param name="id">A collection of category IDs.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of <see cref="ProductDto"/> objects associated with the specified category IDs.</returns>
         Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
@@ -32,6 +34,7 @@ namespace Blazing.Ecommerce.Repository
         /// Deletes products based on their IDs.
         /// </summary>
         /// <param name="id">A collection of product IDs to be deleted.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of <see cref="ProductDto"/> objects that were deleted.</returns>
         Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
@@ -39,6 +42,7 @@ namespace Blazing.Ecommerce.Repository
         /// Retrieves products by their IDs.
         /// </summary>
         /// <param name="id">A collection of product IDs.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of <see cref="ProductDto"/> objects that match the specified IDs.</returns>
         Task<IEnumerable<ProductDto?>> GetProductById(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
@@ -52,6 +56,7 @@ namespace Blazing.Ecommerce.Repository
         /// Checks if the specified products exist in the repository.
         /// </summary>
         /// <param name="productDto">A collection of <see cref="ProductDto"/> objects to check for existence.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result indicating whether the products exist (<c>true</c> if they exist, <c>false</c> otherwise).</returns>
         Task<bool> ExistsAsyncProduct(IEnumerable<ProductDto> productDto, CancellationToken cancellationToken);
 

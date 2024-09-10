@@ -1,5 +1,4 @@
 ﻿using Blazing.Api.Controllers.Product;
-using Blazing.Ecommerce.Repository;
 using Blazing.Test.Data;
 using BlazingPizzaTest.Controller;
 using BlazingPizzaTest.Data;
@@ -11,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blazing.Ecommerce.Interface;
 
 namespace Blazing.Test.Api.Controller
 {

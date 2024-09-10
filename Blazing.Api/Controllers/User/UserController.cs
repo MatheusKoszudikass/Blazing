@@ -1,6 +1,7 @@
 ﻿using Blazing.Application.Dto;
 using Blazing.Domain.Exceptions.User;
 using Blazing.Identity.Entities;
+using Blazing.Identity.Interface;
 using Blazing.Identity.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -102,8 +103,8 @@ public class UserController(ILogger<UserController> logger, IUserInfrastructureR
     /// This method requires the user to be authenticated.
     /// </remarks>
     [Authorize]
-    [HttpGet("Id")]
-    public async Task<ActionResult<UserDto>> GetUserById(IEnumerable<Guid> id,
+    [HttpGet("id")]
+    public async Task<ActionResult<UserDto>> GetUserById([FromQuery]IEnumerable<Guid> id,
         CancellationToken cancellationToken)
     {
         var result = await _userInfrastructureRepository.GetUsersByIdAsync(id, cancellationToken);
@@ -120,14 +121,19 @@ public class UserController(ILogger<UserController> logger, IUserInfrastructureR
     /// <summary>
     /// Retrieves all users from the database.
     /// </summary>
+    /// <param name="pageSize"></param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <param name="page"></param>
     /// <returns>An asynchronous task that represents the operation. The task result contains an action result indicating the success of the operation.
     /// The result contains a list of all users.</returns>
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<ApplicationUser>> GetAllUser(CancellationToken cancellationToken)
+    public async Task<ActionResult<ApplicationUser>> GetAllUser([FromQuery]int page, int pageSize, CancellationToken cancellationToken)
     {
-        var result = await _userInfrastructureRepository.GetAllUsersAsync(cancellationToken);
+        if (pageSize > 50)
+            pageSize = 50;
+
+        var result = await _userInfrastructureRepository.GetAllUsersAsync(page, pageSize, cancellationToken);
 
         _logger.LogInformation("A recuperação dos usuários foi realizada com sucesso. Total Usuários: {TotalUsuários}",
             result.Count());
@@ -138,7 +144,7 @@ public class UserController(ILogger<UserController> logger, IUserInfrastructureR
     /// <summary>
     /// Asynchronously handles the login request.
     /// </summary>
-    /// <param name="login.email">The email of the user.</param>
+    /// <param name="login.LoginIdentifier ">The email of the user.</param>
     /// <param name="login.password">The password of the user.</param>
     /// <param name="login.rememberMe">A boolean indicating whether the user wants to be remembered.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
@@ -155,42 +161,41 @@ public class UserController(ILogger<UserController> logger, IUserInfrastructureR
         switch (result)
         {
             case { Succeeded: true }:
-                if (!string.IsNullOrEmpty(login.Email) && login.Email.Contains("@"))
+                if (!string.IsNullOrEmpty(login.LoginIdentifier) && login.LoginIdentifier.Contains("@"))
                 {
-                    _logger.LogInformation("O login foi realizado com sucesso. E-mail: {email}", login.Email);
+                    _logger.LogInformation("O login foi realizado com sucesso. E-mail: {email}", login.LoginIdentifier);
                     return Ok(new { status = "success", message = "Login bem-sucedido." });
                 }
                 else
                 {
-                    _logger.LogInformation("O login foi realizado com sucesso. Nome do usuário: {userName}", login.Email);
+                    _logger.LogInformation("O login foi realizado com sucesso. Nome do usuário: {userName}", login.LoginIdentifier );
                     return Ok(new { status = "success", message = "Login bem-sucedido." });
                 }
 
             case { IsNotAllowed: true }:
-                _logger.LogWarning("Tentativa de login falhou. O login não é permitido para este usuário. E-mail: {email}", login.Email);
+                _logger.LogWarning("Tentativa de login falhou. O login não é permitido para este usuário. E-mail: {email}", login.LoginIdentifier );
                 return Unauthorized(new { status = "error", message = "Login não permitido para este usuário." });
 
             case { RequiresTwoFactor: true }:
-                _logger.LogInformation("Tentativa de login requer autenticação de dois fatores. E-mail: {email}", login.Email);
+                _logger.LogInformation("Tentativa de login requer autenticação de dois fatores. E-mail: {email}", login.LoginIdentifier );
                 return Unauthorized(new { status = "2fa_required", message = "Autenticação de dois fatores é necessária." });
 
             case { Succeeded: false }:
-                if (!string.IsNullOrEmpty(login.Email) && login.Email.Contains("@"))
+                if (!string.IsNullOrEmpty(login.LoginIdentifier ) && login.LoginIdentifier .Contains("@"))
                 {
-                    _logger.LogWarning("Tentativa de login falhou. Credenciais inválidas. E-mail: {email}", login.Email);
+                    _logger.LogWarning("Tentativa de login falhou. Credenciais inválidas. E-mail: {email}", login.LoginIdentifier );
                     return Unauthorized(new { status = "error", message = "Credenciais inválidas." });
                 }
                 else
                 {
-                    _logger.LogWarning("Tentativa de login falhou. Credenciais inválidas. Nome do usuário: {email}", login.Email);
+                    _logger.LogWarning("Tentativa de login falhou. Credenciais inválidas. Nome do usuário: {email}", login.LoginIdentifier );
                     return Unauthorized(new { status = "error", message = "Credenciais inválidas." });
                 }
 
             default:
-                _logger.LogWarning("Falha no login. Credenciais inválidas. E-mail: {email}", login.Email);
+                _logger.LogWarning("Falha no login. Credenciais inválidas. E-mail: {email}", login.LoginIdentifier );
                 return Unauthorized(new { status = "error", message = "Credenciais inválidas." });
         }
-
 
     }
 

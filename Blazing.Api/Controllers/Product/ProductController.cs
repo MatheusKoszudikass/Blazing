@@ -1,8 +1,8 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.Ecommerce.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Blazing.Ecommerce.Interface;
 
 namespace Blazing.Api.Controllers.Product
 {
@@ -15,7 +15,7 @@ namespace Blazing.Api.Controllers.Product
     /// This class requires an instance of ILogger and IProductAppService to be passed in the constructor.
     /// </remarks>
     /// <typeparam name="_logger">The type of the logger.</typeparam>
-    /// <typeparam name="_productInfraRepository">The type of the product infrastructure service.</typeparam>
+    /// <typeparam name="produtoRepository">The type of the product infrastructure service.</typeparam>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController(ILogger<ProductController> logger, IProductInfrastructureRepository produtoRepository) : ControllerBase
@@ -103,8 +103,8 @@ namespace Blazing.Api.Controllers.Product
         /// <param name="id">the identifier of the productDto.</param>
         /// <returns>productDto.</returns>
         [Authorize]
-        [HttpGet("productId")]
-        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductById([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
+        [HttpGet("id")]
+        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductById([FromQuery]IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var productsById = await _productInfraRepository.GetProductById(id, cancellationToken);
 
@@ -122,6 +122,10 @@ namespace Blazing.Api.Controllers.Product
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll([FromQuery]int page, int pageSize, CancellationToken cancellationToken)
         {
+            if (pageSize > 50)
+                pageSize = 50;
+            
+
             var products = await _productInfraRepository.GetAll(page, pageSize, cancellationToken);
 
             _logger.LogInformation("Produtos recuperados com sucesso. Total de produtos: {TotalProducts}.",

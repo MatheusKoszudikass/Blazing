@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.Category;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Interfaces.Repository;
 using Blazing.Domain.Interfaces.Services;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blazing.Application.Interface.Category;
 
 namespace Blazing.Application.Services
 {
@@ -101,8 +101,12 @@ namespace Blazing.Application.Services
         /// <summary>
         /// Checks if categories exist based on the provided flag.
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="existsName"></param>
         /// <param name="categoryDto">A boolean flag indicating the existence check.</param>
-        public async Task<bool?> ExistsCategories(bool id, bool existsName, IEnumerable<CategoryDto?> categoryDto, CancellationToken cancellationToken)
+        /// <param name="cancellationToken"></param>
+        public async Task<bool?> ExistsCategories(bool id, bool existsName, IEnumerable<CategoryDto?> categoryDto,
+            CancellationToken cancellationToken)
         {
             var category = _mapper.Map<IEnumerable<Category>>(categoryDto);
             await _categoriaDomainService.ExistsAsync(id, existsName, category, cancellationToken);

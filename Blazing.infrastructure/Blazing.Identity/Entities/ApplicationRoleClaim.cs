@@ -9,8 +9,8 @@ namespace Blazing.Identity.Entities
 {
     public partial class ApplicationRoleClaim : IdentityRoleClaim<Guid>
     {
-        //public DateTime DataCreated { get; set; } = DateTime.Now;
-        //public DateTime DataUpdated { get; set; }
-        //public DateTime DataDeleted { get; set; }
+        public DateTime DataCreated { get; set; } = DateTime.Now;
+        public DateTime DataUpdated { get; set; }
+        public DateTime DataDeleted { get; set; }
     }
 }

@@ -1,12 +1,6 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Blazing.Application.Interfaces.User
+namespace Blazing.Application.Interface.User
 {
     public interface IUserAppService<T> where T : BaseEntityDto
     {
@@ -22,15 +16,21 @@ namespace Blazing.Application.Interfaces.User
         /// </summary>
         /// <param name="id">The ID of the userDto to be updated.</param>
         /// <param name="userDto">The updated userDto details.</param>
+        /// <param name="productDtosUpdate"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with the updated userDto.</returns>
-        Task<IEnumerable<UserDto?>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> userDto, IEnumerable<UserDto> productDtosUpdate, CancellationToken cancellationToken);
+        Task<IEnumerable<UserDto?>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> userDto,
+            IEnumerable<UserDto?> productDtosUpdate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a collection of userDto by their IDs.
         /// </summary>
         /// <param name="id">A collection of userDto IDs to be deleted.</param>
+        /// <param name="userDto"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a collection of the deleted userDto.</returns>
-        Task<IEnumerable<UserDto?>> DeleteUsers(IEnumerable<Guid> id, IEnumerable<UserDto> userDto, CancellationToken cancellationToken);
+        Task<IEnumerable<UserDto?>> DeleteUsers(IEnumerable<Guid> id, IEnumerable<UserDto?> userDto,
+            CancellationToken cancellationToken);
 
         /// <summary>
         /// Retrieves a userDto by its ID.

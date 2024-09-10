@@ -1,5 +1,5 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.Ecommerce.Repository;
+using Blazing.Ecommerce.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,6 @@ namespace Blazing.Api.Controllers.Category
     {
         private readonly ILogger<CategoryController> _logger = logger;
         private readonly ICategoryInfrastructureRepository _categoriaRepository = categoriaRepository;
-
 
         /// <summary>
         /// Adds a list of new categories.
@@ -59,7 +58,7 @@ namespace Blazing.Api.Controllers.Category
         /// <returns>List of category DTOs to delete.</returns>
         [Authorize]
         [HttpDelete("delete")]
-        public async Task<ActionResult<CategoryDto?>> DeleteCategories(IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<ActionResult<CategoryDto?>> DeleteCategories([FromQuery]IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var categoriesDeleted = await _categoriaRepository.DeleteCategory(id, cancellationToken);
 
@@ -92,9 +91,13 @@ namespace Blazing.Api.Controllers.Category
         /// <returns>List of category DTOs.</returns>
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery]int page, int pageSize, CancellationToken cancellationToken)
         {
-            var categories = await _categoriaRepository.GetAll(cancellationToken);
+            if (pageSize > 50)
+            {
+                pageSize = 50;
+            }
+            var categories = await _categoriaRepository.GetAll(page, pageSize,cancellationToken);
 
             _logger.LogInformation("Categoria recuperados com sucesso. Total de categorias: {TotalCategories}",
                 categories.Count());

@@ -282,13 +282,14 @@ namespace Blazing.Domain.Services
         public async Task<IEnumerable<Product?>> GetAll(IEnumerable<Product?> products,
             CancellationToken cancellationToken)
         {
-            if (products == null || !products.Any())
+            var enumerable = products.ToList();
+            if (products == null || enumerable.Count == 0)
                 throw new ProductExceptions.ProductNotFoundException(products ?? []);
             try
             {
                 await Task.CompletedTask;
 
-                return products;
+                return enumerable;
             }
             catch (DomainException)
             {

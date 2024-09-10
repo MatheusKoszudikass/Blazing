@@ -42,6 +42,8 @@ namespace Blazing.Test.Infrastructure
         [Fact]
         public async Task CategoriesAllTest()
         {
+            var page = 1;
+            var pageSize = 3;
             var cts = CancellationToken.None;
 
             // Check if category exists
@@ -52,12 +54,11 @@ namespace Blazing.Test.Infrastructure
 
             // Update categories in the repository
             var resultUpdateAsync = await _fixture.CategoryInfrastructureRepository.UpdateCategory(_categoryIds, _categories, cts);
-
             // Get category by ID
             var resultGetByIdAsync = await _fixture.CategoryInfrastructureRepository.GetCategoryById(_categoryIds, cts);
 
             // Get all categories
-            var resultGetAllAsync = await _fixture.CategoryInfrastructureRepository.GetAll(cts);
+            var resultGetAllAsync = await _fixture.CategoryInfrastructureRepository.GetAll(page, pageSize, cts);
 
             // Delete categories
             var resultDeleteAsync = await _fixture.CategoryInfrastructureRepository.DeleteCategory(_categoryIds, cts);

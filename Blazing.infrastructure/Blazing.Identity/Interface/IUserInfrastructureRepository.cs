@@ -2,7 +2,7 @@
 using Blazing.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Blazing.Identity.Repository
+namespace Blazing.Identity.Interface
 {
     #region ContratcsUserIdentity
 
@@ -19,7 +19,7 @@ namespace Blazing.Identity.Repository
 
         Task<IEnumerable<UserDto?>> GetUsersByIdAsync(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
-        Task<IEnumerable<UserDto?>> GetAllUsersAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<UserDto?>> GetAllUsersAsync(int page, int pageSize, CancellationToken cancellationToken);
 
         Task<SignInResult> LoginAsync(Login login,
             CancellationToken cancellationToken);

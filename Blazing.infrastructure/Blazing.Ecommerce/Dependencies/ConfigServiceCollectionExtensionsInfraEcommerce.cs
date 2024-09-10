@@ -1,21 +1,21 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.Category;
-using Blazing.Application.Interfaces.Product;
+using Blazing.Application.Interface.Category;
+using Blazing.Application.Interface.Product;
 using Blazing.Application.Services;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Interfaces.Services.User;
 using Blazing.Domain.Services;
 using Blazing.Ecommerce.Data;
+using Blazing.Ecommerce.Interface;
 using Blazing.Ecommerce.Repository;
-using Blazing.Ecommerce.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blazing.Ecommerce.Dependency
+namespace Blazing.Ecommerce.Dependencies
 {
-    public static class ConfigServiceCollectionExtensiosInfraEcommerce
+    public static class ConfigServiceCollectionExtensionsInfraEcommerce
     {
 
         public static IServiceCollection AddConfigInfraEcommerce(

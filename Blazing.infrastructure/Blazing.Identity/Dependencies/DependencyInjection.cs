@@ -5,9 +5,9 @@ using Blazing.Identity.Data;
 
 namespace Blazing.Identity.Dependency
 {
-    public class DependencyInjection(BlazingIdentityDbContext IdentityAppDbContext, IMapper mapper)
+    public class DependencyInjection(BlazingIdentityDbContext? IdentityAppDbContext, IMapper mapper)
     {
-        public readonly BlazingIdentityDbContext _appContext = IdentityAppDbContext;
+        public readonly BlazingIdentityDbContext? _appContext = IdentityAppDbContext;
 
         public readonly IMapper _mapper = mapper;
     }

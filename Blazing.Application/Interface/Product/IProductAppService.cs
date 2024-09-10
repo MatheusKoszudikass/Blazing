@@ -1,8 +1,6 @@
 ﻿using Blazing.Application.Dto;
-using Blazing.Domain.Entities;
-using System.Xml.Linq;
 
-namespace Blazing.Application.Interfaces.Product
+namespace Blazing.Application.Interface.Product
 {
     #region Interface product App Service.
     /// <summary>

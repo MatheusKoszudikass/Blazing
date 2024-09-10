@@ -209,19 +209,22 @@ namespace Blazing.Domain.Services
         /// <exception cref="UserException.UserNotFoundException.UserNotFound">Thrown if the user collection is null or empty.</exception>
         public async Task<IEnumerable<User?>> Delete(IEnumerable<Guid> id, IEnumerable<User> user, CancellationToken cancellationToken)
         {
+            var enumerable = user.ToList();
+
             if (id == null || Guid.Empty == id.FirstOrDefault() || !id.Any())
-                throw DomainException.IdentityInvalidException.Identities(id ?? []);  
-            if (user == null || !user.Any())
-                throw UserException.UserNotFoundException.UserNotFound(user);
+                throw DomainException.IdentityInvalidException.Identities(id ?? []);
+
+            if (user == null || !enumerable.Any())
+                throw UserException.UserNotFoundException.UserNotFound(enumerable);
             try
             {
-                foreach (var item in user)
+                foreach (var item in enumerable)
                 {
                     item.PasswordHash = null;
                 }
 
                 await Task.CompletedTask;
-                return user;
+                return enumerable;
             }
             catch (DomainException )
             {
@@ -240,21 +243,23 @@ namespace Blazing.Domain.Services
         /// <exception cref="UserException.UserNotFoundException.UserNotFound">Thrown when no users matching the provided IDs are found in the user collection.</exception>
         public async Task<IEnumerable<User?>> GetById(IEnumerable<Guid> id, IEnumerable<User> users, CancellationToken cancellationToken)
         {
-            if (id == null || !id.Any() || Guid.Empty == id.FirstOrDefault())
-                throw DomainException.IdentityInvalidException.Identities(id ?? []);  
-            if (users == null || !users.Any())
-                throw UserException.UserNotFoundException.UserNotFound(users);
+            var usersManager = users.ToList();
+            var byId = id.ToList();
+            if (id == null || !byId.Any() || Guid.Empty == byId.FirstOrDefault())
+                throw DomainException.IdentityInvalidException.Identities(id ?? []);
+            if (users == null || !byId.Any())
+                throw UserException.UserNotFoundException.UserNotFound(usersManager);
 
             try
             {
 
-                foreach (var user in users)
+                foreach (var user in usersManager)
                 {
                     user.PasswordHash = null;
                 }
 
                 await Task.CompletedTask;
-                return users;
+                return usersManager;
             }
             catch (DomainException )
             {
@@ -270,7 +275,7 @@ namespace Blazing.Domain.Services
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation. The task result contains a collection of User objects.</returns>
         /// <exception cref="DomainException.NotFoundException">Thrown when there are no users to retrieve or if the input collection is null or empty.</exception>
-        public async Task<IEnumerable<User?>> GetAll(IEnumerable<User> users, CancellationToken cancellationToken)
+        public async Task<IEnumerable<User?>> GetAll(IEnumerable<User?> users, CancellationToken cancellationToken)
         {
             if(users is null || !users.Any())
                 throw DomainException.NotFoundException.FoundException();
@@ -315,19 +320,19 @@ namespace Blazing.Domain.Services
         /// <returns>A task representing the asynchronous operation, with a result indicating whether the user exists (true if the ID, username, or email exists, false otherwise).</returns>
         /// <exception cref="UserException.UserAlreadyExistsException">Thrown when the user with the specified ID, username, or email already exists.</exception>
         /// <exception cref="DomainException">Thrown when there is an error checking for the existence of the user.</exception>
-        public async Task<bool> UserExistsAsync(bool id, bool userName, bool email, IEnumerable<User> users, CancellationToken cancellationToken)
+        public Task<bool> UserExistsAsync(bool id, bool userName, bool email, IEnumerable<User> users, CancellationToken cancellationToken)
         {
             try
             {
-                return users != null && users.Any()  switch
+                var enumerable = users.ToList();
+                return Task.FromResult(users != null && enumerable.Any()  switch
                 {
-                    true when id => throw UserException.UserAlreadyExistsException.FromExistingId(users.Select(u => u.Id).ToString()),
-                    true when userName => throw UserException.UserAlreadyExistsException.FromNameExistingUser(users.Select(u => u.UserName).ToString()),
-                    true when email => throw UserException.UserAlreadyExistsException.FromEmailExistingUser(users.Select(u => u.Email).ToString()),
+                    true when id => throw UserException.UserAlreadyExistsException.FromExistingId(enumerable.Select(u => u.Id).ToString()),
+                    true when userName => throw UserException.UserAlreadyExistsException.FromNameExistingUser(enumerable.Select(u => u.UserName).ToString()),
+                    true when email => throw UserException.UserAlreadyExistsException.FromEmailExistingUser(enumerable.Select(u => u.Email).ToString()),
                     _ => false
                   
-                };
-                await Task.CompletedTask;
+                });
             }
             catch (DomainException)
             {

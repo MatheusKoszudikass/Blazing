@@ -86,7 +86,7 @@ namespace Blazing.Domain.Exceptions
             /// Initializes a new instance of the <see cref="ProductNotFoundException"/> class with the specified product list.
             /// </summary>
             /// <param name="produtos">The list of products that was not found or is empty.</param>
-            public ProductNotFoundException(IEnumerable<Product> produtos)
+            public ProductNotFoundException(IEnumerable<Product?> produtos)
                 : base("A lista de produtos está vazia.")
             {
             }

@@ -1,7 +1,6 @@
 ﻿using Blazing.Application.Dto;
 
-
-namespace Blazing.Ecommerce.Repository
+namespace Blazing.Ecommerce.Interface
 {
     public interface ICategoryInfrastructureRepository
     {
@@ -13,6 +12,6 @@ namespace Blazing.Ecommerce.Repository
 
         Task<IEnumerable<CategoryDto?>> GetCategoryById(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
-        Task<IEnumerable<CategoryDto?>> GetAll(CancellationToken cancellationToken);
+        Task<IEnumerable<CategoryDto?>> GetAll(int page, int pageSize, CancellationToken cancellationToken);
     }
 }

@@ -1,19 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Blazing.Application.Dto;
-using Blazing.Application.Interfaces.Product;
+using Blazing.Application.Interface.Product;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
 using Blazing.Ecommerce.Dependency;
-using Blazing.Ecommerce.Repository;
+using Blazing.Ecommerce.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Blazing.Ecommerce.Service
+namespace Blazing.Ecommerce.Repository
 {
     #region Responsibility for searching data in the database in the product table.
     /// <summary>
@@ -53,7 +48,7 @@ namespace Blazing.Ecommerce.Service
         /// Updates a product in the repository.
         /// </summary>
         /// <param name="id">The ID of the product to update.</param>
-        /// <param name="productDtos">The updated product.</param>
+        /// <param name="productDtoUpdate">The updated product.</param>
         /// <returns>The updated product.</returns>
         public async Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDtoUpdate, CancellationToken cancellationToken)
         {
@@ -104,16 +99,21 @@ namespace Blazing.Ecommerce.Service
         /// <returns>The products in the category.</returns>
         public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
+            var cacheId = id;
 
-            var ProductCategory = await _dependencyInjection._appContext.Products
-                                         .Include(a => a.Assessment)
-                                                 .ThenInclude(r => r.RevisionDetail)
-                                         .Include(a => a.Attributes)
-                                         .Include(a => a.Availability)
-                                         .Include(i => i.Image)
-                                         .Where(p => id.Contains(p.CategoryId)).ToListAsync(cancellationToken);
+            if (!_memoryCache.TryGetValue(cacheId, out IEnumerable<Product>? productsCategories))
+            {
+                productsCategories = await _dependencyInjection._appContext.Products
+                    .Include(a => a.Assessment)
+                    .ThenInclude(r => r.RevisionDetail)
+                    .Include(a => a.Attributes)
+                    .Include(a => a.Availability)
+                    .Include(i => i.Image)
+                    .Take(5)
+                    .Where(p => id.Contains(p.CategoryId)).ToListAsync(cancellationToken);
+            }
 
-            var categoryResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(ProductCategory);
+            var categoryResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(productsCategories);
 
             await _productAppService.GetProductsByCategoryId(id, categoryResultDto, cancellationToken);
 
@@ -189,16 +189,23 @@ namespace Blazing.Ecommerce.Service
         /// <returns>The product.</returns>
         public async Task<IEnumerable<ProductDto?>> GetProductById(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            var product = await _dependencyInjection._appContext.Products
-                                .Include(a => a.Assessment)
-                                         .ThenInclude(r => r.RevisionDetail)
-                                .Include(d => d.Dimensions)
-                                .Include(a => a.Attributes)
-                                .Include(a => a.Availability)
-                                .Include(i => i.Image)
-                                .Where(p => id.Contains(p.Id)).ToListAsync(cancellationToken);
+            var cacheId = id;
+            if (!_memoryCache.TryGetValue(cacheId, out IEnumerable<Product>? products))
+            {
+                products = await _dependencyInjection._appContext.Products
+                                        .Include(a => a.Assessment)
+                                        .ThenInclude(r => r.RevisionDetail)
+                                        .Include(d => d.Dimensions)
+                                        .Include(a => a.Attributes)
+                                        .Include(a => a.Availability)
+                                        .Include(i => i.Image)
+                                        .AsNoTracking()
+                                        .Take(5)
+                                        .Where(p => id.Contains(p.Id))
+                                        .ToListAsync(cancellationToken);
+            }
 
-            var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(product);
+            var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
             var productResult = await _productAppService.GetProductById(id, productResultDto, cancellationToken);
 
@@ -206,13 +213,18 @@ namespace Blazing.Ecommerce.Service
         }
 
 
-         public async Task<IEnumerable<ProductDto?>> GetAll(int page, int pageSize, CancellationToken cancellationToken)
-         {
+        public async Task<IEnumerable<ProductDto?>> GetAll(int page, int pageSize, CancellationToken cancellationToken)
+        {
             var cacheKey = $"products_{page}_{pageSize}";
 
-            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<Product> products))
+            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<Product>? products))
             {
                 products = await _dependencyInjection._appContext.Products
+                    .Include(a => a.Assessment)
+                    .ThenInclude(r => r.RevisionDetail)
+                    .Include(d => d.Dimensions)
+                    .Include(a => a.Attributes)
+                    .Include(a => a.Availability)
                     .Include(i => i.Image)
                     .AsNoTracking()
                     .Skip((page - 1) * pageSize)
@@ -226,24 +238,7 @@ namespace Blazing.Ecommerce.Service
             var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
             return productResultDto;
-
-
-                    //var products = await _dependencyInjection._appContext.Products
-                    //    .Include(a => a.Assessment)
-                    //    .ThenInclude(r => r.RevisionDetail)
-                    //    .Include(d => d.Dimensions)
-                    //    .Include(a => a.Attributes)
-                    //    .Include(a => a.Availability)
-                    //    .Include(i => i.Image)
-                    //    .AsNoTracking()
-                    //    .Skip((pageNumber - 1) * pageSize)
-                    //    .Take(pageSize)
-                    //    .ToListAsync(cancellationToken);
-
-                    //var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
-
-                    //return productResultDto;
-                }
+        }
 
         /// <summary>
         /// Checks if any products with the specified names exist in the database.
