@@ -15,26 +15,12 @@ namespace Blazing.Test.Infrastructure
     /// This class is used to test the UserDtoRepository methods.
     /// It uses the UserDtoRepositoryFixture to set up the necessary data and dependencies.
     /// </remarks>
-    public class UserEcommerceRepositoryFixtureTest : IClassFixture<RepositoryFixtureTest>
+    public class UserEcommerceRepositoryFixtureTest(RepositoryFixtureTest fixture) : IClassFixture<RepositoryFixtureTest>
     {
-        //User
-        private readonly RepositoryFixtureTest _fixture;
+        private readonly IEnumerable<UserDto> _user = fixture.PeopleOfData.GetAddUsers();
+        private readonly IEnumerable<Guid> _userId = fixture.PeopleOfData.GetUserId();
+        private readonly IEnumerable<UserDto> _UserToUpdate = fixture.PeopleOfData.GetUpdateUsers();
 
-        private readonly IEnumerable<UserDto> _user;
-        private readonly IEnumerable<Guid> _userId;
-        private readonly IEnumerable<UserDto> _UserToUpdate;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserEcommerceRepositoryFixtureTest"/> class.
-        /// </summary>
-        /// <param name="fixture">The fixture used to set up the necessary data and dependencies.</param>
-        public UserEcommerceRepositoryFixtureTest(RepositoryFixtureTest fixture)
-        {
-            _fixture = fixture;
-            _user = _fixture.PeopleOfData.GetAddUsers();
-            _userId = _fixture.PeopleOfData.GetUserId();
-            _UserToUpdate = _fixture.PeopleOfData.GetUpdateUsers();
-        }
 
         /// <summary>
         /// Tests the functionality of the UserEcommerceRepository class.
@@ -42,28 +28,31 @@ namespace Blazing.Test.Infrastructure
         [Fact]
         public async Task UserAllTest()
         {
-            int page = 1;
-            int pageSize = 3;
+            const int page = 1;
+            const int pageSize = 3;
             // Create a cancellation token with no cancellation.
             var cts = CancellationToken.None;
 
+            var originalUser = _user.ToList();
+            var updatedUser = _UserToUpdate.ToList();
+
             // Test if users exist in the repository.
-            var resultExistsFalse = await _fixture.UserEcommerceRepository.ExistsAsync(_user, cts);
+            var resultExistsFalse = await fixture.UserEcommerceRepository.ExistsAsync(originalUser, cts);
 
             // Add users to the repository.
-            var resultAdd = await _fixture.UserEcommerceRepository.AddUsers(_user, cts);
-
-            // Get all users from the repository.
-            var resultUserAll = await _fixture.UserEcommerceRepository.GetAllUsers(page,pageSize,cts);
+            var resultAdd = await fixture.UserEcommerceRepository.AddUsers(originalUser, cts);
 
             // Update users in the repository.
-            var resultToUpdate = await _fixture.UserEcommerceRepository.UpdateUsers(_userId, _UserToUpdate, cts);
+            var resultToUpdate = await fixture.UserEcommerceRepository.UpdateUsers(_userId, updatedUser, cts);
+
+            // Get all users from the repository.
+            var resultUserAll = await fixture.UserEcommerceRepository.GetAllUsers(page, pageSize, cts);
 
             // Get users by ID from the repository.
-            var resultById = await _fixture.UserEcommerceRepository.GetUsersById(_userId, cts);
+            var resultById = await fixture.UserEcommerceRepository.GetUsersById(_userId, cts);
 
             // Delete users from the repository.
-            var resultDeleteUser = await _fixture.UserEcommerceRepository.DeleteUsers(_userId, cts);
+            var resultDeleteUser = await fixture.UserEcommerceRepository.DeleteUsers(_userId, cts);
 
             // Assert that the results are not null.
             Assert.False(resultExistsFalse);
@@ -73,52 +62,40 @@ namespace Blazing.Test.Infrastructure
             Assert.NotNull(resultToUpdate);
             Assert.NotNull(resultDeleteUser);
 
-            // Assert that the results of the repository methods match the expected results.
-            await TaskCompletedTaskUserDto(_user, resultAdd);
-            await TaskCompletedTaskUserDto(_UserToUpdate, resultToUpdate);
-            await TaskCompletedTaskUserDto(resultToUpdate, resultById);
-            await TaskCompletedTaskUserDto(resultById, resultDeleteUser);
+            Assert.IsType<List<UserDto>>(resultAdd);
+            Assert.IsType<List<UserDto>>(resultUserAll);
+            Assert.IsType<List<UserDto>>(resultById);
+            Assert.IsType<List<UserDto>>(resultToUpdate);
+            Assert.IsType<List<UserDto>>(resultDeleteUser);
+
+            CompareUsers(originalUser, resultAdd);
+            CompareUsers(updatedUser, resultToUpdate);
+            CompareUsers(updatedUser, resultById);
+            CompareUsers(updatedUser, resultUserAll);
+            CompareUsers(updatedUser, resultDeleteUser);
         }
 
         /// <summary>
-        /// Compares two collections of UserDto objects and asserts that they are equal.
+        /// Compares the properties of two UserDto objects.
         /// </summary>
-        /// <param name="originalUserDto">The original collection of UserDto objects.</param>
-        /// <param name="checkUserDto">The collection of UserDto objects to check against the original.</param>
-        /// <returns>A Task that completes when the comparison is complete.</returns>
-        private static Task TaskCompletedTaskUserDto(IEnumerable<UserDto?> originalUserDto, IEnumerable<UserDto?> checkUserDto)
+        /// <param name="originalUsers">The original UserDto objects.</param>
+        /// <param name="updatedUsers">The updated UserDto objects.</param>
+        private static void CompareUsers(IEnumerable<UserDto> originalUsers, IEnumerable<UserDto?> updatedUsers)
         {
-            foreach (var itemAdded in checkUserDto)
+            var userDto = originalUsers.ToList();
+            foreach (var item in updatedUsers)
             {
-                var userAdd = originalUserDto.FirstOrDefault(u => u.Id == itemAdded.Id);
-
-                Assert.Equal(itemAdded.Id, userAdd.Id);
-                Assert.Equal(itemAdded.Status, userAdd.Status);
-                Assert.Equal(itemAdded.FirstName, userAdd.FirstName);
-                Assert.Equal(itemAdded.LastName, userAdd.LastName);
-                Assert.Equal(itemAdded.UserName, userAdd.UserName);
-                Assert.Equal(itemAdded.Email, userAdd.Email);
-                Assert.Equal(itemAdded.PasswordHash, userAdd.PasswordHash);
-                Assert.Equal(itemAdded.PhoneNumber, userAdd.PhoneNumber);
+                var user = userDto.FirstOrDefault(x => x.Id == item.Id);
+                Assert.NotNull(user);
+                Assert.Equal(item.Id, user.Id);
+                Assert.Equal(item.UserName, user.UserName);
+                Assert.Equal(item.Email, user.Email);
+                Assert.Equal(item.FirstName, user.FirstName);
+                Assert.Equal(item.LastName, user.LastName);
+                Assert.Equal(item.Status, user.Status);
+                Assert.Equal(item.PasswordHash, user.PasswordHash);
+                Assert.Equal(item.PhoneNumber, user.PhoneNumber);
             }
-
-            return Task.CompletedTask;
-        }
-
-        private static Task TaskCompletedTaskAddressUser(IEnumerable<AddressDto?> originalAddressDto, IEnumerable<AddressDto?> checkAddressDto)
-        {
-            foreach (var itemAdded in checkAddressDto)
-            {
-                var addressAdd = originalAddressDto.FirstOrDefault(u => u.Id == itemAdded.Id);
-
-                Assert.Equal(itemAdded.UserId, addressAdd.UserId);
-                Assert.Equal(itemAdded.Street, addressAdd.Street);
-                Assert.Equal(itemAdded.City, addressAdd.City);
-                Assert.Equal(itemAdded.State, addressAdd.State);
-                Assert.Equal(itemAdded.PostalCode, addressAdd.PostalCode);
-            }
-
-            return Task.CompletedTask;
         }
     }
 }
