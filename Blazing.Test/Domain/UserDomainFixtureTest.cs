@@ -8,12 +8,19 @@ using Blazing.Domain.Entities;
 
 namespace Blazing.Test.Domain
 {
+    /// <summary>
+    /// Test class for the UserDomainService.
+    /// </summary>
     public class UserDomainFixtureTest(DomainFixtureTest domainFixtureTest) : IClassFixture<DomainFixtureTest>
     {
         private readonly IEnumerable<UserDto> _users = domainFixtureTest.PeopleOfData.GetAddUsers();
         private readonly IEnumerable<Guid> _idUsers = domainFixtureTest.PeopleOfData.GetUserId();
         private readonly IEnumerable<UserDto> _usersToUpdate = domainFixtureTest.PeopleOfData.GetUpdateUsers();
 
+        /// <summary>
+        /// Tests the functionality of the UserDomainService class.
+        /// </summary>
+        /// <returns>A task that completes when the test is complete.</returns>
         [Fact]
         public async Task UserDomainTestAll()
         {
@@ -52,6 +59,11 @@ namespace Blazing.Test.Domain
 
         }
 
+        /// <summary>
+        /// Compares two collections of User objects and asserts that they are equal.
+        /// </summary>
+        /// <param name="originalUsers">The original collection of User objects.</param>
+        /// <param name="updatedUsers">The collection of User objects to check against the original.</param>
         private static void CompareUser(IEnumerable<User> originalUsers, IEnumerable<User?> updatedUsers)
         {
             var enumerable = originalUsers.ToList();
