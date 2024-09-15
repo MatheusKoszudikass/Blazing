@@ -14,8 +14,8 @@ namespace Blazing.Api.Controllers.Product
     /// <remarks>
     /// This class requires an instance of ILogger and IProductAppService to be passed in the constructor.
     /// </remarks>
-    /// <typeparam name="_logger">The type of the logger.</typeparam>
-    /// <typeparam name="produtoRepository">The type of the product infrastructure service.</typeparam>
+    /// <parameter name="logger">The type of the logger.</parameter>
+    /// <parameter name="produtoRepository">The type of the product infrastructure service.</parameter>
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController(ILogger<ProductController> logger, IProductInfrastructureRepository produtoRepository) : ControllerBase
@@ -28,17 +28,20 @@ namespace Blazing.Api.Controllers.Product
         /// Adds a list of new productsDto.
         /// </summary>
         /// <param name="newProductsDto">List of DTOs of productsDto to be added.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>List of added productsDto.</returns>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> AddProducts([FromBody] IEnumerable<ProductDto> newProductsDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> AddProducts([FromBody] IEnumerable<ProductDto> newProductsDto,
+            CancellationToken cancellationToken)
         {
-            
             var productAdded = await _productInfraRepository.AddProducts(newProductsDto, cancellationToken);
-            var productName = productAdded.Select(x => x.Name).ToList();
+
+            var productDto = productAdded.ToList();
+            var productName = productDto.Select(x => x.Name).ToList();
 
             _logger.LogInformation("Produtos adicionados com sucesso. nomes dos produtos: {names}. Total de produtos: {TotalProducts}.",
-                     productName, productAdded.Count());
+                     productName, productDto.Count());
 
             return Ok(productAdded); // Status 200
         }
@@ -47,13 +50,14 @@ namespace Blazing.Api.Controllers.Product
         /// Edit an existing productDto.
         /// </summary>
         /// <param name="id">The identifier of the productDto to be edited.</param>
-        /// <param name="productDto">DTO with updated productDto data.</param>
+        /// <param name="updateProductDto">DTO with updated productDto data.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>DTO of the edited product.</returns>
         [Authorize]
         [HttpPut("update")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduto([FromBody] IEnumerable<ProductDto> updateProductDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduto([FromQuery]IEnumerable<Guid> id, 
+            [FromBody] IEnumerable<ProductDto> updateProductDto, CancellationToken cancellationToken)
         {
-            var id = updateProductDto.Select(x => x.Id).ToList();
             var productUpdated = await _productInfraRepository.UpdateProduct(id, updateProductDto, cancellationToken);
 
             _logger.LogInformation("Produtos foram atualizados com sucesso utilizando os identificadores: {id}. Total de produtos editados: {TotalProducts}.",
@@ -66,24 +70,25 @@ namespace Blazing.Api.Controllers.Product
         /// Get productsDto from a specific categoryDto.
         /// </summary>
         /// <param name="id">the identifier of categoryDto.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>List of products in categoryDto.</returns>
         [Authorize]
         [HttpGet("categoryId")]
         public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            var produtcsCategories = await _productInfraRepository.GetProductsByCategoryId(id, cancellationToken);
+            var productsCategories = await _productInfraRepository.GetProductsByCategoryId(id, cancellationToken);
 
             _logger.LogInformation("Produtos recuperados com sucesso utilizando os identificadores de categoria: {id}. Total de produtos: {TotalProducts}.",
-                id, produtcsCategories.Count());
+                id, productsCategories.Count());
 
-            return Ok(produtcsCategories); // Status 200
+            return Ok(productsCategories); // Status 200
         }
-
 
         /// <summary>
         /// Deletes a productDto list.
         /// </summary>
         /// <param name="id">List of productDto and the identifier to delete.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>List of deleted productDto.</returns>
         [Authorize]
         [HttpDelete("delete")]
@@ -101,10 +106,11 @@ namespace Blazing.Api.Controllers.Product
         /// Gets a specific productDto by its identifier.
         /// </summary>
         /// <param name="id">the identifier of the productDto.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>productDto.</returns>
         [Authorize]
         [HttpGet("id")]
-        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductById([FromQuery]IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductById([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var productsById = await _productInfraRepository.GetProductById(id, cancellationToken);
 
@@ -120,11 +126,10 @@ namespace Blazing.Api.Controllers.Product
         /// <returns>List of product DTOs.</returns>
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll([FromQuery]int page, int pageSize, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll([FromQuery] int page, int pageSize, CancellationToken cancellationToken)
         {
             if (pageSize > 50)
                 pageSize = 50;
-            
 
             var products = await _productInfraRepository.GetAll(page, pageSize, cancellationToken);
 
@@ -136,4 +141,3 @@ namespace Blazing.Api.Controllers.Product
     }
     #endregion
 }
-
