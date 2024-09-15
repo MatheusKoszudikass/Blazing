@@ -33,6 +33,7 @@ namespace Blazing.Test.Controller
         public PeopleOfData PeopleOfData { get; }
         public BlazingDbContext DbContext { get; }
         public IMapper Mapper { get; }
+        public ProductMapping ProductMapping { get; }
         public DependencyInjection DependencyInjection { get; }
         public IMemoryCache MemoryCache;
 
@@ -68,13 +69,14 @@ namespace Blazing.Test.Controller
             }).CreateMapper();
 
             Mapper = config;
+            ProductMapping = new ProductMapping();
             MemoryCache = new MemoryCache(new MemoryCacheOptions());
             DependencyInjection = new DependencyInjection(DbContext, Mapper);
 
             //Products
             ProductDomainService = new ProductDomainService();
             ProductAppService = new ProductAppService(Mapper, ProductDomainService);
-            ProductInfrastructure = new ProductInfrastructureRepository(MemoryCache, DependencyInjection, ProductAppService);
+            ProductInfrastructure = new ProductInfrastructureRepository(ProductMapping, MemoryCache, DependencyInjection, ProductAppService);
             ProductController = new ProductController(_loggerController.Object, ProductInfrastructure);
 
             //Categories
