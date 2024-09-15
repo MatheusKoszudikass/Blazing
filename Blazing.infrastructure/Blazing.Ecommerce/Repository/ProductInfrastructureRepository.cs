@@ -1,12 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Blazing.Application.Dto;
 using Blazing.Application.Interface.Product;
+using Blazing.Application.Mappings;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
 using Blazing.Ecommerce.Dependency;
 using Blazing.Ecommerce.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Blazing.Ecommerce.Repository
 {
@@ -15,8 +17,9 @@ namespace Blazing.Ecommerce.Repository
     /// Repository class for managing Product domain objects.
     /// </summary>
     [MemoryDiagnoser]
-    public class ProductInfrastructureRepository(IMemoryCache memoryCache,DependencyInjection dbContext, IProductAppService<ProductDto> productInfrastructureRepository) : IProductInfrastructureRepository
+    public class ProductInfrastructureRepository(ProductMapping product, IMemoryCache memoryCache,DependencyInjection dbContext, IProductAppService<ProductDto> productInfrastructureRepository) : IProductInfrastructureRepository
     {
+        private readonly ProductMapping _productMapping = product;
         private readonly IMemoryCache _memoryCache = memoryCache;
         private readonly DependencyInjection _dependencyInjection = dbContext;
         private readonly IProductAppService<ProductDto> _productAppService = productInfrastructureRepository;
@@ -25,13 +28,15 @@ namespace Blazing.Ecommerce.Repository
         /// <summary>
         /// Adds a product to the repository.
         /// </summary>
-        /// <param name="product">The product to add.</param>
+        /// <param name="productDto">The product to add.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The added product.</returns>
         public async Task<IEnumerable<ProductDto?>> AddProducts(IEnumerable<ProductDto> productDto, CancellationToken cancellationToken)
         {
-            await ExistsAsyncProduct(productDto, cancellationToken);
+            var newProduct = productDto.ToList();
+            await ExistsAsyncProduct(newProduct, cancellationToken);
 
-            var productDtoResult = await _productAppService.AddProducts(productDto, cancellationToken);
+            var productDtoResult = await _productAppService.AddProducts(newProduct, cancellationToken);
 
             var productResult = _dependencyInjection._mapper.Map<IEnumerable<Product>>(productDtoResult);
 
@@ -40,8 +45,6 @@ namespace Blazing.Ecommerce.Repository
             await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
             return await Task.FromResult(productDtoResult);
-
-
         }
 
         /// <summary>
@@ -49,12 +52,14 @@ namespace Blazing.Ecommerce.Repository
         /// </summary>
         /// <param name="id">The ID of the product to update.</param>
         /// <param name="productDtoUpdate">The updated product.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The updated product.</returns>
         public async Task<IEnumerable<ProductDto?>> UpdateProduct(IEnumerable<Guid> id, IEnumerable<ProductDto> productDtoUpdate, CancellationToken cancellationToken)
         {
-            if (!id.Any())
+            var ids = id.ToList();
+            if (!ids.Any() || ids.Contains(Guid.Empty))
             {
-                throw new ProductExceptions.IdentityProductInvalidException(id);
+                throw new ProductExceptions.IdentityProductInvalidException(ids);
             }
 
             // Obtém os produtos existentes com as propriedades relacionadas carregadas
@@ -65,17 +70,18 @@ namespace Blazing.Ecommerce.Repository
                 .Include(a => a.Attributes)
                 .Include(a => a.Availability)
                 .Include(i => i.Image)
-                .Where(p => id.Contains(p.Id))
+                .Where(p => ids.Contains(p.Id))
                 .ToListAsync(cancellationToken);
 
             // Mapeia os produtos existentes para DTOs
-            var productDtos = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(existingProducts);
+            var productDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(existingProducts);
 
             // Atualiza os produtos usando o serviço
-            var productDtoUpdateResult = await _productAppService.UpdateProduct(id, productDtos, productDtoUpdate, cancellationToken);
+            var productDtoUpdateResult = await _productAppService.UpdateProduct(ids, productDto, productDtoUpdate, cancellationToken);
 
             // Atualiza as propriedades das entidades existentes com base nos DTOs atualizados
-            foreach (var updatedProductDto in productDtoUpdateResult)
+            var updatedProductDos = productDtoUpdateResult.ToList();
+            foreach (var updatedProductDto in updatedProductDos)
             {
                 var existingProduct = existingProducts.SingleOrDefault(p => p.Id == updatedProductDto.Id);
                 if (existingProduct != null)
@@ -87,21 +93,21 @@ namespace Blazing.Ecommerce.Repository
             // Salva as alterações no banco de dados
             await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
-            return productDtoUpdateResult;
+            return updatedProductDos;
         }
-
 
 
         /// <summary>
         /// Gets products by category ID.
         /// </summary>
         /// <param name="id">The ID of the category.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The products in the category.</returns>
         public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            var cacheId = id;
+            var ids = id.ToList();
 
-            if (!_memoryCache.TryGetValue(cacheId, out IEnumerable<Product>? productsCategories))
+            if (!_memoryCache.TryGetValue(ids, out IEnumerable<Product>? productsCategories))
             {
                 productsCategories = await _dependencyInjection._appContext.Products
                     .Include(a => a.Assessment)
@@ -110,14 +116,15 @@ namespace Blazing.Ecommerce.Repository
                     .Include(a => a.Availability)
                     .Include(i => i.Image)
                     .Take(5)
-                    .Where(p => id.Contains(p.CategoryId)).ToListAsync(cancellationToken);
+                    .Where(p => ids.Contains(p.CategoryId)).ToListAsync(cancellationToken);
             }
 
             var categoryResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(productsCategories);
 
-            await _productAppService.GetProductsByCategoryId(id, categoryResultDto, cancellationToken);
+            var productsByCategoryId = categoryResultDto.ToList();
+            await _productAppService.GetProductsByCategoryId(ids, productsByCategoryId, cancellationToken);
 
-            return categoryResultDto;
+            return productsByCategoryId;
 
         }
 
@@ -125,6 +132,7 @@ namespace Blazing.Ecommerce.Repository
         /// Deletes products by ID.
         /// </summary>
         /// <param name="id">The IDs of the products to delete.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The deleted products.</returns>
         public async Task<IEnumerable<ProductDto?>> DeleteProducts(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
@@ -148,7 +156,7 @@ namespace Blazing.Ecommerce.Repository
                 {
                     _dependencyInjection._appContext.Assessments.Remove(product.Assessment);
 
-                    if (product.Assessment.RevisionDetail != null && product.Assessment.RevisionDetail.Any())
+                    if (product.Assessment.RevisionDetail.Any())
                     {
                         _dependencyInjection._appContext.Revisions.RemoveRange(product.Assessment.RevisionDetail);
                     }
@@ -170,27 +178,28 @@ namespace Blazing.Ecommerce.Repository
                 }
             }
 
+            var productDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
-            var productDtos = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
-
-            await _productAppService.DeleteProducts(id, productDtos, cancellationToken);
+            var deleteProducts = productDto.ToList();
+            await _productAppService.DeleteProducts(id, deleteProducts, cancellationToken);
 
             _dependencyInjection._appContext.Products.RemoveRange(products);
 
             await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
-            return productDtos;
+            return deleteProducts;
         }
 
         /// <summary>
         /// Gets a product by ID.
         /// </summary>
         /// <param name="id">The ID of the product.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The product.</returns>
         public async Task<IEnumerable<ProductDto?>> GetProductById(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            var cacheId = id;
-            if (!_memoryCache.TryGetValue(cacheId, out IEnumerable<Product>? products))
+            var cacheKey = id.ToList();
+            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<Product>? products))
             {
                 products = await _dependencyInjection._appContext.Products
                                         .Include(a => a.Assessment)
@@ -201,21 +210,21 @@ namespace Blazing.Ecommerce.Repository
                                         .Include(i => i.Image)
                                         .AsNoTracking()
                                         .Take(5)
-                                        .Where(p => id.Contains(p.Id))
+                                        .Where(p => cacheKey.Contains(p.Id))
                                         .ToListAsync(cancellationToken);
             }
 
             var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
 
-            var productResult = await _productAppService.GetProductById(id, productResultDto, cancellationToken);
+            var productById = productResultDto.ToList();
+            var productResult = await _productAppService.GetProductById(cacheKey, productById, cancellationToken);
 
-            return productResultDto;
+            return productById;
         }
-
 
         public async Task<IEnumerable<ProductDto?>> GetAll(int page, int pageSize, CancellationToken cancellationToken)
         {
-            var cacheKey = $"products_{page}_{pageSize}";
+            const string cacheKey = $"products_all";
 
             if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<Product>? products))
             {
@@ -227,23 +236,33 @@ namespace Blazing.Ecommerce.Repository
                     .Include(a => a.Availability)
                     .Include(i => i.Image)
                     .AsNoTracking()
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
                     .ToListAsync(cancellationToken);
 
+                var cacheExpiryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30),
+                    SlidingExpiration = TimeSpan.FromMinutes(10)
+                };
 
-                _memoryCache.Set(cacheKey, products, TimeSpan.FromMinutes(5));
+                _memoryCache.Set(cacheKey, products, cacheExpiryOptions);
             }
 
-            var productResultDto = _dependencyInjection._mapper.Map<IEnumerable<ProductDto>>(products);
+            var productResultDto = new List<ProductDto?>();
+            if (products == null) return productResultDto;
+            var productCache = products
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+             productResultDto = _productMapping.ReturnProductDto(productCache).ToList();
 
             return productResultDto;
         }
 
+
         /// <summary>
         /// Checks if any products with the specified names exist in the database.
         /// </summary>
-        /// <param name="productNames">A collection of product names to check.</param>
+        /// <param name="product">A collection of product names to check.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>True if any products with the specified names exist, false otherwise.</returns>
         public async Task<bool> ExistsAsyncProduct(IEnumerable<ProductDto> product, CancellationToken cancellationToken)
         {
