@@ -31,6 +31,8 @@ namespace Blazing.Test.Controller
         [Fact]
         public async Task ProductControllerTest()
         {
+            fixture.MemoryCache.Remove($"products_all");
+
             var cts = CancellationToken.None;
             var originalProducts = _products.ToList();
             var updatedProducts = _productsUpdated.ToList();
@@ -42,13 +44,12 @@ namespace Blazing.Test.Controller
               fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductById(_idProducts, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.GetAll(1, 50, cts)).ReturnsAsync(updatedProducts);
 
-
             var resultAddProducts = await fixture.ProductController.AddProducts(originalProducts, cts);
             var okResult = Assert.IsType<OkObjectResult>(resultAddProducts.Result);
             var returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
 
-            var resultUpdateProduct = await fixture.ProductController.UpdateProduto(updatedProducts, cts);
+            var resultUpdateProduct = await fixture.ProductController.UpdateProduto(_idProducts, updatedProducts, cts);
             okResult = Assert.IsType<OkObjectResult>(resultUpdateProduct.Result);
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
@@ -72,6 +73,8 @@ namespace Blazing.Test.Controller
             okResult = Assert.IsType<OkObjectResult>(resultDeleted.Result);
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
+
+            fixture.MemoryCache.Remove($"products_all");
         }
     }
 }

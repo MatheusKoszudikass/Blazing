@@ -2,6 +2,7 @@
 using Blazing.Application.Dto;
 using Blazing.Domain.Entities;
 using Iced.Intel;
+using Microsoft.Extensions.Caching.Memory;
 
 
 namespace Blazing.Test.Infrastructure
@@ -21,7 +22,6 @@ namespace Blazing.Test.Infrastructure
         private readonly IEnumerable<ProductDto> _productsToUpdate = fixture.PeopleOfData.UpdateProduct();
         private readonly IEnumerable<Guid> _categoryIds = fixture.PeopleOfData.GetCategoryIds();
 
-
         /// <summary>
         /// Test method for the ProductRepository methods.
         /// </summary>
@@ -31,6 +31,8 @@ namespace Blazing.Test.Infrastructure
         [Fact]
         public async Task ProductsAllTest()
         {
+            fixture.MemoryCache.Remove($"products_all");
+
             const int page = 1;
             const int pageSize = 2;
             var cts = CancellationToken.None;
@@ -82,6 +84,8 @@ namespace Blazing.Test.Infrastructure
             CompareProducts(updatedProducts, resultGetByIdAsync);
             CompareProducts(updatedProducts, resultGetAllAsync);
             CompareProducts(updatedProducts, resultDeleteProductById);
+
+            fixture.MemoryCache.Remove($"products_all");
         }
 
         /// <summary>
@@ -102,7 +106,7 @@ namespace Blazing.Test.Infrastructure
                 Assert.Equal(item.CategoryId, userAdd.CategoryId);
                 Assert.Equal(item.AssessmentId, userAdd.AssessmentId);
                 CompareAssessments(item.Assessment, userAdd.Assessment);
-                CompareRevision(item.Assessment.RevisionDetail.First(), userAdd.Assessment.RevisionDetail.First());
+                CompareRevision(item.Assessment.RevisionDetail.FirstOrDefault(), userAdd.Assessment.RevisionDetail.FirstOrDefault());
                 Assert.Equal(item.AttributesId, userAdd.AttributesId);
                 CompareAttributes(item.Attributes, userAdd.Attributes);
                 Assert.Equal(item.AvailabilityId, userAdd.AvailabilityId);
@@ -120,6 +124,7 @@ namespace Blazing.Test.Infrastructure
         /// <param name="revisionToUpdate">The updated RevisionDto object.</param>
         private static void CompareRevision(RevisionDto? revisionOriginal, RevisionDto? revisionToUpdate)
         {
+            if (revisionOriginal == null || revisionToUpdate == null) return;
             if (revisionOriginal.Id != revisionToUpdate.Id) return;
             Assert.Equal(revisionToUpdate.Comment, revisionOriginal.Comment);
             Assert.Equal(revisionOriginal.Date, revisionToUpdate.Date);

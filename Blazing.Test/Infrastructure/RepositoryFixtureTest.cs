@@ -30,12 +30,14 @@ namespace Blazing.Test.Infrastructure
         private bool _disposed;
 
 
-        private readonly IMemoryCache _memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
+        public readonly IMemoryCache MemoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
 
         /// <summary>
         ///     Gets the AutoMapper instance.
         /// </summary>
         public IMapper Mapper { get; }
+
+        public ProductMapping ProductMapping { get; }
 
         /// <summary>
         ///     Gets the PeopleOfData instance.
@@ -124,6 +126,8 @@ namespace Blazing.Test.Infrastructure
             // Create a new instance of the Mapper class
             Mapper = config.CreateMapper();
 
+            ProductMapping = new ProductMapping();
+
             // Create a new instance of the MockDb class and create a new instance of the BlazingDbContext class
             DbContext = new MockDb().CreateDbContext();
 
@@ -141,7 +145,7 @@ namespace Blazing.Test.Infrastructure
 
             // Create a new instance of the ProductInfrastructureRepository class
             ProductInfrastructureRepository =
-                new ProductInfrastructureRepository(_memoryCache, InjectServiceDbContext, ProductAppService);
+                new ProductInfrastructureRepository(ProductMapping, MemoryCache, InjectServiceDbContext, ProductAppService);
 
             //Category
 
@@ -153,7 +157,7 @@ namespace Blazing.Test.Infrastructure
 
             // Create a new instance of the CategoryInfrastructureRepository class
             CategoryInfrastructureRepository =
-                new CategoryInfrastructureRepository(_memoryCache, CategoryAppService, InjectServiceDbContext);
+                new CategoryInfrastructureRepository(MemoryCache, CategoryAppService, InjectServiceDbContext);
 
             //User Ecommerce
 
@@ -164,7 +168,7 @@ namespace Blazing.Test.Infrastructure
             UserAppService = new UserAppService(Mapper, UserDomainService);
 
             UserEcommerceRepository =
-                new UserInfrastructureRepository(_memoryCache, UserAppService,
+                new UserInfrastructureRepository(MemoryCache, UserAppService,
                     InjectServiceDbContext);
 
             //User Identity
@@ -203,7 +207,6 @@ namespace Blazing.Test.Infrastructure
             if (_disposed) return;
             if (disposing)
                 DbContext?.Dispose();
-
             _disposed = true;
         }
 
