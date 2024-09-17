@@ -17,7 +17,6 @@ using Blazing.Ecommerce.Dependency;
 using Blazing.Ecommerce.Interface;
 using Blazing.Ecommerce.Repository;
 using Blazing.Test.Data;
-using BlazingPizzaTest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -33,7 +32,8 @@ namespace Blazing.Test.Controller
         public PeopleOfData PeopleOfData { get; }
         public BlazingDbContext DbContext { get; }
         public IMapper Mapper { get; }
-        public ProductMapping ProductMapping { get; }
+        public ProductDtoMapping ProductMapping { get; }
+        public CategoryDtoMapping CategoryMapping { get; }
         public DependencyInjection DependencyInjection { get; }
         public IMemoryCache MemoryCache;
 
@@ -69,7 +69,8 @@ namespace Blazing.Test.Controller
             }).CreateMapper();
 
             Mapper = config;
-            ProductMapping = new ProductMapping();
+            ProductMapping = new ProductDtoMapping();
+            CategoryMapping = new CategoryDtoMapping();
             MemoryCache = new MemoryCache(new MemoryCacheOptions());
             DependencyInjection = new DependencyInjection(DbContext, Mapper);
 
@@ -82,7 +83,7 @@ namespace Blazing.Test.Controller
             //Categories
             CategoryDomainService = new CategoryDomainService();
             CategoryAppService = new CategoryAppService(CategoryDomainService, Mapper);
-            CategoryInfrastructure = new CategoryInfrastructureRepository(MemoryCache, CategoryAppService, DependencyInjection);
+            CategoryInfrastructure = new CategoryInfrastructureRepository(CategoryMapping, MemoryCache, CategoryAppService, DependencyInjection);
             CategoryController = new CategoryController(_loggerCategoryController.Object, CategoryInfrastructure);
         }
         

@@ -51,8 +51,11 @@ namespace Blazing.Application.Services
         /// Gets productsDtos associated with a specific categoryDto ID.
         /// </summary>
         /// <param name="id">The category ID to filter the productsDto.</param>
+        /// <param name="productDto"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The list of productsDto associated with the given categoryDto.</returns>
-        public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, IEnumerable<ProductDto> productDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id,
+            IEnumerable<ProductDto?> productDto, CancellationToken cancellationToken)
         {
             var products = _mapper.Map<IEnumerable<Product>>(productDto);
 
@@ -99,7 +102,8 @@ namespace Blazing.Application.Services
         /// Gets all productsDto from the domain.
         /// </summary>
         /// <returns>The list of all productsDto.</returns>
-        public async Task<IEnumerable<ProductDto?>> GetAllProduct(IEnumerable<ProductDto> productDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductDto?>> GetAllProduct(IEnumerable<ProductDto?> productDto,
+            CancellationToken cancellationToken)
         {
             var products = _mapper.Map<IEnumerable<Product>>(productDto);
 

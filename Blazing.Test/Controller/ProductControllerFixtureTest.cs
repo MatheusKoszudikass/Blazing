@@ -31,6 +31,9 @@ namespace Blazing.Test.Controller
         [Fact]
         public async Task ProductControllerTest()
         {
+            var page = 1;
+            var pageSize = 2;
+
             fixture.MemoryCache.Remove($"products_all");
 
             var cts = CancellationToken.None;
@@ -39,7 +42,7 @@ namespace Blazing.Test.Controller
 
               fixture.ProductInfrastructureRepository.Setup(repo =>  repo.AddProducts(originalProducts, cts)).ReturnsAsync(originalProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.UpdateProduct(_idProducts,updatedProducts, cts)).ReturnsAsync(updatedProducts);
-              fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductsByCategoryId(_idProductsCategory, cts)).ReturnsAsync(updatedProducts);
+              fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductsByCategoryId(page, pageSize, _idProductsCategory, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.DeleteProducts(_idProducts, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductById(_idProducts, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.GetAll(1, 50, cts)).ReturnsAsync(updatedProducts);
@@ -54,10 +57,10 @@ namespace Blazing.Test.Controller
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
 
-            var resultGetByCategory = await fixture.ProductController.GetProductsByCategoryId(_idProductsCategory, cts);
+            var resultGetByCategory = await fixture.ProductController.GetProductsByCategoryId(page, pageSize, _idProductsCategory, cts);
             okResult = Assert.IsType<OkObjectResult>(resultGetByCategory.Result);
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
-            Assert.Single(returnProducts);
+            Assert.Equal(2, returnProducts.Count);
 
             var resultGetById = await fixture.ProductController.GetProductById(_idProducts, cts);
             okResult = Assert.IsType<OkObjectResult>(resultGetById.Result);

@@ -9,6 +9,7 @@ using Serilog.Context;
 namespace Blazing.Api.Middleware
 {
     #region ExceptionsControllers
+
     public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IWebHostEnvironment env)
     {
         /// <summary>
@@ -92,9 +93,11 @@ namespace Blazing.Api.Middleware
         /// <param name="ex">The domain exception.</param>
         private async Task DetermineException(HttpContext context, DomainException ex)
         {
+
             switch (ex)
             {
-                case DomainException.NotFoundException or DomainException.IdentityInvalidException:
+                case DomainException.NotFoundException:
+                case DomainException.IdentityInvalidException:
                     await HandleDomainException(context, ex);
                     break;
                 case ProductExceptions.ProductAlreadyExistsException:
@@ -103,22 +106,51 @@ namespace Blazing.Api.Middleware
                 case ProductExceptions.ProductNotFoundException:
                     await HandleProductException(context, ex);
                     break;
-                default:
-                {
-                    if (ex is CategoryExceptions.CategoryAlreadyExistsException ||
-                        ex is CategoryExceptions.CategoryNotFoundException ||
-                        ex is CategoryExceptions.CategoryInvalidExceptions ||
-                        ex is CategoryExceptions.CategoryInvalidExceptions)
-                        await HandleCategoryException(context, ex);
-                    else if (ex is UserException.UserAlreadyExistsException ||
-                             ex is UserException.UserLockedOutException ||
-                             ex is UserException.IdentityAddUserException ||
-                             ex is UserException.UserInvalidException ||
-                             ex is UserException.UserNotFoundException)
-                        await HandleUserException(context, ex);
+                case CategoryExceptions.CategoryAlreadyExistsException:
+                case CategoryExceptions.CategoryNotFoundException:
+                case CategoryExceptions.CategoryInvalidExceptions:
+                    await HandleCategoryException(context, ex);
                     break;
-                }
+                case UserException.UserAlreadyExistsException:
+                case UserException.UserLockedOutException:
+                case UserException.IdentityAddUserException:
+                case UserException.UserInvalidException:
+                case UserException.UserNotFoundException:
+                    await HandleUserException(context, ex);
+                    break;
+                default:
+                    await HandleUserException(context, ex);
+                    break;
             }
+
+
+        }
+
+        /// <summary>
+        /// Handles a domain exception by setting the appropriate HTTP status code and logging the exception.
+        /// </summary>
+        /// <param name="context">The HTTP context of the request.</param>
+        /// <param name="ex">The domain exception to handle.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task HandleDomainException(HttpContext context, DomainException ex)
+        {
+            var message = string.Empty;
+            switch (ex)
+            {
+                case DomainException.NotFoundException:
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    message = ex.Message;
+                    logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
+                    break;
+
+                case DomainException.IdentityInvalidException:
+                    context.Response.StatusCode = StatusCodes.Status409Conflict;
+                    message = ex.Message;
+                    logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
+                    break;
+            }
+
+            await HandleExceptionAsync(context, ex, message);
         }
 
         /// <summary>
@@ -237,35 +269,6 @@ namespace Blazing.Api.Middleware
 
             await HandleExceptionAsync(context, ex, message);
         }
-
-
-        /// <summary>
-        /// Handles a domain exception by setting the appropriate HTTP status code and logging the exception.
-        /// </summary>
-        /// <param name="context">The HTTP context of the request.</param>
-        /// <param name="ex">The domain exception to handle.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task HandleDomainException(HttpContext context, DomainException ex)
-        {
-            var message = string.Empty;
-            switch (ex)
-            {
-                case DomainException.NotFoundException:
-                    context.Response.StatusCode = StatusCodes.Status404NotFound;
-                    message = ex.Message;
-                    logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
-                    break;
-
-                case DomainException.IdentityInvalidException:
-                    context.Response.StatusCode = StatusCodes.Status409Conflict;
-                    message = ex.Message;
-                    logger.LogWarning("Ocorreu um aviso: {ErrorMessage}", ex.Message);
-                    break;
-            }
-
-            await HandleExceptionAsync(context, ex, message);
-        }
-
     }
     #endregion
 }
