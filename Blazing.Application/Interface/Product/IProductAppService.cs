@@ -28,8 +28,10 @@ namespace Blazing.Application.Interface.Product
         /// </summary>
         /// <param name="id">The ID of the categoryDto to retrieve productsDto from.</param>
         /// <param name="productDto">The productsDto to be retrieved.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a collection of productsDto in the specified categoryDto.</returns>
-        Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, IEnumerable<ProductDto> productDto, CancellationToken cancellationToken);
+        Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id,
+            IEnumerable<ProductDto?> productDto, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a collection of productsDto by their IDs.
@@ -49,7 +51,7 @@ namespace Blazing.Application.Interface.Product
         /// Retrieves all productsDto.
         /// </summary>
         /// <returns>A task representing the asynchronous operation, with a collection of all productsDto.</returns>
-        Task<IEnumerable<ProductDto?>> GetAllProduct(IEnumerable<ProductDto> productDto, CancellationToken cancellationToken);
+        Task<IEnumerable<ProductDto?>> GetAllProduct(IEnumerable<ProductDto?> productDto, CancellationToken cancellationToken);
 
         /// <summary>
         ///  checks the name to see if it already exists or not

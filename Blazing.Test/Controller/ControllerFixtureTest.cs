@@ -17,7 +17,6 @@ using Blazing.Ecommerce.Dependency;
 using Blazing.Ecommerce.Interface;
 using Blazing.Ecommerce.Repository;
 using Blazing.Test.Data;
-using BlazingPizzaTest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -33,6 +32,8 @@ namespace Blazing.Test.Controller
         public PeopleOfData PeopleOfData { get; }
         public BlazingDbContext DbContext { get; }
         public IMapper Mapper { get; }
+        public ProductDtoMapping ProductMapping { get; }
+        public CategoryDtoMapping CategoryMapping { get; }
         public DependencyInjection DependencyInjection { get; }
         public IMemoryCache MemoryCache;
 
@@ -68,19 +69,21 @@ namespace Blazing.Test.Controller
             }).CreateMapper();
 
             Mapper = config;
+            ProductMapping = new ProductDtoMapping();
+            CategoryMapping = new CategoryDtoMapping();
             MemoryCache = new MemoryCache(new MemoryCacheOptions());
             DependencyInjection = new DependencyInjection(DbContext, Mapper);
 
             //Products
             ProductDomainService = new ProductDomainService();
             ProductAppService = new ProductAppService(Mapper, ProductDomainService);
-            ProductInfrastructure = new ProductInfrastructureRepository(MemoryCache, DependencyInjection, ProductAppService);
+            ProductInfrastructure = new ProductInfrastructureRepository(ProductMapping, MemoryCache, DependencyInjection, ProductAppService);
             ProductController = new ProductController(_loggerController.Object, ProductInfrastructure);
 
             //Categories
             CategoryDomainService = new CategoryDomainService();
             CategoryAppService = new CategoryAppService(CategoryDomainService, Mapper);
-            CategoryInfrastructure = new CategoryInfrastructureRepository(MemoryCache, CategoryAppService, DependencyInjection);
+            CategoryInfrastructure = new CategoryInfrastructureRepository(CategoryMapping, MemoryCache, CategoryAppService, DependencyInjection);
             CategoryController = new CategoryController(_loggerCategoryController.Object, CategoryInfrastructure);
         }
         

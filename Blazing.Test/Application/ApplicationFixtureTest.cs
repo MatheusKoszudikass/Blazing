@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Blazing.Application.Mappings;
 using Blazing.Application.Services;
-using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Services;
-using BlazingPizzaTest.Data;
-using Moq;
+using Blazing.Test.Data;
 
 namespace Blazing.Test.Application
 {

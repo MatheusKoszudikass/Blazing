@@ -28,7 +28,7 @@ namespace Blazing.Ecommerce.Interface
         /// <param name="id">A collection of category IDs.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a result of a collection of <see cref="ProductDto"/> objects associated with the specified category IDs.</returns>
-        Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(IEnumerable<Guid> id, CancellationToken cancellationToken);
+        Task<IEnumerable<ProductDto?>> GetProductsByCategoryId(int page, int pageSize, IEnumerable<Guid> id, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes products based on their IDs.

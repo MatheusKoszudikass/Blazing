@@ -31,32 +31,36 @@ namespace Blazing.Test.Controller
         [Fact]
         public async Task ProductControllerTest()
         {
+            var page = 1;
+            var pageSize = 2;
+
+            fixture.MemoryCache.Remove($"products_all");
+
             var cts = CancellationToken.None;
             var originalProducts = _products.ToList();
             var updatedProducts = _productsUpdated.ToList();
 
               fixture.ProductInfrastructureRepository.Setup(repo =>  repo.AddProducts(originalProducts, cts)).ReturnsAsync(originalProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.UpdateProduct(_idProducts,updatedProducts, cts)).ReturnsAsync(updatedProducts);
-              fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductsByCategoryId(_idProductsCategory, cts)).ReturnsAsync(updatedProducts);
+              fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductsByCategoryId(page, pageSize, _idProductsCategory, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.DeleteProducts(_idProducts, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.GetProductById(_idProducts, cts)).ReturnsAsync(updatedProducts);
               fixture.ProductInfrastructureRepository.Setup(repo => repo.GetAll(1, 50, cts)).ReturnsAsync(updatedProducts);
-
 
             var resultAddProducts = await fixture.ProductController.AddProducts(originalProducts, cts);
             var okResult = Assert.IsType<OkObjectResult>(resultAddProducts.Result);
             var returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
 
-            var resultUpdateProduct = await fixture.ProductController.UpdateProduto(updatedProducts, cts);
+            var resultUpdateProduct = await fixture.ProductController.UpdateProduto(_idProducts, updatedProducts, cts);
             okResult = Assert.IsType<OkObjectResult>(resultUpdateProduct.Result);
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
 
-            var resultGetByCategory = await fixture.ProductController.GetProductsByCategoryId(_idProductsCategory, cts);
+            var resultGetByCategory = await fixture.ProductController.GetProductsByCategoryId(page, pageSize, _idProductsCategory, cts);
             okResult = Assert.IsType<OkObjectResult>(resultGetByCategory.Result);
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
-            Assert.Single(returnProducts);
+            Assert.Equal(2, returnProducts.Count);
 
             var resultGetById = await fixture.ProductController.GetProductById(_idProducts, cts);
             okResult = Assert.IsType<OkObjectResult>(resultGetById.Result);
@@ -72,6 +76,8 @@ namespace Blazing.Test.Controller
             okResult = Assert.IsType<OkObjectResult>(resultDeleted.Result);
             returnProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
             Assert.Equal(2, returnProducts.Count);
+
+            fixture.MemoryCache.Remove($"products_all");
         }
     }
 }

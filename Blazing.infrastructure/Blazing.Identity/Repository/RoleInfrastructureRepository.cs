@@ -169,6 +169,7 @@ namespace Blazing.Identity.Repository
                         {
                             cacheAppRole[index] = updatedRole;
                         }
+                        
                         else
                         {
                             cacheAppRole.Add(updatedRole);

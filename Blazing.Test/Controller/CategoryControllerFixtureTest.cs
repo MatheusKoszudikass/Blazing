@@ -46,12 +46,12 @@ namespace Blazing.Test.Controller
             var resultUpdateCategories = await fixture.CategoryController.UpdateCategories(updatedCategoryDto, cts);
             okResult = Assert.IsType<OkObjectResult>(resultUpdateCategories.Result);
             returnProducts = Assert.IsType<List<CategoryDto>>(okResult.Value);
-            Assert.Single(returnProducts);
+            Assert.Equal(2, returnProducts.Count);
 
             var resultGetByCategory = await fixture.CategoryController.GetCategoryById(_idCategory, cts);
             okResult = Assert.IsType<OkObjectResult>(resultGetByCategory.Result);
             returnProducts = Assert.IsType<List<CategoryDto>>(okResult.Value);
-            Assert.Single(returnProducts);
+            Assert.Equal(2, returnProducts.Count);
 
             var resultGetAll = await fixture.CategoryController.GetAllCategories(1, 2, cts);
             okResult = Assert.IsType<OkObjectResult>(resultGetAll.Result);
@@ -61,7 +61,7 @@ namespace Blazing.Test.Controller
             var resultDeletedCategories = await fixture.CategoryController.DeleteCategories(_idCategory, cts);
             okResult = Assert.IsType<OkObjectResult>(resultDeletedCategories.Result);
             returnProducts = Assert.IsType<List<CategoryDto>>(okResult.Value);
-            Assert.Single(returnProducts);
+            Assert.Equal(2, returnProducts.Count);
         }
     }
 }

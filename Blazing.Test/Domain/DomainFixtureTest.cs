@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Blazing.Application.Mappings;
 using Blazing.Domain.Services;
-using BlazingPizzaTest.Data;
-using Microsoft.EntityFrameworkCore;
+using Blazing.Test.Data;
 
 namespace Blazing.Test.Domain
 {
