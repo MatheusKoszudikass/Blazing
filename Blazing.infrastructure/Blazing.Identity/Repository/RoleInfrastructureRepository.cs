@@ -1,195 +1,192 @@
 ﻿using AutoMapper;
-using Blazing.Identity.Dependency;
+using BenchmarkDotNet.Disassemblers;
+using Blazing.Identity.Dependencies;
 using Blazing.Identity.Entities;
 using Blazing.Identity.Dto;
 using Blazing.Identity.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Blazing.Identity.RepositoryResult;
 
 namespace Blazing.Identity.Repository
 {
-    public class RoleInfrastructureRepository(IMemoryCache memoryCache,DependencyInjection dependencyInjection,RoleManager<ApplicationRole> roleManager) 
+    public class RoleInfrastructureRepository(ILogger<RoleInfrastructureRepository> logger, 
+        DependencyInjection dependencyInjection, UserManager<ApplicationUser> manager,RoleManager<ApplicationRole> roleManager)
         : IRoleInfrastructureRepository
     {
-        private readonly IMemoryCache _memoryCache = memoryCache;   
+        private readonly ILogger<RoleInfrastructureRepository> _logger = logger;
         private readonly DependencyInjection _dependencyInjection = dependencyInjection;
+        private readonly UserManager<ApplicationUser> _userManager = manager;
         private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
 
-        public async Task<IEnumerable<IdentityResult?>> Add(IEnumerable<ApplicationRoleDto> roleDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IdentityResult>?> Add(IEnumerable<ApplicationRoleDto> roleDto, CancellationToken cancellationToken)
         {
-            if (roleDto == null || !roleDto.Any())
-            {
+            var roleList = roleDto.ToList();
+            if (roleList.Count == 0)
                 throw new ArgumentException("A lista de papéis está vazia.", nameof(roleDto));
-            }
 
-            var results = new List<IdentityResult>();
-
-            foreach (var item in roleDto)
+            var result = new List<IdentityResult>();
+            try
             {
-                if (item == null)
+                foreach (var item in roleList)
                 {
-                    results.Add(IdentityResult.Failed(new IdentityError { Description = "Umas das funções fornecidos é nulo." }));
-                    continue;
+                    var roleExists = await _roleManager.RoleExistsAsync(item.Name);
+                    if (roleExists)
+                    {
+                        _logger.LogInformation("A função {role} existe.", item.Name);
+                        throw new ArgumentException("O funções do usuário ja existe.", nameof(item.Name));
+                    }
+
+                    var applicationRole = _dependencyInjection._mapper.Map<ApplicationRole>(item);
+
+                    var resultRoleCreate = await _roleManager.CreateAsync(applicationRole);
+
+                    result.Add(resultRoleCreate);
                 }
 
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    results.Add(IdentityResult.Failed(new IdentityError { Description = "Operação cancelada." }));
-                    break;
-                }
-
-                var roleExists = await _roleManager.RoleExistsAsync(item.Name);
-                if (roleExists)
-                {
-                    results.Add(IdentityResult.Failed(new IdentityError { Description = $"O função '{item.Name}' já existe." }));
-                    continue;
-                }
-
-                var applicationRole = _dependencyInjection._mapper.Map<ApplicationRole>(item);
-
-                var result = await _roleManager.CreateAsync(applicationRole);
-                UpdateCacheRoles(roleDto);
-                results.Add(result);
+                return result;
             }
-
-            return results;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<IEnumerable<IdentityResult?>> Update(IEnumerable<Guid> id, IEnumerable<ApplicationRoleDto> roleDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IdentityResult>?> Update(IEnumerable<Guid> id, IEnumerable<ApplicationRoleDto> roleDto, CancellationToken cancellationToken)
         {
-            if (roleDto == null)
-            {
-                throw new ArgumentException("O identificado da função não podem ficar vazios.");
-            }
+            var idList = id.ToList();
+            if (idList.Count == 0 || idList.Any(i => i == Guid.Empty))
+                throw new ArgumentException("O identificado da função não podem ficar vazios.", nameof(idList));
+            
+            var roleDtoList = roleDto.ToList();
+            if (roleDtoList.Count == 0 || !roleDtoList.Any(i => idList.Contains(i.Id)))
+                throw new ArgumentException("A lista de funções não pode ficar vazia.", nameof(roleDtoList));
 
-            var results = new List<IdentityResult>();
-            foreach (var item in roleDto)
+            var result = new List<IdentityResult>();
+            try
             {
-                var role = await _roleManager.FindByIdAsync(item.Id.ToString());
-                if (role == null)
+                foreach (var item in roleDtoList)
                 {
-                    throw new InvalidOperationException("O papel do usuário não existe.");
+                    var role = await _roleManager.FindByIdAsync(item.Id.ToString());
+                    if (role == null)
+                    {
+                        _logger.LogInformation("A função {role} não foi encontrada.", item.Name);
+                        throw new ArgumentException("O funções do usuário não existe.", nameof(role.Name));
+                    }
+                    
+                    var applicationRole = _dependencyInjection._mapper.Map(item, role);
+
+                    var resultRoleUpdate = await _roleManager.UpdateAsync(applicationRole);
+
+                    result.Add(resultRoleUpdate);
                 }
 
-                var applicationRole = _dependencyInjection._mapper.Map(item, role);
-               var result =  await _roleManager.UpdateAsync(applicationRole);
-                results.Add(result);
-                if (result.Succeeded)
-                {
-                    UpdateCacheRoles(roleDto);
-                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<IEnumerable<IdentityResult>?> Delete(IEnumerable<Guid> id, CancellationToken cancellationToken)
+        {
+            var idList = id.ToList();
+            if (idList.Count == 0 || idList.Any(i => i == Guid.Empty))
+            {
+                _logger.LogInformation("O identificador da função não pode estar vazio. {nome}", nameof(idList));
+                throw new ArgumentException("O identificador da função não pode estár vazio.", nameof(idList));
             }
 
-            return results;
+            var result = new List<IdentityResult>();
+            try
+            {
+                foreach (var itemId in idList)
+                {
+                    var role = await _roleManager.FindByIdAsync(itemId.ToString());
+                    if (role == null)continue;
+
+                    var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name.ToString());
+                    foreach (var user in usersInRole)
+                    {
+                        var resultRemoveUserRole = await _userManager.RemoveFromRoleAsync(user, role.Name.ToString());
+               
+                        result.Add(resultRemoveUserRole);
+                            
+                    }
+
+                    var resultRemoveRole = await _roleManager.DeleteAsync(role);
+
+                    result.Add(resultRemoveRole);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
-        public Task<IEnumerable<IdentityResult?>> Delete(IEnumerable<Guid> id, IEnumerable<ApplicationRoleDto> obj, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ApplicationRoleDto?>> GetById(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
+            var idsList = id.ToList();
+            var applicationRoles = new List<ApplicationRole>();
+            if (idsList.Count == 0 || idsList.Any(i => i == Guid.Empty))
+            {
+                _logger.LogInformation("O identificado da função não pode ficar vazio. {nome}", nameof(id));
+                throw new ArgumentException("O identificado da função não pode ficar vazio.", nameof(id));
+            }
 
-        public Task<IEnumerable<ApplicationRoleDto?>> GetById(IEnumerable<Guid> id, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (var itemId in idsList)
+                {
+                    var role = await _roleManager.FindByIdAsync(itemId.ToString());
+                    if (role == null)
+                    {
+                        _logger.LogInformation("A função {role} não foi encontrada.", itemId);
+                        throw new ArgumentException("A função {role} não foi encontrada.", nameof(role.Name));
+                    }
+
+                    applicationRoles.Add(role);
+                }
+
+                return _dependencyInjection._mapper.Map<IEnumerable<ApplicationRoleDto>>(applicationRoles);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
         public async Task<IEnumerable<ApplicationRoleDto?>> GetAll(int page, int pageSize,
             CancellationToken cancellationToken)
         {
-            if (page <= 0)
-            {
-                throw new ArgumentException("A página deve ser maior que zero.", nameof(page));
-            }
-
-            if (pageSize > 50)
-            {
-                pageSize = 50;
-            }
-            var cacheKey = $"{page}-{pageSize}";
             try
             {
-                if(!_memoryCache.TryGetValue(cacheKey, out IEnumerable<ApplicationRole>? applicationRoles))
+                var applicationRoles = await _dependencyInjection._appContext.Roles
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync(cancellationToken);
+                if (!applicationRoles.Any())
                 {
-                    applicationRoles = await _dependencyInjection._appContext.Roles
-                        .Skip((page - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToListAsync(cancellationToken);
-
-          
-                    _memoryCache.Set(cacheKey, applicationRoles, TimeSpan.FromMinutes(5));
+                    _logger.LogInformation("Nenhuma função foi encontrada.");
+                    throw new ArgumentException("Nenhuma função foi encontrada.", nameof(applicationRoles));
                 }
+                
                 var applicationRolesRto = _dependencyInjection._mapper.Map<IEnumerable<ApplicationRoleDto>>(applicationRoles);
-                var result = CacheMemoryManagerRoles(page, pageSize, applicationRolesRto);
 
-                return result;
+                return applicationRolesRto;
             }
-            catch (AutoMapperMappingException ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-
-        public Task<bool> ExistsAsync(bool boolean, bool booleanI, IEnumerable<ApplicationRoleDto> obj, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        private static IEnumerable<ApplicationRoleDto> CacheMemoryManagerRoles(int page, int pageSize, IEnumerable<ApplicationRoleDto> role)
-        {
-            return role.Select(item => item with { Page = page, PageSize = pageSize });
-        }
-
-
-        /// <summary>
-        /// Updates the cache with the provided roles. If the cache already contains roles for the given page and page size,
-        /// it updates the existing roles with the provided ones. Otherwise, it adds the provided roles to the cache.
-        /// </summary>
-        /// <param name="roleDto">The roles to update or add to the cache.</param>
-        private void UpdateCacheRoles(IEnumerable<ApplicationRoleDto> roleDto)
-        {
-            if (roleDto == null || !roleDto.Any())
-                return;
-
-            var page = roleDto.First().Page;
-            var pageSize = roleDto.First().PageSize;
-            var cacheKey = $"{page}-{pageSize}";
-            try
-            {
-                if (_memoryCache.TryGetValue(cacheKey, out List<ApplicationRole>? cacheAppRole))
-                {
-                    var updatedRoles = roleDto.Select(dto => _dependencyInjection._mapper.Map<ApplicationRole>(dto)).ToList();
-
-                    foreach (var updatedRole in updatedRoles)
-                    {
-                        var index = cacheAppRole.FindIndex(r => r.Id == updatedRole.Id);
-                        if (index >= 0)
-                        {
-                            cacheAppRole[index] = updatedRole;
-                        }
-                        
-                        else
-                        {
-                            cacheAppRole.Add(updatedRole);
-                        }
-                    }
-
-                    _memoryCache.Set(cacheKey, cacheAppRole, TimeSpan.FromMinutes(5));
-                }
-                else
-                {
-                    var newCacheAppRole = roleDto.Select(dto => _dependencyInjection._mapper.Map<ApplicationRole>(dto)).ToList();
-                    _memoryCache.Set(cacheKey, newCacheAppRole, TimeSpan.FromMinutes(5));
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
     }
 }
