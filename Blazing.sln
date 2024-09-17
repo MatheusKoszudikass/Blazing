@@ -28,6 +28,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.Identity", "Blazing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazing.Ecommerce", "Blazing.infrastructure\Blazing.Ecommerce\Blazing.Ecommerce.csproj", "{0494D7B2-EA12-4DE1-8C61-3785DB6054DA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazing.LoadTest", "Blazing.LoadTest", "{FBB643DE-96F5-4023-9397-DB208E425C2E}"
+	ProjectSection(SolutionItems) = preProject
+		Blazing.LoadTest\docker-compose.yml = Blazing.LoadTest\docker-compose.yml
+		Blazing.LoadTest\index.js = Blazing.LoadTest\index.js
+		Blazing.LoadTest\package-lock.json = Blazing.LoadTest\package-lock.json
+		Blazing.LoadTest\package.json = Blazing.LoadTest\package.json
+		Blazing.LoadTest\script.js = Blazing.LoadTest\script.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +87,7 @@ Global
 		{8EDD322F-BDC3-442D-9388-638514D315CA} = {4018E3EB-248B-435C-A6FB-5DCE97E40C86}
 		{3C171917-EBED-49B5-8C32-F8E9370E3536} = {8EDD322F-BDC3-442D-9388-638514D315CA}
 		{0494D7B2-EA12-4DE1-8C61-3785DB6054DA} = {8EDD322F-BDC3-442D-9388-638514D315CA}
+		{FBB643DE-96F5-4023-9397-DB208E425C2E} = {4018E3EB-248B-435C-A6FB-5DCE97E40C86}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4788DC1A-A668-48EF-A2A5-BC53557EF6FB}
