@@ -20,7 +20,13 @@ namespace Blazing.Api.Dependencies
         {
             services.AddAutoMapper(typeof(BlazingProfile));
 
+            //Mapping product
+            services.AddScoped<ProductDtoMapping>();
             services.AddScoped<ProductMapping>();
+
+            //Mapping category
+            services.AddScoped<CategoryDtoMapping>();
+            services.AddScoped<CategoryMapping>();
 
             services.AddSwaggerGen();
 
