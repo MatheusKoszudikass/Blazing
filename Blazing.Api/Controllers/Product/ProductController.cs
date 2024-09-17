@@ -69,14 +69,19 @@ namespace Blazing.Api.Controllers.Product
         /// <summary>
         /// Get productsDto from a specific categoryDto.
         /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
         /// <param name="id">the identifier of categoryDto.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>List of products in categoryDto.</returns>
         [Authorize]
         [HttpGet("categoryId")]
-        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto?>>> GetProductsByCategoryId(int page, int pageSize, [FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            var productsCategories = await _productInfraRepository.GetProductsByCategoryId(id, cancellationToken);
+            if(pageSize > 50)
+                pageSize = 50;
+
+            var productsCategories = await _productInfraRepository.GetProductsByCategoryId(page, pageSize, id, cancellationToken);
 
             _logger.LogInformation("Produtos recuperados com sucesso utilizando os identificadores de categoria: {id}. Total de produtos: {TotalProducts}.",
                 id, productsCategories.Count());
@@ -92,7 +97,7 @@ namespace Blazing.Api.Controllers.Product
         /// <returns>List of deleted productDto.</returns>
         [Authorize]
         [HttpDelete("delete")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> DeleteProducts([FromBody] IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> DeleteProducts([FromQuery] IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var productsDeleted = await _productInfraRepository.DeleteProducts(id, cancellationToken);
 

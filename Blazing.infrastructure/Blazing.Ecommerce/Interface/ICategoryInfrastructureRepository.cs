@@ -13,5 +13,7 @@ namespace Blazing.Ecommerce.Interface
         Task<IEnumerable<CategoryDto?>> GetCategoryById(IEnumerable<Guid> id, CancellationToken cancellationToken);
 
         Task<IEnumerable<CategoryDto?>> GetAll(int page, int pageSize, CancellationToken cancellationToken);
+
+        Task<bool> ExistsAsyncCategory(IEnumerable<CategoryDto> categoryDto, CancellationToken cancellationToken);
     }
 }

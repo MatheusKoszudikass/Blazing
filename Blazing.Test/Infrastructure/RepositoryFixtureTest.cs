@@ -10,7 +10,6 @@ using Blazing.Identity.Data;
 using Blazing.Identity.Entities;
 using Blazing.Identity.Mappings;
 using Blazing.Test.Data;
-using BlazingPizzaTest.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -37,7 +36,9 @@ namespace Blazing.Test.Infrastructure
         /// </summary>
         public IMapper Mapper { get; }
 
-        public ProductMapping ProductMapping { get; }
+        public ProductDtoMapping ProductMapping { get; }
+
+        public CategoryDtoMapping CategoryMapping { get; }
 
         /// <summary>
         ///     Gets the PeopleOfData instance.
@@ -126,7 +127,9 @@ namespace Blazing.Test.Infrastructure
             // Create a new instance of the Mapper class
             Mapper = config.CreateMapper();
 
-            ProductMapping = new ProductMapping();
+            ProductMapping = new ProductDtoMapping();
+
+            CategoryMapping = new CategoryDtoMapping();
 
             // Create a new instance of the MockDb class and create a new instance of the BlazingDbContext class
             DbContext = new MockDb().CreateDbContext();
@@ -157,7 +160,7 @@ namespace Blazing.Test.Infrastructure
 
             // Create a new instance of the CategoryInfrastructureRepository class
             CategoryInfrastructureRepository =
-                new CategoryInfrastructureRepository(MemoryCache, CategoryAppService, InjectServiceDbContext);
+                new CategoryInfrastructureRepository(CategoryMapping, MemoryCache, CategoryAppService, InjectServiceDbContext);
 
             //User Ecommerce
 
