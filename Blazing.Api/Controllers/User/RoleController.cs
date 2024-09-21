@@ -28,7 +28,7 @@ namespace Blazing.Api.Controllers.User
         {
             var result = await _roleInfrastructureRepository.Add(roleDto, cancellationToken);
             _logger.LogInformation("Funções adicionadas com sucesso. Total: {result}", 
-                result.Count());
+                result);
 
             return Ok(result);
         }
@@ -46,8 +46,8 @@ namespace Blazing.Api.Controllers.User
             CancellationToken cancellationToken)
         {
             var result = await _roleInfrastructureRepository.Update(id ,roleDto, cancellationToken);
-            _logger.LogInformation("Funções atualizadas com sucesso. Total: {result}.",
-                result.Count());
+            _logger.LogInformation("Funções atualizadas com sucesso. {result}.",
+                result);
 
             return Ok(result);
         }
@@ -65,7 +65,7 @@ namespace Blazing.Api.Controllers.User
         {
             var result = await _roleInfrastructureRepository.Delete(id, cancellationToken);
             _logger.LogInformation("Funções excluídas com sucesso. Total {result}",
-                result.Count());
+                result);
 
             return Ok(result);
         }

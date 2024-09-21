@@ -9,50 +9,51 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// DTO responsible for general product information.
     /// </summary>
-    public sealed class ProductDto : BaseEntityDto
+    public sealed record ProductDto 
     {
-        public string? Name { get; set; }
+        public Guid Id { get; init; }
+        public string Name { get; init; } = string.Empty;
 
-        public string? Description { get; set; }
+        public string? Description { get; init; }
 
-        public decimal Price { get; set; }
+        public decimal Price { get; init; }
 
-        public string? Currency { get; set; }
+        public string? Currency { get; init; }
 
-        public Guid CategoryId { get; set; }
+        public Guid CategoryId { get; init; }
 
-        public string? Brand { get; set; }
+        public string? Brand { get; init; }
 
-        public string? SKU { get; set; }
+        public string? Sku { get; init; }
 
-        public int StockQuantity { get; set; }
+        public int StockQuantity { get; init; }
 
-        public string? StockLocation { get; set; }
+        public string? StockLocation { get; init; }
 
-        public Guid DimensionsId { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public DimensionsDto? Dimensions { get; set; }
-
-        public Guid AssessmentId { get; set; }
+        public Guid DimensionsId { get; init; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public AssessmentDto? Assessment { get; set; }
+        public DimensionsDto? Dimensions { get; init; }
 
-        public Guid AttributesId { get; set; } 
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public AttributeDto? Attributes { get; set; }
-
-        public Guid AvailabilityId { get; set; }
+        public Guid AssessmentId { get; init; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public AvailabilityDto? Availability { get; set; }
+        public AssessmentDto? Assessment { get; init; }
 
-        public Guid ImageId { get; set; }
+        public Guid AttributesId { get; init; } 
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ImageDto? Image { get; set; }
+        public AttributeDto? Attributes { get; init; }
+
+        public Guid AvailabilityId { get; init; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public AvailabilityDto? Availability { get; init; }
+
+        public Guid ImageId { get; init; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public ImageDto? Image { get; init; }
     }
     #endregion
 }

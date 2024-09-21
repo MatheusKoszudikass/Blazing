@@ -2,13 +2,12 @@
 using Blazing.Application.Dto;
 using Blazing.Application.Interface.User;
 using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Services;
-using Blazing.Domain.Interfaces.Services.User;
+using Blazing.Domain.Interface.Services.User;
 
 namespace Blazing.Application.Services
 {
     #region Application user service.
-    public class UserAppService(IMapper mapper, IUserDomainService userDomainService) : IUserAppService<UserDto>
+    public class UserAppService(IMapper mapper, IUserDomainService userDomainService) : IUserAppService
     {
         private readonly IMapper _mapper = mapper;
         private readonly IUserDomainService _userCrudDomainService = userDomainService;
@@ -18,7 +17,7 @@ namespace Blazing.Application.Services
         /// </summary>
         /// <param name="userDto">The list of userDto to be added.</param>
         /// <returns>The list of userDto that have been added.</returns>
-        public async Task<IEnumerable<UserDto?>> AddUsers(IEnumerable<UserDto> userDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> AddUsers(IEnumerable<UserDto> userDto, CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(userDto);
 
@@ -37,7 +36,7 @@ namespace Blazing.Application.Services
         /// <param name="usersDtoUpdate"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>The updated userDto, if found.</returns>
-        public async Task<IEnumerable<UserDto?>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto,
+        public async Task<IEnumerable<UserDto>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto,
             IEnumerable<UserDto?> usersDtoUpdate, CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(usersDto);
@@ -57,7 +56,7 @@ namespace Blazing.Application.Services
         /// <param name="usersDto"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>The list of UserDto that were deleted.</returns>
-        public async Task<IEnumerable<UserDto?>> DeleteUsers(IEnumerable<Guid> id, IEnumerable<UserDto?> usersDto,
+        public async Task<IEnumerable<UserDto>> DeleteUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto,
             CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(usersDto);
@@ -73,8 +72,10 @@ namespace Blazing.Application.Services
         /// Gets a specific UserDto based on the given ID.
         /// </summary>
         /// <param name="id">The ID of the UserDto to get.</param>
+        /// <param name="usersDto"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The UserDto corresponding to the given ID.</returns>
-        public async Task<IEnumerable<UserDto?>> GetUserById(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> GetUserById(IEnumerable<Guid> id, IEnumerable<UserDto> usersDto, CancellationToken cancellationToken)
         {
             var users = _mapper.Map<IEnumerable<User>>(usersDto);
 
@@ -89,9 +90,9 @@ namespace Blazing.Application.Services
         /// Gets all UserDto from the domain.
         /// </summary>
         /// <returns>The list of all UserDto.</returns>
-        public async Task<IEnumerable<UserDto?>> GetAllUsers(IEnumerable<UserDto> usersDto, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> GetAllUsers(IEnumerable<UserDto> usersDto, CancellationToken cancellationToken)
         {
-            IEnumerable<User?> users = _mapper.Map<IEnumerable<User>>(usersDto);
+             var users = _mapper.Map<IEnumerable<User>>(usersDto);
 
              users = await _userCrudDomainService.GetAll(users, cancellationToken);
 

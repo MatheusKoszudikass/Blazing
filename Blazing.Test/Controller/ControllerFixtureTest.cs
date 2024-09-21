@@ -13,7 +13,7 @@ using Blazing.Application.Mappings;
 using Blazing.Application.Services;
 using Blazing.Domain.Services;
 using Blazing.Ecommerce.Data;
-using Blazing.Ecommerce.Dependency;
+using Blazing.Ecommerce.Dependencies;
 using Blazing.Ecommerce.Interface;
 using Blazing.Ecommerce.Repository;
 using Blazing.Test.Data;

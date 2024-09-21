@@ -26,6 +26,9 @@ namespace Blazing.Test.Domain
         //Users
         public UserDomainService UserDomainService { get; } = new();
 
+        //Permission
+        public PermissionDomainService PermissionDomainService { get; } = new();
+
         public DomainFixtureTest()
         {
             Mapper = new MapperConfiguration(cfg =>

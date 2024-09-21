@@ -2,7 +2,6 @@
 using Blazing.Application.Mappings;
 using Blazing.Application.Services;
 using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Services;
 using Blazing.Ecommerce.Data;
 using Blazing.Identity.Data;

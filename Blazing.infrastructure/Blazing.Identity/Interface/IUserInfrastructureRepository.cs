@@ -1,5 +1,6 @@
 ﻿using Blazing.Application.Dto;
 using Blazing.Identity.Entities;
+using Blazing.Identity.RepositoryResult;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blazing.Identity.Interface

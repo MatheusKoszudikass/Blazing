@@ -22,8 +22,10 @@ namespace Blazing.Ecommerce.Data
         public DbSet<Category> Category { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Image> Image { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Revision> Revisions { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
         public DbSet<User> Users { get; set; }
 
@@ -35,10 +37,21 @@ namespace Blazing.Ecommerce.Data
                 .AreUnicode(false)
                 .HaveMaxLength(500);
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Role>()
+                .HasMany(r => r.Permissions)
+                .WithMany(p => p.Roles)
+                .UsingEntity(j => j.ToTable("RolePermissions"));
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Roles)
+                .WithMany(r => r.User)
+                .UsingEntity(j => j.ToTable("RolesUser"));
         }
 
     }

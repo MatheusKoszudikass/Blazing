@@ -3,7 +3,7 @@ using Blazing.Application.Interface.User;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.User;
-using Blazing.Ecommerce.Dependency;
+using Blazing.Ecommerce.Dependencies;
 using Blazing.Ecommerce.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,10 +13,10 @@ namespace Blazing.Ecommerce.Repository
     #region InfraEcommerceUserDtoRepository.
 
     public class UserInfrastructureRepository(IMemoryCache memoryCache,
-        IUserAppService<UserDto> userAppService, DependencyInjection dependencyInjection) : IUserInfrastructureRepository
+        IUserAppService userAppService, DependencyInjection dependencyInjection) : IUserInfrastructureRepository
     {
         private readonly IMemoryCache _memoryCache = memoryCache;
-        private readonly IUserAppService<UserDto> _userAppService = userAppService;
+        private readonly IUserAppService _userAppService = userAppService;
         private readonly DependencyInjection _dependencyInjection = dependencyInjection;
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Blazing.Ecommerce.Repository
         /// </summary>
         /// <param name="userDtos">A collection of <see cref="UserDto"/> objects representing the userDto to be added.</param>
         /// <returns>A task representing the asynchronous operation, with a result of the collection of <see cref="UserDto"/> that were added.</returns>
-        public async Task<IEnumerable<UserDto?>> AddUsers(IEnumerable<UserDto> userDtos, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> AddUsers(IEnumerable<UserDto> userDtos, CancellationToken cancellationToken)
         {
             await ExistsAsync(userDtos, cancellationToken);
 
@@ -47,7 +47,7 @@ namespace Blazing.Ecommerce.Repository
         /// <param name="usersDtoUpdate">The updated UserDto.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The updated UserDto.</returns>
-        public async Task<IEnumerable<UserDto?>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto?> usersDtoUpdate,
+        public async Task<IEnumerable<UserDto>> UpdateUsers(IEnumerable<Guid> id, IEnumerable<UserDto> usersDtoUpdate,
             CancellationToken cancellationToken)
         {
             var enumerable = id.ToList();
@@ -77,9 +77,7 @@ namespace Blazing.Ecommerce.Repository
             {
                 var existingUser = existingUsers.SingleOrDefault(u => u.Id == userDto.Id);
                 await UpdateUserDetailsAsync(userDto, existingUser, cancellationToken);
-                if (existingUser == null) continue;
 
-                // Atualiza as propriedades do usuário
                 existingUser.Status = userDto.Status;
                 existingUser.FirstName = userDto.FirstName;
                 existingUser.LastName = userDto.LastName;
@@ -90,20 +88,16 @@ namespace Blazing.Ecommerce.Repository
                 {
                     existingUser.PasswordHash = userDto.PasswordHash;
                 }
-                existingUser.DataUpdated = userDto.DataUpdated;
+                existingUser.DataUpdated = userDto.DateUpdate;
 
                 if (userDto.Addresses != null)
                 {
-
-                    // Aqui mapeia e aplica as alterações nos endereços
                     _dependencyInjection._mapper.Map(userDto.Addresses, existingUser.Addresses);
                 }
             }
 
-            // Salva as alterações no banco de dados
             await _dependencyInjection._appContext.SaveChangesAsync(cancellationToken);
 
-            // Retorna os DTOs atualizados
             return updateUsers;
         }
 
@@ -117,7 +111,7 @@ namespace Blazing.Ecommerce.Repository
         /// <exception cref="UserException.UserAlreadyExistsException">
         /// Thrown if the users name or email already exists and is different from the existing user.
         /// </exception>
-        private async Task UpdateUserDetailsAsync(UserDto? originalUserDto, User? updatedUserDto, CancellationToken cancellationToken)
+        private async Task UpdateUserDetailsAsync(UserDto originalUserDto, User? updatedUserDto, CancellationToken cancellationToken)
         {
             var userNameExists  = await IsUserNameExistsAsync(originalUserDto.UserName, cancellationToken);
             var emailExists = await IsUserEmailExistsAsync(originalUserDto.Email, cancellationToken);
@@ -152,7 +146,7 @@ namespace Blazing.Ecommerce.Repository
         /// <param name="id">The IDs of the users to delete.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The deleted users as UserDto objects.</returns>
-        public async Task<IEnumerable<UserDto?>> DeleteUsers(IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> DeleteUsers(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
             var users = await _dependencyInjection._appContext.Users
                                  .Include(u => u.Addresses)
@@ -175,7 +169,7 @@ namespace Blazing.Ecommerce.Repository
                 }
             }
 
-            IEnumerable<UserDto?> usersDto = _dependencyInjection._mapper.Map<IEnumerable<UserDto>>(users);
+            var usersDto = _dependencyInjection._mapper.Map<IEnumerable<UserDto>>(users);
 
             usersDto = await _userAppService.DeleteUsers(id, usersDto, cancellationToken);
 
@@ -192,20 +186,15 @@ namespace Blazing.Ecommerce.Repository
         /// <param name="id">The IDs of the users to retrieve.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A collection of UserDto objects corresponding to the given IDs.</returns>
-        public async Task<IEnumerable<UserDto?>> GetUsersById(IEnumerable<Guid> id, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> GetUsersById(IEnumerable<Guid> id, CancellationToken cancellationToken)
         {
-            var cacheId = id;
-            if (!_memoryCache.TryGetValue(cacheId, out IEnumerable<User>? users))
-            {
-                users = await _dependencyInjection._appContext.Users
+            var  users =  _dependencyInjection._appContext.Users
                     .Include(a => a.Addresses)
                     .AsNoTracking()
                     .Take(5)
                     .Where(p => id.Contains(p.Id))
-                    .ToListAsync(cancellationToken);
+                    .AsQueryable();
 
-                _memoryCache.Set(cacheId, users, TimeSpan.FromMinutes(5));
-            }
             var usersResultDto = _dependencyInjection._mapper.Map<IEnumerable<UserDto>>(users);
             var result = await _userAppService.GetUserById(id, usersResultDto, cancellationToken);
 
@@ -220,7 +209,7 @@ namespace Blazing.Ecommerce.Repository
         /// <param name="pageSize"></param>
         /// <param name="cancellationToken">The cancellation token to cancel the operation.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a collection of UserDto objects.</returns>
-        public async Task<IEnumerable<UserDto?>> GetAllUsers(int page, int pageSize,CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> GetAllUsers(int page, int pageSize,CancellationToken cancellationToken)
         {
             var userCache = $"{page}_{pageSize}";
 

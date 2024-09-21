@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Blazing.Domain.Interfaces.Repository
+﻿namespace Blazing.Domain.Interface.Repository
 {
     #region Logs.
     /// <summary>

@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace Blazing.Application.Dto
 {
+    /// <summary>
+    /// Abstract base class for Data Transfer Objects (DTOs), providing common properties for tracking entity 
+    /// identifiers, creation, update, and deletion timestamps.
+    /// </summary>
     public abstract class BaseEntityDto
     {
         public Guid Id { get; set; }
 
-        public DateTime DataCreated { get; set; }
+        public DateTime DataCreated { get; init; }
 
-        public DateTime? DataUpdated { get; set; }
+        public DateTime? DataUpdated { get; init; }
 
-        public DateTime? DataDeleted { get; set; }
+        public DateTime? DataDeleted { get; init; }
     }
 }

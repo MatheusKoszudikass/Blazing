@@ -12,14 +12,14 @@ namespace Blazing.Identity.Entities
     public sealed class ApplicationUser : IdentityUser<Guid>
     {
         [Required(ErrorMessage = "Campo obrigatório.")]
-        public bool Status { get; set; }
+        public bool Status { get; init; }
         [Required(ErrorMessage = "O primeiro nome é obrigatório.")]
         [StringLength(50, ErrorMessage = "O primeiro nome não pode ter mais de 50 caracteres.")]
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O sobrenome é obrigatório.")]
         [StringLength(50, ErrorMessage = "O sobrenome não pode ter mais de 50 caracteres.")]
-        public string? LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A data de criação é obrigatória.")]
         public DateTime CreationDate { get; set; } = DateTime.Now;

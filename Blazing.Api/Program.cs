@@ -1,7 +1,6 @@
 using BenchmarkDotNet.Running;
 using Blazing.Api.Dependencies;
 using Blazing.Api.Middleware;
-using Blazing.Ecommerce.Dependency;
 using Blazing.Identity.Dependencies;
 using Blazing.Identity.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,6 +8,7 @@ using Microsoft.Identity.Web;
 using Serilog;
 using System.Text.Json.Serialization;
 using Blazing.Ecommerce.Dependencies;
+using DependencyInjection = Blazing.Identity.Dependencies.DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,8 +39,6 @@ builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
     opt.JsonSerializerOptions.IncludeFields = true;
 });
 
-// Registrar outras dependências
-builder.Services.AddScoped<DependencyInjection>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

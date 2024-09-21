@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
-using Blazing.Ecommerce.Data;
 using Blazing.Identity.Data;
 
-
-namespace Blazing.Identity.Dependency
+namespace Blazing.Identity.Dependencies
 {
-    public class DependencyInjection(BlazingIdentityDbContext? IdentityAppDbContext, IMapper mapper)
+    public class DependencyInjection(BlazingIdentityDbContext? identityAppDbContext, IMapper mapper)
     {
-        public readonly BlazingIdentityDbContext? _appContext = IdentityAppDbContext;
+        public readonly BlazingIdentityDbContext? AppContext = identityAppDbContext;
 
-        public readonly IMapper _mapper = mapper;
+        public readonly IMapper Mapper = mapper;
     }
 }

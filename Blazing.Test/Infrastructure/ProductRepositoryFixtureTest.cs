@@ -5,6 +5,7 @@ using Blazing.Domain.Exceptions;
 using Iced.Intel;
 using Microsoft.Extensions.Caching.Memory;
 using System.Drawing.Printing;
+using Blazing.Domain.Exceptions.Product;
 
 
 namespace Blazing.Test.Infrastructure

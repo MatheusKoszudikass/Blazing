@@ -25,7 +25,7 @@ namespace Blazing.Application.Mappings
                     Currency = product.Currency,
                     CategoryId = product.CategoryId,
                     Brand = product.Brand,
-                    SKU = product.SKU,
+                    Sku = product.Sku,
                     StockQuantity = product.StockQuantity,
                     StockLocation = product.StockLocation,
                     DimensionsId = product.DimensionsId,
@@ -116,18 +116,33 @@ namespace Blazing.Application.Mappings
             };
         }
 
-        public virtual RevisionDto ConvertToRevisionDto(Revision revision)
+        protected virtual RevisionDto ConvertToRevisionDto(Revision revision)
         {
             return new RevisionDto
             {
                 Id = revision.Id,
                 Date = revision.Date,
-                User = revision.User != null ? new UserDto
-                {
-                    Id = revision.User.Id,
-                    UserName = revision.User.UserName,
-                    Email = revision.User.Email
-                } : null
+                User = revision.User != null ? ConvertToUserDto(revision.User) : null
+            };
+        }
+
+        protected virtual UserDto ConvertToUserDto(User user)
+        {
+            return new UserDto
+            {
+                Id = user.Id,
+                Status = Convert.ToBoolean(user.Status),
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Email = user.Email,
+                PasswordHash = user.PasswordHash,
+                PhoneNumber = user.PhoneNumber,
+                Addresses = null,
+                ShoppingCarts = null,
+                DateCreate = user.DataCreated,
+                DateDelete = user.DataDeleted,
+                DateUpdate = user.DataUpdated
             };
         }
     }

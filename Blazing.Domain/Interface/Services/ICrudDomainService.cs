@@ -1,6 +1,6 @@
 ﻿using Blazing.Domain.Entities;
 
-namespace Blazing.Domain.Interfaces.Services
+namespace Blazing.Domain.Interface.Services
 {
     #region Interface Crud Domain Service.
     /// <summary>
@@ -11,10 +11,10 @@ namespace Blazing.Domain.Interfaces.Services
         /// <summary>
         /// Adds a collection of object.
         /// </summary>
-        /// <param name="obj">A collection of boject to be added.</param>
+        /// <param name="obj">A collection of object to be added.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a collection of the added object.</returns>
-        Task<IEnumerable<T?>> Add(IEnumerable<T> obj, CancellationToken cancellationToken);
+        Task<IEnumerable<T>> Add(IEnumerable<T> obj, CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates a object by its ID.
@@ -24,7 +24,7 @@ namespace Blazing.Domain.Interfaces.Services
         /// <param name="objUpdate"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with the updated object.</returns>
-        Task<IEnumerable<T?>> Update(IEnumerable<Guid> id, IEnumerable<T> obj, IEnumerable<T> objUpdate, CancellationToken cancellationToken);
+        Task<IEnumerable<T>> Update(IEnumerable<Guid> id, IEnumerable<T> obj, IEnumerable<T> objUpdate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a collection of object by their IDs.
@@ -33,7 +33,7 @@ namespace Blazing.Domain.Interfaces.Services
         /// <param name="obj">A collection of object to be deleted.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a collection of the deleted object.</returns>
-        Task<IEnumerable<T?>> Delete(IEnumerable<Guid> id, IEnumerable<T> obj, CancellationToken cancellationToken);
+        Task<IEnumerable<T>> Delete(IEnumerable<Guid> id, IEnumerable<T> obj, CancellationToken cancellationToken);
 
         /// <summary>
         /// Retrieves a object by its ID.
@@ -42,7 +42,7 @@ namespace Blazing.Domain.Interfaces.Services
         /// <param name="obj">The product details.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with the object details.</returns>
-        Task<IEnumerable<T?>> GetById(IEnumerable<Guid> id, IEnumerable<T> obj, CancellationToken cancellationToken);
+        Task<IEnumerable<T>> GetById(IEnumerable<Guid> id, IEnumerable<T> obj, CancellationToken cancellationToken);
 
         /// <summary>
         /// Retrieves all object.
@@ -50,7 +50,7 @@ namespace Blazing.Domain.Interfaces.Services
         /// <param name="obj">The object details.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>A task representing the asynchronous operation, with a collection of all object.</returns>
-        Task<IEnumerable<T?>> GetAll(IEnumerable<T?> obj, CancellationToken cancellationToken);
+        Task<IEnumerable<T>> GetAll(IEnumerable<T> obj, CancellationToken cancellationToken);
 
         /// <summary>
         /// Checks if a specified condition exists asynchronously.

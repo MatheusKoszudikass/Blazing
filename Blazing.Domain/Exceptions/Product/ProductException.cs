@@ -1,6 +1,4 @@
-﻿using Blazing.Domain.Entities;
-
-namespace Blazing.Domain.Exceptions
+﻿namespace Blazing.Domain.Exceptions.Product
 {
     /// <summary>
     /// A static class that contains all exceptions related to products.
@@ -24,7 +22,7 @@ namespace Blazing.Domain.Exceptions
             {
             }
 
-            public ProductAlreadyExistsException(IEnumerable<Product?> produtoNome)
+            public ProductAlreadyExistsException(IEnumerable<Entities.Product?> produtoNome)
                : base($"Nenhuma alteração foi detectada para os produtos: {string.Join(", ", produtoNome.Select(p => p.Name).ToList())}")
             {
             }
@@ -67,7 +65,7 @@ namespace Blazing.Domain.Exceptions
             /// Initializes a new instance of the <see cref="ProductInvalidException"/> class with the specified invalid product.
             /// </summary>
             /// <param name="produto">The product that is invalid.</param>
-            public ProductInvalidException(Product produto)
+            public ProductInvalidException(Entities.Product produto)
                 : base($"Produto {produto.Name} é inválido.")
             {
             }
@@ -86,7 +84,7 @@ namespace Blazing.Domain.Exceptions
             /// Initializes a new instance of the <see cref="ProductNotFoundException"/> class with the specified product list.
             /// </summary>
             /// <param name="produtos">The list of products that was not found or is empty.</param>
-            public ProductNotFoundException(IEnumerable<Product?> produtos)
+            public ProductNotFoundException(IEnumerable<Entities.Product?> produtos)
                 : base("A lista de produtos está vazia.")
             {
             }

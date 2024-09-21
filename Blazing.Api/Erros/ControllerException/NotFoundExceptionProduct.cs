@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Blazing.Api.Erros.ControllerExceptions
+﻿namespace Blazing.Api.Erros.ControllerException
 {
     public class NotFoundException(string message) : Exception(message) { }
     public class BadRequestException(string message) : Exception(message) { }

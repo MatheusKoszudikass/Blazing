@@ -25,8 +25,10 @@ namespace Blazing.Application.Mappings
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Dimensions, DimensionsDto>().ReverseMap();
             CreateMap<Image, ImageDto>().ReverseMap();
+            CreateMap<Permission, PermissionDto>().ReverseMap();
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Revision, RevisionDto>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
             CreateMap<ShoppingCart, ShoppingCartDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
         }

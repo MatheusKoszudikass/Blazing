@@ -1,9 +1,10 @@
 ﻿using Blazing.Application.Dto;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.User;
-using Blazing.Identity.Dependency;
+using Blazing.Identity.Dependencies;
 using Blazing.Identity.Entities;
 using Blazing.Identity.Mappings;
+using Blazing.Identity.RepositoryResult;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -364,7 +365,7 @@ namespace Blazing.Identity.Repository
         ///     A task representing the asynchronous operation, with a result indicating whether the userDto exist (
         ///     <c>true</c> if they exist, <c>false</c> otherwise).
         /// </returns>
-        public async Task<bool> ExistsAsync(IEnumerable<ApplicationUser> userIdentity,
+        private async Task<bool> ExistsAsync(IEnumerable<ApplicationUser> userIdentity,
             CancellationToken cancellationToken)
         {
             var userDto = (await _mapper.UserMapperDto(userIdentity, cancellationToken))
@@ -394,7 +395,7 @@ namespace Blazing.Identity.Repository
         private async Task<bool> IsUserIdExistsAsync(string userId, CancellationToken cancellationToken)
         {
             var id = Guid.Parse(userId);
-            return await _dependencyInjection._appContext.Users.AnyAsync(u => u.Id == id, cancellationToken);
+            return await _dependencyInjection.AppContext.Users.AnyAsync(u => u.Id == id, cancellationToken);
         }
 
         /// <summary>
@@ -405,7 +406,7 @@ namespace Blazing.Identity.Repository
         /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user exists.</returns>
         private async Task<bool> IsUserNameExistsAsync(string? userName, CancellationToken cancellationToken)
         {
-            return await _dependencyInjection._appContext.Users.AnyAsync(u => u.UserName == userName,
+            return await _dependencyInjection.AppContext.Users.AnyAsync(u => u.UserName == userName,
                 cancellationToken);
         }
 
@@ -417,7 +418,7 @@ namespace Blazing.Identity.Repository
         /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user exists.</returns>
         private async Task<bool> IsEmailExistsAsync(string? email, CancellationToken cancellationToken)
         {
-            return await _dependencyInjection._appContext.Users.AnyAsync(u => u.Email == email, cancellationToken);
+            return await _dependencyInjection.AppContext.Users.AnyAsync(u => u.Email == email, cancellationToken);
         }
     }
 }

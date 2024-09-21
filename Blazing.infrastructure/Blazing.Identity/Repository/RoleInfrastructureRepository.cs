@@ -39,7 +39,7 @@ namespace Blazing.Identity.Repository
                         throw new ArgumentException("O funções do usuário ja existe.", nameof(item.Name));
                     }
 
-                    var applicationRole = _dependencyInjection._mapper.Map<ApplicationRole>(item);
+                    var applicationRole = _dependencyInjection.Mapper.Map<ApplicationRole>(item);
 
                     var resultRoleCreate = await _roleManager.CreateAsync(applicationRole);
 
@@ -76,7 +76,7 @@ namespace Blazing.Identity.Repository
                         throw new ArgumentException("O funções do usuário não existe.", nameof(role.Name));
                     }
                     
-                    var applicationRole = _dependencyInjection._mapper.Map(item, role);
+                    var applicationRole = _dependencyInjection.Mapper.Map(item, role);
 
                     var resultRoleUpdate = await _roleManager.UpdateAsync(applicationRole);
 
@@ -155,7 +155,7 @@ namespace Blazing.Identity.Repository
                     applicationRoles.Add(role);
                 }
 
-                return _dependencyInjection._mapper.Map<IEnumerable<ApplicationRoleDto>>(applicationRoles);
+                return _dependencyInjection.Mapper.Map<IEnumerable<ApplicationRoleDto>>(applicationRoles);
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace Blazing.Identity.Repository
         {
             try
             {
-                var applicationRoles = await _dependencyInjection._appContext.Roles
+                var applicationRoles = await _dependencyInjection.AppContext.Roles
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync(cancellationToken);
@@ -179,7 +179,7 @@ namespace Blazing.Identity.Repository
                     throw new ArgumentException("Nenhuma função foi encontrada.", nameof(applicationRoles));
                 }
                 
-                var applicationRolesRto = _dependencyInjection._mapper.Map<IEnumerable<ApplicationRoleDto>>(applicationRoles);
+                var applicationRolesRto = _dependencyInjection.Mapper.Map<IEnumerable<ApplicationRoleDto>>(applicationRoles);
 
                 return applicationRolesRto;
             }
