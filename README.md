@@ -36,11 +36,15 @@ O projeto está em fase inicial, com foco na estruturação de testes antes das 
 
 ## 🆕 Atualizações Recentes
 
-Foi adicionado bibliotecas de logs. Para ajudar no detalhamento de Exceções: Os logs de erro contêm stack traces detalhados que ajudam a identificar a origem do problema. Isso é necessário para depurar exceções e corrigir bugs. Informações contextuais Logs como RequestId, RequestPath, e ConnectionId para ajudar a rastrear a execução das requisições e identificar problemas específicos relacionados a uma requisição. Registro de sucesso e falhas das operações: Logs informativos como “Produtos adicionados com sucesso” ajudam a monitorar operações bem-sucedidas e a verificar se o comportamento da aplicação está ocorrendo com o esperado. Registro de ips informações sobre o endereço IP do usuário para caso de auditoria. 
+Acredito que cheguei a um ponto de expertise utilizando C#, especialmente em arquiteturas limpas e modelos anêmicos e ricos. Embora eu ainda não tenha um projeto referente ao modelo rico utilizando o famoso MVC, pretendo trazer esses projetos ao longo do tempo.
 
-Os logs estruturados estão em fase inicial de implementação, sendo salvos em arquivos no formato JSON, localizados em ./Blazing.Api/logs (por exemplo, log-development-20240816.json). Além disso, as operações críticas, como exceções, são salvas tanto no arquivo quanto no banco de dados SQL Server. No entanto, estou em dúvida sobre manter os logs em um banco de dados relacional.
+Acredito que, ao olhar os commits, é possível ver o avanço de um desenvolvedor de software, começando com um projeto ruim e melhorando suas técnicas. Ainda falta muito para chegar no código e na estrutura que eu gostaria de demonstrar, pois acredito que mostrar os erros desde o básico até chegar a um ponto aceitável é importante.
 
-Bibliotecas utilizadas:![alt text](image.png)
+Neste último commit, implementei uma funcionalidade de permissão que ainda não finalizei, mas já estava chegando a um ponto razoável para o modelo anêmico que eu queria trazer. Claro que faltou a abordagem de utilizar enum para as permissões, que é uma prática muito eficaz para definir o nível de permissão, etc.
+
+No entanto, demonstro o avanço nas separações de responsabilidades, com uma estrutura bem organizada e comentada. Os testes unitários foram melhorados, e comecei a usar record para DTOs, que é uma abordagem bem melhor para projetos escaláveis. Estava começando a refatorar com esse intuito.
+
+O que faltou foi registrar os benchmarks da evolução dos métodos e o uso do mapeamento manual dos DTOs para entidades e vice-versa, já que o AutoMapper consome muitos recursos ao fazer isso “magicamente” para você. Enfim, espero voltar quando tiver mais tempo para esse projeto. 
 
 
 ## Roadmap
