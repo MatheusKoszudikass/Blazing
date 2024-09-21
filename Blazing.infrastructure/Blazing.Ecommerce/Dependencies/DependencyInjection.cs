@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Blazing.Ecommerce.Data;
 
-
-namespace Blazing.Ecommerce.Dependency
+namespace Blazing.Ecommerce.Dependencies
 {
     public class DependencyInjection(BlazingDbContext AppDbContext, IMapper mapper)
     {

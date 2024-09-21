@@ -14,16 +14,16 @@ public class BlazingIdentityMapper
 
         // Itera sobre a lista de identityUser e existingUserDtos ao mesmo tempo
         using (var identityUserEnumerator = identityUser.GetEnumerator())
-        using (var existingUserDtosEnumerator = existingUserDtos.GetEnumerator())
+        using (var existingUserDtoEnumerator = existingUserDtos.GetEnumerator())
         {
-            while (identityUserEnumerator.MoveNext() && existingUserDtosEnumerator.MoveNext())
+            while (identityUserEnumerator.MoveNext() && existingUserDtoEnumerator.MoveNext())
             {
                 var identity = identityUserEnumerator.Current;
-                var existingDto = existingUserDtosEnumerator.Current;
+                var existingDto = existingUserDtoEnumerator.Current;
 
                 // Mapeia o Id do ApplicationUser para o UserDto existente
-                existingDto.Id = identity.Id;
-                existingDto.PasswordHash = identity.PasswordHash;
+                existingDto = existingDto with { Id = identity.Id };
+                existingDto = existingDto with { PasswordHash = identity.PasswordHash };
 
                 // Adiciona o UserDto à lista de resultados
                 result.Add(existingDto);
@@ -103,7 +103,7 @@ public class BlazingIdentityMapper
             Email = u.Email,
             PasswordHash = u.PasswordHash,
             PhoneNumber = u.PhoneNumber,
-            CreationDate = u.DataCreated,
+            CreationDate = u.DateCreate,
             LastUpdate = DateTime.Now,
         });
 
@@ -111,7 +111,7 @@ public class BlazingIdentityMapper
         return result;
     }
 
-    public virtual async Task<IEnumerable<UserDto>> UserMapperDto(IEnumerable<ApplicationUser?> identityUser,
+    public virtual async Task<IEnumerable<UserDto>> UserMapperDto(IEnumerable<ApplicationUser> identityUser,
         CancellationToken cancellationToken)
     {
         var result = identityUser.Select(i => new UserDto
@@ -124,8 +124,8 @@ public class BlazingIdentityMapper
             Email = i.Email,
             PasswordHash = i.PasswordHash,
             PhoneNumber = i.PhoneNumber,
-            DataCreated = i.CreationDate,
-            DataUpdated = i.LastUpdate
+            DateCreate = i.CreationDate,
+            DateUpdate = i.LastUpdate
         });
 
         await Task.CompletedTask;

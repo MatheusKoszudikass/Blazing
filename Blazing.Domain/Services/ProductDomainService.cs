@@ -1,9 +1,9 @@
 ﻿using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.Category;
-using Blazing.Domain.Interfaces.Repository;
-using Blazing.Domain.Interfaces.Services;
 using System.Text;
+using Blazing.Domain.Exceptions.Product;
+using Blazing.Domain.Interface.Services;
 
 namespace Blazing.Domain.Services
 {
@@ -16,7 +16,7 @@ namespace Blazing.Domain.Services
         /// <param name="product">The list of products to be added.</param>
         /// <returns>The list of products that have been added.</returns>
         /// <exception cref="ProductExceptions.ProductNotFoundException">Thrown when the product list is null or empty.</exception>
-        public async Task<IEnumerable<Product?>> Add(IEnumerable<Product> product, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Product>> Add(IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (product == null || !product.Any())
                 throw new ProductExceptions.ProductNotFoundException(product ?? []);
@@ -88,7 +88,7 @@ namespace Blazing.Domain.Services
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The updated products.</returns>
         /// <exception cref="DomainException">Thrown when a domain-related error occurs during the update process.</exception>
-        public async Task<IEnumerable<Product?>> Update(IEnumerable<Guid> id, IEnumerable<Product> originalProducts, IEnumerable<Product> updatedProducts, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Product>> Update(IEnumerable<Guid> id, IEnumerable<Product> originalProducts, IEnumerable<Product> updatedProducts, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any() || id.Contains(Guid.Empty))
                 throw new ProductExceptions.IdentityProductInvalidException(id ?? []);
@@ -145,7 +145,7 @@ namespace Blazing.Domain.Services
                      NormalizeString(product1.Currency) == NormalizeString(product2.Currency) &&
                      product1.CategoryId == product2.CategoryId &&
                      NormalizeString(product1.Brand) == NormalizeString(product2.Brand) &&
-                     NormalizeString(product1.SKU) == NormalizeString(product2.SKU) &&
+                     NormalizeString(product1.Sku) == NormalizeString(product2.Sku) &&
                      product1.StockQuantity == product2.StockQuantity &&
                      NormalizeString(product1.StockLocation) == NormalizeString(product2.StockLocation) &&
 
@@ -201,7 +201,7 @@ namespace Blazing.Domain.Services
         /// <returns>The list of products that were deleted.</returns>
         /// <exception cref="ProductExceptions.IdentityProductInvalidException">Thrown when the list of provided IDs is empty.</exception>
         /// <exception cref="ProductExceptions.ProductNotFoundException">Throws when no product is deleted.</exception>
-        public async Task<IEnumerable<Product?>> Delete(IEnumerable<Guid> id, IEnumerable<Product> product, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Product>> Delete(IEnumerable<Guid> id, IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (!id.Any())
                 throw new ProductExceptions.IdentityProductInvalidException(id);
@@ -248,7 +248,7 @@ namespace Blazing.Domain.Services
         /// <returns>The list of products associated with the given id.</returns>
         /// <exception cref="ProductExceptions.IdentityProductInvalidException">Thrown when the given ID is invalid.</exception>
         /// <exception cref="ProductExceptions.ProductNotFoundException">Throws when no products not found .</exception>
-        public async Task<IEnumerable<Product?>> GetById(IEnumerable<Guid> id, IEnumerable<Product> product, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Product>> GetById(IEnumerable<Guid> id, IEnumerable<Product> product, CancellationToken cancellationToken)
         {
             if (!id.Any())
                 throw new ProductExceptions.IdentityProductInvalidException(id);
@@ -279,7 +279,7 @@ namespace Blazing.Domain.Services
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the list of products.</returns>
         /// <exception cref="ProductExceptions.ProductNotFoundException">Thrown when no products are found.</exception>
-        public async Task<IEnumerable<Product?>> GetAll(IEnumerable<Product?> products,
+        public async Task<IEnumerable<Product>> GetAll(IEnumerable<Product> products,
             CancellationToken cancellationToken)
         {
             var enumerable = products.ToList();

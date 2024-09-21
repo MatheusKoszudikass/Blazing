@@ -2,12 +2,12 @@
 using Blazing.Application.Dto;
 using Blazing.Application.Interface.Product;
 using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Services;
+using Blazing.Domain.Interface.Services;
 
 namespace Blazing.Application.Services
 {
     #region Application product service.
-    public class ProductAppService(IMapper mapper, ICrudDomainService<Product> produtoDomainService) : IProductAppService<ProductDto>
+    public class ProductAppService(IMapper mapper, ICrudDomainService<Product> produtoDomainService) : IProductAppService
     {
 
         private readonly ICrudDomainService<Product> _produtoDomainService = produtoDomainService;

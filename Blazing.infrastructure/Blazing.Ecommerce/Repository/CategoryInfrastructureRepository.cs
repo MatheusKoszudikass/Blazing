@@ -4,7 +4,7 @@ using Blazing.Application.Mappings;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.Category;
-using Blazing.Ecommerce.Dependency;
+using Blazing.Ecommerce.Dependencies;
 using Blazing.Ecommerce.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;

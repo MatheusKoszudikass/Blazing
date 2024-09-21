@@ -2,12 +2,11 @@
 using Blazing.Application.Interface.User;
 using Blazing.Application.Services;
 using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Services;
+using Blazing.Domain.Interface.Services;
 using Blazing.Domain.Services;
 using Blazing.Ecommerce.Interface;
 using Blazing.Ecommerce.Repository;
 using Blazing.Identity.Data;
-using Blazing.Identity.Dependency;
 using Blazing.Identity.Entities;
 using Blazing.Identity.Mappings;
 using Microsoft.AspNetCore.Identity;
@@ -68,7 +67,7 @@ namespace Blazing.Identity.Dependencies
 
             // Users
             services.AddScoped<ICrudDomainService<User>, UserDomainService>();
-            services.AddScoped<IUserAppService<UserDto>, UserAppService>();
+            services.AddScoped<IUserAppService, UserAppService>();
             services.AddScoped<IUserInfrastructureRepository, UserInfrastructureRepository>();
             services.AddScoped<Interface.IUserInfrastructureRepository, Repository.UserInfrastructureRepository>();
 

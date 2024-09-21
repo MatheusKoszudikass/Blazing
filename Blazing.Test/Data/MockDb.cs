@@ -25,15 +25,15 @@ namespace Blazing.Test.Data
             return new BlazingDbContext(options);
         }
 
-        //public BlazingIdentityDbContext CreateDbContextIdentity()
-        //{
-        //    var options = new DbContextOptionsBuilder<BlazingIdentityDbContext>()
-        //        .UseInMemoryDatabase($"InMemoryTest{DateTime.Now.ToFileTime()}").Options;
+        public BlazingIdentityDbContext CreateDbContextIdentity()
+        {
+            var options = new DbContextOptionsBuilder<BlazingIdentityDbContext>()
+                .UseInMemoryDatabase($"InMemoryTest{DateTime.Now.ToFileTime()}").Options;
 
-        //    ConfigureServices();
+            //ConfigureServices();
 
-        //    return new BlazingIdentityDbContext(options);
-        //}
+            return new BlazingIdentityDbContext(options);
+        }
 
         //public void ConfigureServices()
         //{

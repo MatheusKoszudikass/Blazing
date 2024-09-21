@@ -8,9 +8,9 @@ using Blazing.Domain.Entities;
 
 namespace Blazing.Application.Mappings
 {
-    public class ProductMapping
+    public sealed class ProductMapping
     {
-        public virtual IEnumerable<Product?> ReturnProduct(IEnumerable<ProductDto>? productsDto)
+        public IEnumerable<Product?> ReturnProduct(IEnumerable<ProductDto>? productsDto)
         {
             var productResult = new List<Product>();
             foreach (var productDto in productsDto)
@@ -24,7 +24,7 @@ namespace Blazing.Application.Mappings
                     Currency = productDto.Currency,
                     CategoryId = productDto.CategoryId,
                     Brand = productDto.Brand,
-                    SKU = productDto.SKU,
+                    Sku = productDto.Sku,
                     StockQuantity = productDto.StockQuantity,
                     StockLocation = productDto.StockLocation,
                     DimensionsId = productDto.DimensionsId,
@@ -54,7 +54,7 @@ namespace Blazing.Application.Mappings
             return productResult;
         }
 
-        public virtual Dimensions? ConvertToDimensions(DimensionsDto? dimensionsDto)
+        private Dimensions? ConvertToDimensions(DimensionsDto? dimensionsDto)
         {
             if (dimensionsDto == null) return null;
 
@@ -67,7 +67,7 @@ namespace Blazing.Application.Mappings
             };
         }
 
-        public virtual Assessment? ConvertToAssessment(AssessmentDto? assessmentDto)
+        private static Assessment? ConvertToAssessment(AssessmentDto? assessmentDto)
         {
             if (assessmentDto == null) return null;
 
@@ -79,7 +79,7 @@ namespace Blazing.Application.Mappings
             };
         }
 
-        public virtual Revision? ConvertToRevision(RevisionDto? revisionDto)
+        private static Revision? ConvertToRevision(RevisionDto? revisionDto)
         {
             if (revisionDto == null) return null;
 
@@ -96,7 +96,7 @@ namespace Blazing.Application.Mappings
             };
         }
 
-        public virtual Attributes? ConvertToAttributes(AttributeDto? attributeDto)
+        private static Attributes? ConvertToAttributes(AttributeDto? attributeDto)
         {
             if (attributeDto == null) return null;
             return new Attributes
@@ -108,7 +108,7 @@ namespace Blazing.Application.Mappings
             };
         }
 
-        public virtual Availability? ConvertToAvailability(AvailabilityDto? availabilityDto)
+        private static Availability? ConvertToAvailability(AvailabilityDto? availabilityDto)
         {
             if (availabilityDto == null) return null;
 
@@ -120,7 +120,7 @@ namespace Blazing.Application.Mappings
             };
         }
 
-        public virtual Image? ConvertToImage(ImageDto? imageDto)
+        private static Image? ConvertToImage(ImageDto? imageDto)
         {
             if (imageDto == null) return null;
 

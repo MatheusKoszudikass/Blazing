@@ -1,10 +1,9 @@
 ﻿using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.User;
-using Blazing.Domain.Interfaces.Services;
-using Blazing.Domain.Interfaces.Services.User;
 using System.Linq;
 using System.Text;
+using Blazing.Domain.Interface.Services.User;
 
 namespace Blazing.Domain.Services
 {
@@ -12,14 +11,14 @@ namespace Blazing.Domain.Services
 
     public class UserDomainService : IUserDomainService
     {
-
         /// <summary>
         /// Adds a list of user to the repository.
         /// </summary>
         /// <param name="user">The list of user to be added.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The list of user that have been added.</returns>
         /// <exception cref="DomainException.NotFoundException.FoundException">Thrown when the user list is null or empty.</exception>
-        public async Task<IEnumerable<User?>> Add(IEnumerable<User> user, CancellationToken cancellationToken)
+        public async Task<IEnumerable<User>> Add(IEnumerable<User> user, CancellationToken cancellationToken)
         {
             if (user == null || !user.Any())
                 throw DomainException.NotFoundException.FoundException();
@@ -58,7 +57,7 @@ namespace Blazing.Domain.Services
         /// <exception cref="DomainException.IdentityInvalidException.Identities">Thrown when the provided IDs are invalid or empty.</exception>
         /// <exception cref="DomainException.NotFoundException.FoundException">Thrown when the user list is null or empty.</exception>
         /// <exception cref="UserException.UserAlreadyExistsException.FromExistingUsers">Thrown when the updated user collection is identical to the existing user collection.</exception>
-        public async Task<IEnumerable<User?>> Update(IEnumerable<Guid> id, IEnumerable<User> originalUsers , IEnumerable<User> updatedUsers, CancellationToken cancellationToken)
+        public async Task<IEnumerable<User>> Update(IEnumerable<Guid> id, IEnumerable<User> originalUsers , IEnumerable<User> updatedUsers, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any() || id.Contains(Guid.Empty))
                 throw DomainException.IdentityInvalidException.Identities(id ?? []);
@@ -207,7 +206,7 @@ namespace Blazing.Domain.Services
         /// <returns>A task representing the asynchronous operation. The task result contains the deleted users.</returns>
         /// <exception cref="DomainException.IdentityInvalidException.Identities">Thrown if the provided IDs are invalid or empty.</exception>
         /// <exception cref="UserException.UserNotFoundException.UserNotFound">Thrown if the user collection is null or empty.</exception>
-        public async Task<IEnumerable<User?>> Delete(IEnumerable<Guid> id, IEnumerable<User> user, CancellationToken cancellationToken)
+        public async Task<IEnumerable<User>> Delete(IEnumerable<Guid> id, IEnumerable<User> user, CancellationToken cancellationToken)
         {
             var enumerable = user.ToList();
 
@@ -241,7 +240,7 @@ namespace Blazing.Domain.Services
         /// <returns>A task representing the asynchronous operation. The task result contains a collection of User objects.</returns>
         /// <exception cref="DomainException.IdentityInvalidException.Identities">Thrown when the provided IDs are invalid or empty.</exception>
         /// <exception cref="UserException.UserNotFoundException.UserNotFound">Thrown when no users matching the provided IDs are found in the user collection.</exception>
-        public async Task<IEnumerable<User?>> GetById(IEnumerable<Guid> id, IEnumerable<User> users, CancellationToken cancellationToken)
+        public async Task<IEnumerable<User>> GetById(IEnumerable<Guid> id, IEnumerable<User> users, CancellationToken cancellationToken)
         {
             var usersManager = users.ToList();
             var byId = id.ToList();
@@ -275,7 +274,7 @@ namespace Blazing.Domain.Services
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation. The task result contains a collection of User objects.</returns>
         /// <exception cref="DomainException.NotFoundException">Thrown when there are no users to retrieve or if the input collection is null or empty.</exception>
-        public async Task<IEnumerable<User?>> GetAll(IEnumerable<User?> users, CancellationToken cancellationToken)
+        public async Task<IEnumerable<User>> GetAll(IEnumerable<User> users, CancellationToken cancellationToken)
         {
             if(users is null || !users.Any())
                 throw DomainException.NotFoundException.FoundException();

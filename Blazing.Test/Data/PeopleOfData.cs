@@ -32,9 +32,20 @@ namespace Blazing.Test.Data
         //User
         public Guid UserId { get; set; } = Guid.NewGuid();
         public Guid UserId1 { get; set; } = Guid.NewGuid();
+
+        //Address
         public Guid AddressDtoId { get; set; } = Guid.NewGuid();
         public Guid AddressDtoId1 { get; set; } = Guid.NewGuid();
         public Guid AddressDtoId2 { get; set; } = Guid.NewGuid();
+
+        //Permission
+
+        public Guid PermissionId { get; set; } = Guid.NewGuid();
+        public Guid PermissionId1 { get; set; } = Guid.NewGuid();
+
+        //Role
+        public Guid RoleId { get; set; } = Guid.NewGuid();
+        public Guid RoleId1 { get; set; } = Guid.NewGuid();
 
         #endregion
 
@@ -121,7 +132,7 @@ namespace Blazing.Test.Data
                     Currency = "BRL",
                     CategoryId = CategoryId,
                     Brand = "Brand A",
-                    SKU = "SKU001",
+                    Sku = "SKU001",
                     StockQuantity = 10,
                     StockLocation = "A1",
                     DimensionsId = DimensionsId,
@@ -175,7 +186,7 @@ namespace Blazing.Test.Data
                     Currency = "BRL",
                     CategoryId = CategoryId1,
                     Brand = "Brand B",
-                    SKU = "SKU002",
+                    Sku = "SKU002",
                     StockQuantity = 20,
                     StockLocation = "B1",
                     DimensionsId = DimensionsId1,
@@ -237,7 +248,7 @@ namespace Blazing.Test.Data
                     Currency = "BRL Edit",
                     CategoryId = CategoryId,
                     Brand = "Brand A Edit",
-                    SKU = "SKU001 Edit",
+                    Sku = "SKU001 Edit",
                     StockQuantity = 30,
                     StockLocation = "A1 Edit",
                     DimensionsId = DimensionsId,
@@ -293,7 +304,7 @@ namespace Blazing.Test.Data
                     Currency = "BRL Edit 2",
                     CategoryId = CategoryId1,
                     Brand = "Brand B Edit",
-                    SKU = "SKU001 Edit",
+                    Sku = "SKU001 Edit",
                     StockQuantity = 30,
                     StockLocation = "A1 Edit",
                     DimensionsId = DimensionsId1,
@@ -468,7 +479,7 @@ namespace Blazing.Test.Data
                     Status = true,
                     UserName = "jane.smith edit",
                     Email = "jane.smithedit@example.com",
-                    FirstName = "Janedit",
+                    FirstName = "Jane edit",
                     LastName = "SmithEdit",
                     PhoneNumber = "987-654-3210",
                     Addresses =
@@ -501,13 +512,127 @@ namespace Blazing.Test.Data
                 }
             ];
         }
+        #endregion
 
-        public string GeneratePasswordHash(string password)
+        #region Permission
+
+        public List<PermissionDto> GetPermissions()
         {
-            var passwordHasher = new PasswordHasher<ApplicationUser>();
-            var user = new ApplicationUser();
+            return
+            [
+                new()
+                {
+                    Id = PermissionId,
+                    Name = "AdminAccess",
+                    Description = "Allows full administrative access to all resources.",
+                    UserCreated = UserId,
+                },
 
-            return passwordHasher.HashPassword(user, password);
+                new()
+                {
+                    Id = PermissionId1,
+                    Name = "ReadOnlyAccess",
+                    Description = "Grants read-only access to view resources",
+                    UserCreated = UserId1,
+                }
+            ];
+        }
+
+        public List<PermissionDto> UpdatePermissions()
+        {
+            return
+            [
+                new()
+                {
+                    Id = PermissionId,
+                    Name = "AdminAccess edit",
+                    Description = "Allows full administrative access to all resources edit.",
+                    UserCreated = UserId,
+                    UserUpdated = UserId1,
+                },
+
+                new ()
+                {
+                    Id = PermissionId1,
+                    Name = "ReadOnlyAccess edit",
+                    Description = "Grants read-only access to view resources edit.",
+                    UserCreated = UserId1,
+                    UserUpdated = UserId,
+                }
+            ];
+        }
+
+        public List<Guid> GetPermissionId()
+        {
+            return
+            [
+                PermissionId, PermissionId1
+            ];
+        }
+
+        #endregion
+
+        #region Role
+
+        public ICollection<RoleDto> GetRoleDto()
+        {
+            return
+            [
+                new()
+                {
+                    Status = true,
+                    Id = RoleId,
+                    Name = "Admin",
+                    Description = "Administrator role with full access.",
+                    UserCreatedId = UserId,
+                    Permissions = GetPermissions(),
+                },
+
+                new ()
+                {
+                    Status = false,
+                    Name = "Editor",
+                    Description = "Editor role with permissions to modify content.",
+                    UserCreatedId = UserId1,
+                    Permissions = GetPermissions(),
+                }
+            ];
+        }
+
+        public ICollection<RoleDto> UpdateRoleDto()
+        {
+            return
+            [
+                new()
+                {
+                    Status = false,
+                    Id = RoleId,
+                    Name = "Admin edit",
+                    Description = "Administrator role with full access edit.",
+                    UserCreatedId = UserId1,
+                    UserUpdatedId = UserId,
+                    Permissions = UpdatePermissions()
+                },
+
+                new ()
+                {
+                    Status = true,
+                    Id = RoleId1,
+                    Name = "Editor edit",
+                    Description = "Editor role with permissions to modify content edit.",
+                    UserCreatedId = UserId,
+                    UserUpdatedId = UserId1,
+                    Permissions = UpdatePermissions()
+                }
+            ];
+        }
+
+        public ICollection<Guid> GetRoleId()
+        {
+            return
+            [
+                RoleId, RoleId1
+            ];
         }
 
         #endregion

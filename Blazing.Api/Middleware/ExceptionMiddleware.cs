@@ -3,6 +3,7 @@ using System.Text.Json;
 using Blazing.Api.Erros;
 using Blazing.Domain.Exceptions;
 using Blazing.Domain.Exceptions.Category;
+using Blazing.Domain.Exceptions.Product;
 using Blazing.Domain.Exceptions.User;
 using Serilog.Context;
 

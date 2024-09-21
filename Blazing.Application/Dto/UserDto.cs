@@ -10,26 +10,26 @@ namespace Blazing.Application.Dto
     /// <summary>
     /// Entity responsible for the user.
     /// </summary>
-    public sealed class UserDto : BaseEntityDto
-    {
-        public bool Status { get; set; }
-        public string? FirstName { get; set; }
+public record UserDto
+{
+    public Guid Id { get; init; }
+    public bool Status { get; init; }
+    public string FirstName { get; init; } = string.Empty;
+    public string LastName { get; init; }= string.Empty;
+    public string? UserName { get; init; }
+    public string? Email { get; init; }
+    public string? PasswordHash { get; init; }
+    public string? PhoneNumber { get; init; }
+    public DateTime DateCreate { get; init; }
+    public DateTime? DateUpdate { get; init; }
+    public DateTime? DateDelete { get; init; }
+    public ICollection<Address>? Addresses { get; init; } = new List<Address>();
+    public ICollection<Role> Roles { get; init; } = new List<Role>();
+    public ICollection<ShoppingCart>? ShoppingCarts { get; init; } = new List<ShoppingCart>();
 
-        public string? LastName { get; set; }
+        // Construtor sem parâmetros
+        public UserDto() {}
+}
 
-        public string? UserName { get; set; }
-
-        public string? Email { get; set; }
-
-        public string? PasswordHash { get; set; }
-
-        public string? PhoneNumber { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public IEnumerable<AddressDto>? Addresses { get; set; } = new List<AddressDto>();
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public IEnumerable<ShoppingCartDto>? ShoppingCarts { get; set; } = new List<ShoppingCartDto>();
-    }
     #endregion
 }

@@ -3,7 +3,7 @@ using Blazing.Application.Mappings;
 using Blazing.Application.Services;
 using Blazing.Domain.Services;
 using Blazing.Ecommerce.Data;
-using Blazing.Ecommerce.Dependency;
+using Blazing.Ecommerce.Dependencies;
 using Blazing.Ecommerce.Interface;
 using Blazing.Ecommerce.Repository;
 using Blazing.Identity.Data;
@@ -85,9 +85,7 @@ namespace Blazing.Test.Infrastructure
 
         //User Identity
 
-        public  Identity.Data.BlazingIdentityDbContext? BlazingIdentityDbContext { get; }
-
-        public Identity.Dependency.DependencyInjection InjectServiceIdentityDbContext { get; }
+        public DependencyInjection InjectServiceIdentityDbContext { get; }
 
         public UserManager<ApplicationUser> UserManagerIdentity { get; }
 
@@ -177,7 +175,7 @@ namespace Blazing.Test.Infrastructure
             //User Identity
 
             // Create a new instance of the DependencyInjection class
-            InjectServiceIdentityDbContext = new Identity.Dependency.DependencyInjection(BlazingIdentityDbContext, Mapper);
+            InjectServiceIdentityDbContext = new DependencyInjection(DbContext, Mapper);
 
             //Create a new instance of the Mock<IUserInfrastructureRepository> class
             var userRepositoryMock = new Mock<IUserInfrastructureRepository>();

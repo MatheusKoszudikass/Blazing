@@ -6,7 +6,7 @@ namespace Blazing.Application.Interface.Product
     /// <summary>
     /// Product application layer interface
     /// </summary>
-    public interface IProductAppService<T> where T : BaseEntityDto
+    public interface IProductAppService
     {
         /// <summary>
         /// Adds a collection of productsDto.

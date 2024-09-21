@@ -3,7 +3,8 @@ using Blazing.Application.Interface.Product;
 using Blazing.Application.Mappings;
 using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
-using Blazing.Ecommerce.Dependency;
+using Blazing.Domain.Exceptions.Product;
+using Blazing.Ecommerce.Dependencies;
 using Blazing.Ecommerce.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,12 +15,12 @@ namespace Blazing.Ecommerce.Repository
     /// <summary>
     /// Repository class for managing Product domain objects.
     /// </summary>
-    public class ProductInfrastructureRepository(ProductDtoMapping product, IMemoryCache memoryCache,DependencyInjection dbContext, IProductAppService<ProductDto> productInfrastructureRepository) : IProductInfrastructureRepository
+    public class ProductInfrastructureRepository(ProductDtoMapping product, IMemoryCache memoryCache,DependencyInjection dbContext, IProductAppService productInfrastructureRepository) : IProductInfrastructureRepository
     {
         private readonly ProductDtoMapping _productMapping = product;
         private readonly IMemoryCache _memoryCache = memoryCache;
         private readonly DependencyInjection _dependencyInjection = dbContext;
-        private readonly IProductAppService<ProductDto> _productAppService = productInfrastructureRepository;
+        private readonly IProductAppService _productAppService = productInfrastructureRepository;
         private const string CacheKey = "products_all";
 
         /// <summary>

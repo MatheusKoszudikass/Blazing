@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Blazing.Application.Dto;
 using Blazing.Domain.Entities;
-using Blazing.Domain.Interfaces.Repository;
-using Blazing.Domain.Interfaces.Services;
 using Blazing.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blazing.Application.Interface.Category;
+using Blazing.Domain.Interface.Services;
 
 namespace Blazing.Application.Services
 {

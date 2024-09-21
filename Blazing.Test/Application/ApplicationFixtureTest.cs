@@ -24,7 +24,10 @@ namespace Blazing.Test.Application
         //Users
         public UserDomainService UserDomainService { get; }
         public UserAppService UserAppService { get; }
-
+        
+        //Permission
+        public PermissionDomainService PermissionDomainService { get; }
+        public PermissionAppService PermissionAppService { get; }
 
         public ApplicationFixtureTest()
         {
@@ -50,6 +53,10 @@ namespace Blazing.Test.Application
             UserDomainService = new UserDomainService();
 
             UserAppService = new UserAppService(Mapper, UserDomainService);
+
+            //Permission
+            PermissionDomainService = new PermissionDomainService();
+            PermissionAppService = new PermissionAppService(Mapper, PermissionDomainService);
         }
 
     }

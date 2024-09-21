@@ -1,8 +1,8 @@
 ﻿using Blazing.Domain.Entities;
 using Blazing.Domain.Exceptions;
-using Blazing.Domain.Interfaces.Services;
 using System.Text;
 using Blazing.Domain.Exceptions.Category;
+using Blazing.Domain.Interface.Services;
 
 namespace Blazing.Domain.Services
 {
@@ -16,7 +16,7 @@ namespace Blazing.Domain.Services
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
         /// <returns>The added categories.</returns>
         /// <exception cref="CategoryExceptions.CategoryNotFoundException">Thrown when the input collection is null or empty.</exception>
-        public async Task<IEnumerable<Category?>> Add(IEnumerable<Category> categories, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Category>> Add(IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
             {
@@ -48,7 +48,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The id of the categories to update.</param>
         /// <param name="updatedCategories">The categories with updated information.</param>
         /// <returns>The updated categories.</returns>
-        public async Task<IEnumerable<Category?>> Update(IEnumerable<Guid> id, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Category>> Update(IEnumerable<Guid> id, IEnumerable<Category> originalCategories, IEnumerable<Category> updatedCategories, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any() || id.Contains(Guid.Empty))
                 throw DomainException.IdentityInvalidException.Identities(id ?? []);
@@ -123,7 +123,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The id of the categories to delete.</param>
         /// <param name="categories">The categories to delete.</param>
         /// <returns>The deleted categories.</returns>
-        public async Task<IEnumerable<Category?>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Category>> Delete(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any() || id.Contains(Guid.Empty))
             {
@@ -157,7 +157,7 @@ namespace Blazing.Domain.Services
         /// <param name="id">The id of the categories to retrieve.</param>
         /// <param name="categories">The categories with the given id.</param>
         /// <returns>The retrieved categories.</returns>
-        public async Task<IEnumerable<Category?>> GetById(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Category>> GetById(IEnumerable<Guid> id, IEnumerable<Category> categories, CancellationToken cancellationToken)
         {
             if (id == null || !id.Any() || Guid.Empty == id.First())
             {
@@ -187,7 +187,7 @@ namespace Blazing.Domain.Services
         /// <param name="categories">The categories to retrieve.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The retrieved categories.</returns>
-        public async Task<IEnumerable<Category?>> GetAll(IEnumerable<Category?> categories,
+        public async Task<IEnumerable<Category>> GetAll(IEnumerable<Category> categories,
             CancellationToken cancellationToken)
         {
             if (categories == null || !categories.Any())
