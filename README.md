@@ -54,13 +54,14 @@ O que faltou foi registrar os benchmarks da evolução dos métodos e o uso do m
 1. **API:**
    - ✔️ Etidades definidas com propriedades obrigatória.
    - ✔️ Teste unitário e implementações CRUD Product.
-   - ✔️ Teste unitário e implementações CRUD Category. 
+   - ✔️ Teste unitário e implementações CRUD Category.
+   - ✔️ Teste unitário e implementações CRUD Permission. 
    - ✔️ Todo código comentado. 
    - ✔️ Arquitetura limpa.
    - ✔️ Teste Automatizados.
    - ✔️ Tratamento de erros do dominio Product .
    - ✔️ Tratamento de erros middleware.
-   - ⏳ Implementar logs.
+   - ✔️ Implementar logs.
    - ⏳ Teste unitário e implementações CRUD para AddCartItem. 
    - ⏳ Teste unitário e implementações CRUD para Address.
    - ⏳ Teste unitário e implementações CRUD para Assessment. 
@@ -73,9 +74,9 @@ O que faltou foi registrar os benchmarks da evolução dos métodos e o uso do m
    - ⏳ Teste unitário e implementações CRUD para ShoppingCart.
    - ⏳ Teste unitário e implementações CRUD para UpdateCartQuantity.
    - ⏳ Teste unitário e implementações CRUD para User com implementação de autenticação via IdentityUser Asp Net Core, Google Sign-In.
-   - ⏳ Criação de logs. 
-   - ⏳ Teste e criação do controllers Product.
-   - ⏳ Criação das migrations.
+   - ✔️ Criação de logs. 
+   - ✔️ Teste e criação do controllers Product.
+   - ✔️ Criação das migrations.
 
 2. **Cadastro de Usuário:**
    - Implementar a página de cadastro de usuário para facilitar o processo de compra.
